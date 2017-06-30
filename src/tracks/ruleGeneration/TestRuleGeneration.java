@@ -6,6 +6,8 @@ import java.util.Random;
  * Created by dperez on 19/03/2017.
  */
 public class TestRuleGeneration {
+    // only for testing, delete this
+    public static int mainSeed;
     public static void main(String[] args) throws Exception {
 	//Available Controllers
 	String sampleMCTSController = "tracks.singlePlayer.advanced.sampleMCTS.Agent";
@@ -50,6 +52,7 @@ public class TestRuleGeneration {
         // Other settings
         boolean visuals = true;
         int seed = new Random().nextInt();
+        mainSeed = seed;
         int gameIdx = 0;
         int levelIdx = 0; // level names from 0 to 4 (game_lvlN.txt).
         String game = generateRulePath + games[gameIdx] + ".txt";

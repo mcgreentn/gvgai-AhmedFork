@@ -11,6 +11,8 @@ import ontology.Types;
 import tools.ElapsedCpuTimer;
 import tools.LevelAnalyzer;
 import tools.Vector2d;
+import tracks.ruleGeneration.TestRuleGeneration;
+
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1082,6 +1084,21 @@ public class Chromosome implements Comparable<Chromosome>{
 	 */
 	public ArrayList<Double> getFitness() {
 		return fitness;
+	}
+	
+	public void printChromosome() {
+		System.out.println("*Interactions*");
+		String[][] modifiedRules = sl.modifyRules(ruleset[0], ruleset[1], TestRuleGeneration.mainSeed);
+		for(int i = 0; i < ruleset[0].length; i++)
+		{
+			System.out.println(modifiedRules[0][i]);
+		}
+		System.out.println("*Terminations*");
+		for(int i = 0; i < modifiedRules[1].length; i++)
+		{
+			System.out.println(modifiedRules[1][i]);
+		}
+	
 	}
 	/**
 	 * Get constraint fitness for infeasible chromosome
