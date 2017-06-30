@@ -100,6 +100,7 @@ public class RuleGenerator extends AbstractRuleGenerator{
             	 	for(int i = 0; i < amount; i++) {
         	 		Chromosome c = new Chromosome(ruleGen.generateRules(sl, null), sl);
         	 		c.cleanseChromosome();
+        	 		c.printChromosome();
         	 		c.calculateFitness(SharedData.EVALUATION_TIME);
         	 		for(int j = 0; j < mutations; j++) {
         				c.mutate();
@@ -200,6 +201,7 @@ public class RuleGenerator extends AbstractRuleGenerator{
 
 		//calculate fitness of the new population chromosomes
 		for(int i=0;i<newPopulation.size();i++){
+				newPopulation.get(i).printChromosome();
 		    	newPopulation.get(i).calculateFitness(SharedData.EVALUATION_TIME);
 		    	if(newPopulation.get(i).getConstrainFitness() < 1){
 				System.out.println("\tChromosome #" + (i+1) + " Constrain Fitness: " + newPopulation.get(i).getConstrainFitness());
