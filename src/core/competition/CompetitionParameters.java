@@ -61,6 +61,18 @@ public class CompetitionParameters
     public static final int RULE_INITIALIZATION_TIME = 60000;
     
     /**
+     * Milliseconds allowed for the tutorial generator to generate a tutorial
+     */
+    public static final int TUTORIAL_ACTION_TIME = 3600000;
+    /**
+     * Milliseconds allowed for the tutorial generation disqualification, if it returns a tutorial after this time
+     */
+    public static final int TUTORIAL_ACTION_TIME_DISQ = 21600000;
+    /**
+     * Milliseconds allowed for the tutorial generator to initialize
+     */
+    public static final int TUTORIAL_INITIALIZATION_TIME = 60000;
+    /**
      * Number of repetition during the optimization operation
      */
     public static final int OPTIMIZATION_REPEATITION = 1;
