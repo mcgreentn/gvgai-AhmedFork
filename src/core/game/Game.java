@@ -482,7 +482,11 @@ public abstract class Game {
 				result.add(VGDLRegistry.GetInstance().getRegisteredSpriteKey(current));
 			} else {
 				SpriteContent sc = (SpriteContent) classConst[current];
-				queue.addAll(sc.subtypes);
+				for(int s:sc.subtypes){
+				    if(!sc.itypes.contains(s)){
+					queue.add(s);
+				    }
+				}
 			}
 			visited[current] = true;
 		}
@@ -1640,7 +1644,11 @@ public abstract class Game {
 			}
 		}
 		if(Logger.getInstance().getMessageCount() > CompetitionParameters.MAX_ALLOWED_WARNINGS){
+			System.out.println("Finishing the game due to number of warnings: " + Logger.getInstance().getMessageCount() +
+			 ". Messages will be flushed.");
+			Logger.getInstance().printMessages();
 		    isEnded = true;
+		    Logger.getInstance().flushMessages();
 		}
 	}
 
