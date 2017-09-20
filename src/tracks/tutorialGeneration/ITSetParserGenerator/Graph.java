@@ -160,6 +160,7 @@ public class Graph {
 								System.out.println("Initializing new interaction: " + sprite2Node.getName() 
 									+ " " + intData.type +  " "+ spriteNode.getName() + " :: "  + " ScoreChange=" + intData.scoreChange);
 							sprite2Node.addMechanic(spriteNode, intData.type, intData.scoreChange);
+							
 						}
 					}
 
@@ -247,7 +248,7 @@ public class Graph {
 			// corner case for AlternateChaser and RandomAltChaser
 			String stypeName2 = "";
 			SpriteData stype2 = null;
-			if(type.equals("AlternateChaser") || type.equals("RandomAltChaser")) {
+			if(type.equals("AlternateChaser") || type.equals("RandomPathAltChaser")) {
 				stypeName2 = current.sprites.get(1);
 				stype2 = searchForSprite(stypeName2);
 			}
@@ -259,7 +260,7 @@ public class Graph {
 				if(type.equals("Bomber") || type.equals("RandomBomber") || type.equals("BomberRandomMissile")
 						|| type.equals("ShootAvatar") || type.equals("FlakAvatar"))
 					mechanic = "Shoot";
-				else if(type.equals("Chaser") || type.equals("AlternateChaser") || type.equals("RandomAltChaser"))
+				else if(type.equals("Chaser") || type.equals("AlternateChaser") || type.equals("RandomPathAltChaser"))
 					mechanic = "Chase";
 				else if(type.equals("Fleeing")) 
 					mechanic = "Flee";
@@ -275,7 +276,7 @@ public class Graph {
 				if(verbose)
 					System.out.println(stypeName2 + " is an stype. Searching for nodes...");
 				String mechanic = "";
-				if(type.equals("AlternateChaser") || type.equals("RandomAltChaser")) {
+				if(type.equals("AlternateChaser") || type.equals("RandomPathAltChaser")) {
 					mechanic = "Flee";
 				}
 				makeNewMechanic(current.name, stypeName2, mechanic);
