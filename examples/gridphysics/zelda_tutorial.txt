@@ -1,0 +1,20 @@
+TutorialFile
+You are the ShootAvatar. Use the arrow keys to turn and move. Use Space to shoot in the direction you are facing.
+The goal of the game is to...
+Get SpriteCounter goal to 0
+Not Get SpriteCounter nokey to 0
+Not Get SpriteCounter withkey to 0
+Start
+Mechanic: Terminator SpriteCounter goal
+Mechanic: withkey KillSprite goal
+Mechanic: nokey OffshootMechanic withkey
+Start
+Mechanic: Terminator SpriteCounter nokey
+Mechanic: monsterQuick KillSprite nokey
+Mechanic: sword KillSprite monsterQuick
+Mechanic: nokey Shoot sword
+Start
+Mechanic: Terminator SpriteCounter withkey
+Mechanic: monsterQuick KillSprite withkey
+Mechanic: sword KillSprite monsterQuick
+Mechanic: nokey Shoot sword

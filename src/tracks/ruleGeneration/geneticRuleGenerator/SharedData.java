@@ -190,5 +190,13 @@ public class SharedData {
 	public static String[] terminationParams = new String[] {
 		"stype", "stype1", "stype2", "stype3"
 	};
+	
+	
+	/**
+	 * The output file to be printed to
+	 */
+	public static String outputFileName = "output.txt";
+	
+	
 
 }

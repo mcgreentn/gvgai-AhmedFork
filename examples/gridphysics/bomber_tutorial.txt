@@ -1,0 +1,15 @@
+TutorialFile
+You are the ShootAvatar. Use the arrow keys to turn and move. Use Space to shoot in the direction you are facing.
+The goal of the game is to...
+Not Get SpriteCounter avatar to 0
+Get SpriteCounter goal to 0
+Not Get Timeout avatar to 1000
+Mechanic: avatar Shoot bomb
+Mechanic: bomb KillSprite fireEnd
+Mechanic: fireEnd SubtractHealthPoints avatar
+Mechanic: avatar KillSprite bomb
+Mechanic: avatar TransformTo bomb
+Mechanic: avatar AttractGaze bombm
+Mechanic: avatar KillSprite goal
+Mechanic: goal KillSprite lup
+Mechanic: lup AttractGaze bombm

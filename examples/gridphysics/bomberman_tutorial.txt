@@ -1,0 +1,13 @@
+TutorialFile
+You are the ShootAvatar. Use the arrow keys to turn and move. Use Space to shoot in the direction you are facing.
+The goal of the game is to...
+Not Get SpriteCounter bomberman to 0
+Get SpriteCounter goal to 0
+Start
+Mechanic: Terminator SpriteCounter bomberman
+Mechanic: bat KillSprite bomberman
+Mechanic: bomb_10 StepBack bat
+Mechanic: bomberman Shoot bomb_10
+Start
+Mechanic: Terminator SpriteCounter goal
+Mechanic: bomberman KillSprite goal

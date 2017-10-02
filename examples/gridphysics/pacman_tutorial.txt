@@ -1,0 +1,35 @@
+TutorialFile
+You are the OrientedAvatar. Use the arrow keys to turn and move.
+The goal of the game is to...
+Get SpriteCounter fruit to 0
+Get SpriteCounter pellet to 0
+Get SpriteCounter power to 0
+Not Get SpriteCounter hungry to 0
+Not Get SpriteCounter powered to 0
+Mechanic: hungry KillSprite fruit
+Mechanic: hungry KillSprite pellet
+Terminal Node Reached
+Mechanic: hungry KillSprite power
+Terminal Node Reached
+Mechanic: hungry KillSprite power
+Terminal Node Reached
+Mechanic: power TransformToAll hungry
+Terminal Node Reached
+Mechanic: power TransformToAll hungry
+Terminal Node Reached
+Mechanic: power TransformToAll hungry
+Terminal Node Reached
+Mechanic: power TransformToAll hungry
+Terminal Node Reached
+Mechanic: power AddTimer hungry
+Terminal Node Reached
+Mechanic: power AddTimer hungry
+Terminal Node Reached
+Mechanic: power AddTimer hungry
+Terminal Node Reached
+Mechanic: power AddTimer hungry
+Terminal Node Reached
+Mechanic: power AddTimer hungry
+Terminal Node Reached
+Mechanic: power TransformTo hungry
+Terminal Node Reached
