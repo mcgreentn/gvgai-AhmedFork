@@ -18,7 +18,6 @@ public class Graph {
 	private LevelAnalyzer la;
 	
 	public ArrayList<Node> nodeList;
-	
 	private boolean verbose = true;
 	
 	public Graph(GameDescription gd, SLDescription sl, GameAnalyzer ga, LevelAnalyzer la) {
@@ -62,30 +61,15 @@ public class Graph {
 						stypeNames.add(s);
 					}
 				}
-//				if(type.equals("MultiSpriteCounter") || type.equals("MultiSpriteCounterSubTypes") || type.equals("StopCounter")) {
-//					for(String s : tData.sprites) {
-//						if(!s.equals(stypeName)) {
-//							stypeNames.add(s);
-//						}
-//					}
-//				}
 				boolean win = tData.win.equals("True") ? true : false;
-
 				makeNewMechanic("Terminator", stypeName, type, tData.limit, win);
+				Node terminalNode = searchNodeList(stypeName);
+				terminalNode.setIsTerminal(true);
 				for(String s : stypeNames) {
-					if(verbose)
 					makeNewMechanic("Terminator", s, type, tData.limit, win);
-					Node terminalNode = searchNodeList(s);
+					terminalNode = searchNodeList(s);
 					terminalNode.setIsTerminal(true);
 				}
-//				if(type.equals("MultiSpriteCounter") || type.equals("MultiSpriteCounterSubTypes") || type.equals("StopCounter")) {
-//					for(String s : stypeNames) {
-//						if(verbose)
-//						makeNewMechanic("Terminator", s, type, tData.limit, win);
-//						Node terminalNode = searchNodeList(s);
-//						terminalNode.setIsTerminal(true);
-//					}
-//				}
 			} else {
 				boolean win = tData.win.equals("True") ? true : false;
 
@@ -159,8 +143,31 @@ public class Graph {
 							if(verbose)
 								System.out.println("Initializing new interaction: " + sprite2Node.getName() 
 									+ " " + intData.type +  " "+ spriteNode.getName() + " :: "  + " ScoreChange=" + intData.scoreChange);
-							sprite2Node.addMechanic(spriteNode, intData.type, intData.scoreChange);
+							// reverse mechanics for TransformTo and Spawn (they are weird
+							Mechanic newMech;
+							if(!intData.type.equals("TransformTo") && !intData.type.equals("Spawn")) {
+							newMech = sprite2Node.addMechanic(spriteNode, intData.type, intData.scoreChange);
+							} else {
+								newMech = spriteNode.addMechanic(sprite2Node, intData.type, intData.scoreChange);
+							}
 							
+							// add an offshootMechanic for TransformTo or Spawn
+							for(String stypeName : intData.sprites) {
+								if(intData.type.equals("Spawn") || intData.type.equals("TransformTo")) {
+									SpriteData stype = searchForSprite(stypeName);
+									Node sprite3Node = searchNodeList(stype);
+									if(sprite3Node == null) {
+										if(verbose) 
+											System.out.println(stype.name + " Node DNE. Initializing new node.");
+										sprite3Node = makeNewNode(stype);
+									}
+									if(verbose)
+										System.out.println("Spawn or TransformTo type detected. Creating OffshootMechanic: " + sprite3Node.getName()
+												+ " OffshootMechanic " + spriteNode.getName());
+									Mechanic m = new Mechanic(spriteNode, sprite3Node, "OffshootMechanic");
+									newMech.setOffshootMechanic(m);
+								}
+							}
 						}
 					}
 
@@ -243,12 +250,29 @@ public class Graph {
 		if(verbose)
 			System.out.println("Classifying " + current.name +  " as a \"" + type + "\". Looking for stypes...");
 		if(current.sprites.size() > 0) {
+			// make arraylist of stypes of all the same type
+			ArrayList<String> stypes1 = new ArrayList<String>();
 			String stypeName = current.sprites.get(0);
 			SpriteData stype = searchForSprite(stypeName);
+
+			for(String s : current.sprites) {
+				SpriteData typ = searchForSprite(s);
+				if(typ.type.equals(stype.type)) {
+					stypes1.add(s);
+				}
+			}
+
 			// corner case for AlternateChaser and RandomAltChaser
 			String stypeName2 = "";
 			SpriteData stype2 = null;
+			ArrayList<String> stypes2 = new ArrayList<String>();
 			if(type.equals("AlternateChaser") || type.equals("RandomPathAltChaser")) {
+				for(String s : current.sprites) {
+					SpriteData typ = searchForSprite(s);
+					if(!typ.type.equals(stype.type)){
+						stypes2.add(s);
+					}
+				}
 				stypeName2 = current.sprites.get(1);
 				stype2 = searchForSprite(stypeName2);
 			}
@@ -268,8 +292,9 @@ public class Graph {
 					mechanic = "Spawn";
 				else if(type.equals("Portal"))
 					mechanic = "Portal";
-				makeNewMechanic(current.name, stypeName, mechanic);
-		
+				for(String s : stypes1) {
+					makeNewMechanic(current.name, s, mechanic);
+				}
 			}
 		
 			if(stype2 != null) {
@@ -279,7 +304,9 @@ public class Graph {
 				if(type.equals("AlternateChaser") || type.equals("RandomPathAltChaser")) {
 					mechanic = "Flee";
 				}
-				makeNewMechanic(current.name, stypeName2, mechanic);
+				for(String s : stypes2) {
+					makeNewMechanic(current.name, s, mechanic);
+				}
 			}
 		}
 	}
@@ -341,5 +368,24 @@ public class Graph {
 		if(verbose) 
 			System.out.println("Creating new mechanic: " + currentNode.getName() + " " + mechanicType + " " + dependentNode.getName() + ", ScoreChange=" + scoreChange);
 		currentNode.addMechanic(dependentNode, mechanicType, scoreChange);
+	}
+	
+	public ArrayList<Mechanic> searchTerminalMechanics(String object) {
+		ArrayList<Mechanic> returnedMechanics = new ArrayList<Mechanic>();
+		for(Mechanic terminal : searchNodeList("Terminator").getInteractionList()) {
+			if(terminal.getObject().getName().equals(object)) {
+				returnedMechanics.add(terminal);
+			}
+		}
+		return returnedMechanics;
+	}
+	
+	public ArrayList<Mechanic> getTerminalMechanics() {
+		ArrayList<Mechanic> returnedMechanics = new ArrayList<Mechanic>();
+		for(Mechanic terminal : searchNodeList("Terminator").getInteractionList()) {
+			returnedMechanics.add(terminal);
+			
+		}
+		return returnedMechanics;
 	}
 }

@@ -7,6 +7,9 @@ public class Mechanic {
 	private String mechanic;
 	private boolean win;
 	
+	
+	private Mechanic offshootMechanic;
+	
 	private boolean visited;
 	
 	private int limit = -1;
@@ -66,5 +69,13 @@ public class Mechanic {
 	
 	public boolean getVisited() {
 		return visited;
+	}
+	
+	public void setOffshootMechanic(Mechanic m) {
+		offshootMechanic = m;
+	}
+	
+	public Mechanic getOffshootMechanic() {
+		return offshootMechanic;
 	}
 }

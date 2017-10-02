@@ -1,6 +1,8 @@
 package tracks.tutorialGeneration.ITSetParserGenerator;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.HashMap;
 
 import core.game.GameDescription;
 import core.game.GameDescription.SpriteData;
@@ -92,42 +94,70 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 		
 		// start at avatar
 		Node avatarNode = graph.searchNodeList(game.getAvatar().get(0));
-		tutorialString += breadthFirstSearch(avatarNode);
+
+		BFSTree tree = new BFSTree(graph);
+		ArrayList<Mechanic> termMechanics = graph.getTerminalMechanics();
+		for(Mechanic terminalMechanic : termMechanics) {
+			BFSNode leaf = tree.buildTreePriority(avatarNode, terminalMechanic);
+			ArrayList<BFSNode> chain = tree.traceLeaf(leaf);
+			tutorialString += "\nStart";
+			for(BFSNode n : chain) {
+				Mechanic m = n.getNode();
+				if(n.getParent() != null)
+					tutorialString += "\nMechanic: " + m.getSubject().getName() + " " + m.getMechanic() + " " + m.getObject().getName();
+			}
+
+		}
+//		ArrayList<ArrayList<BFSNode>> chains = new ArrayList<ArrayList<BFSNode>>();
+//		for(BFSNode term : tree.getTerminalLeaves()) {
+//			ArrayList<BFSNode> chain = tree.traceLeaf(term);
+//			chains.add(chain);			
+//		}
+		// one by one, for every terminal leaf, check for which terminal condition it is
+		// and find the shortest path for each one back to the avatar
+//		ArrayList<Mechanic> termMechanics = graph.getTerminalMechanics();
+//		HashMap dict = new HashMap<Mechanic, ArrayList<BFSNode>>();
+//		
+//		for(Mechanic terminalMechanic : termMechanics) {
+//			// make a minimum length path chain
+//			ArrayList<BFSNode> chain = new ArrayList<BFSNode>();
+//			int minSize = Integer.MAX_VALUE;
+//			// compare mechanics to the terminalNode mechanics
+//			for(BFSNode term : tree.getTerminalLeaves()) {
+//				if(term.getNode().equals(terminalMechanic)) {
+//					ArrayList<BFSNode> temp = tree.traceLeaf(term);
+//					if(temp.size() < minSize) {
+//						minSize = temp.size();
+//						chain = temp;
+//					}
+//				}
+// 			}
+//			dict.put(terminalMechanic, chain);	
+//		}
 		
+//		for(Mechanic terminalMechanic : termMechanics) {
+//			ArrayList<BFSNode> chain = (ArrayList<BFSNode>) dict.get(terminalMechanic);
+//			tutorialString += "\nStart";
+//			for(BFSNode n : chain) {
+//				Mechanic m = n.getNode();
+//				if(n.getParent() != null)
+//					tutorialString += "\nMechanic: " + m.getSubject().getName() + " " + m.getMechanic() + " " + m.getObject().getName();
+//			}
+//		}
+		
+//		for(BFSNode term : tree.getTerminalLeaves()) {
+//			ArrayList<BFSNode> temp = tree.traceLeaf(term);
+//			tutorialString += "\n**Possible Chain";
+//			for(BFSNode n : temp) {
+//				Mechanic m = n.getNode();
+//				if(n.getParent() != null)
+//					tutorialString += "\nMechanic: " + m.getSubject().getName() + " " + m.getMechanic() + " " + m.getObject().getName();
+//			}
+//			
+//		}	
 		return tutorialString;
 	}
 	
-	private String breadthFirstSearch(Node start) {
-		ArrayList<ArrayList<Mechanic>> chains = new ArrayList<ArrayList<Mechanic>>();
-		String tutorialString = "";
-		ArrayList<Mechanic> queue = new ArrayList<Mechanic>();
-		for(Mechanic mechie : start.getInteractionList()) {
-			queue.add(mechie);
-			mechie.setVisited(true);
-		}
-		start.setIsTerminal(true);
-		while(!queue.isEmpty()) {
-			// remove last
-//			Mechanic next = queue.remove(queue.size()-1); 
-			Mechanic next = queue.remove(0);
-			// add to queue
-			for(Mechanic mechie : next.getObject().getInteractionList()) {
-				if(!mechie.getVisited()) {
-					queue.add(mechie);
-					mechie.setVisited(true);
-				}
-//				else 
-//					tutorialString += "\n**End Chain**";
-			}
-			tutorialString += "\n" + "Mechanic: " + next.getSubject().getName() + " " + next.getMechanic() + " " + next.getObject().getName();
-			if(next.getObject().getIsTerminal()) {
-				tutorialString += "\nTerminal Node Reached";
-			}
-			// explore next
-			
-		}
-		return tutorialString;
-	}
 	@Override
 	public String[] generateTutorial(GameDescription game, SLDescription sl, ElapsedCpuTimer elapsedTimer) {
 		String[] generatedTutorial = new String[0];
@@ -143,11 +173,9 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 		// build a test chain
 		generatedTutorialList.add(testChain(interactionGraph));
 		// Play game, figure out victory 
-		for(String s : generatedTutorialList) {
-			System.out.println(s);
-		}
+//		for(String s : generatedTutorialList) {
+//			System.out.println(s);
+//		}
 		return generatedTutorialList.toArray(generatedTutorial);
 	}
-
-	
 }
