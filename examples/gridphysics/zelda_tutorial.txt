@@ -1,0 +1,19 @@
+TutorialFile
+This is how you control your avatar:
+To move as the ShootAvatar, use the arrow keys to turn and move.
+Press space to use the sword (OrientedFlicker).
+
+This is how you win:
+If nokey (ShootAvatar) and key (Immovable) collide, then the nokey (ShootAvatar) sprite will be transformed into withkey (ShootAvatar).
+If Door and withkey (ShootAvatar) collide, then the Door sprite will be opened.
+If the Door sprite is opened, then you Win.
+
+This is how you get points:
+If the nokey (ShootAvatar) and the key (Immovable) collide, then you will gain 1 points.
+If the RandomNPC and the OrientedFlicker collide, then you will gain 2 points.
+If the Door and the withkey (ShootAvatar) collide, then you will gain 1 points.
+
+
+
+
+

@@ -17,7 +17,8 @@ public class BFSTree {
 		mechanicGraph = g;
 		terminalLeaves = new ArrayList<BFSNode>();
 		spriteCountMechanics = new ArrayList<>(Arrays.asList("KillSprite", "KillAll", "KillIfHasMore", "KillIfHasLess", "KillIfOtherHasMore", "SpawnBehind", "SpawnIfHasMore",
-			"SpawnIfHasLess", "CloneSprite", "TransformTo"));
+			"SpawnIfHasLess", "CloneSprite"));
+//		"TransformTo"));
 	}
 	
 	public BFSNode buildTree(Node start, Mechanic search) {
@@ -107,8 +108,10 @@ public class BFSTree {
 			child.addParent(root);
 			child.setParent(root);
 			
-			// special case for offshoot mechanics
-			if(mechie.getMechanic().equals("Spawn") || mechie.getMechanic().equals("TransformTo")) {
+			// special case for offshoot mechanics 
+//			Redo this if it breaks
+//			if(mechie.getMechanic().equals("Spawn") || mechie.getMechanic().equals("TransformTo")) {
+			if(mechie.getMechanic().equals("OffshootMechanic")) {
 //				System.out.println("OffshootFound");
 
 				Mechanic offshoot = mechie.getOffshootMechanic();
@@ -133,7 +136,9 @@ public class BFSTree {
 					child.addParent(next);
 					child.setParent(next);
 					// special case for offshoot mechanics
-					if(mechie.getMechanic().equals("Spawn") || mechie.getMechanic().equals("TransformTo")) {
+//					if(mechie.getMechanic().equals("Spawn") || mechie.getMechanic().equals("TransformTo")) {
+					if(mechie.getMechanic().equals("OffshootMechanic")) {
+
 //						System.out.println("OffshootFound");
 						Mechanic offshoot = mechie.getOffshootMechanic();
 						offshoot.setVisited(true);
@@ -176,11 +181,13 @@ public class BFSTree {
 	public ArrayList<BFSNode> traceLeaf(BFSNode terminal) {
 		ArrayList<BFSNode> chain = new ArrayList<BFSNode>();
 		chain.add(terminal);
-		while(terminal.getParent() != null) {
+		while(terminal.getParent() != null 
+				&& !chain.contains((terminal.getParent()))) {
 			terminal = terminal.getParent();
 			chain.add(terminal);
 		}
 		
 		return chain;
 	}
+	
 }

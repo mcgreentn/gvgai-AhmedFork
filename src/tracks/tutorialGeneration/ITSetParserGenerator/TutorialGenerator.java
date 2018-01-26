@@ -95,69 +95,70 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 		// start at avatar
 		Node avatarNode = graph.searchNodeList(game.getAvatar().get(0));
 
+		// TODO this whole loop has to be redone, this was created for a grant proposal demo!!!
 		BFSTree tree = new BFSTree(graph);
 		ArrayList<Mechanic> termMechanics = graph.getTerminalMechanics();
+		ArrayList<String> steps = new ArrayList<String>();
 		for(Mechanic terminalMechanic : termMechanics) {
 			BFSNode leaf = tree.buildTreePriority(avatarNode, terminalMechanic);
-			ArrayList<BFSNode> chain = tree.traceLeaf(leaf);
-			tutorialString += "\nStart";
-			for(BFSNode n : chain) {
-				Mechanic m = n.getNode();
-				if(n.getParent() != null)
-					tutorialString += "\nMechanic: " + m.getSubject().getName() + " " + m.getMechanic() + " " + m.getObject().getName();
+			if(leaf != null) {
+				ArrayList<BFSNode> chain = tree.traceLeaf(leaf);
+	//			tutorialString += "\nStart";
+				steps.add("End Crit Path\n");
+				for(BFSNode n : chain) {
+					Mechanic m = n.getNode();
+					if(n.getParent() != null)
+					{
+						String step = "";
+						//tutorialString += "\nMechanic: " + m.getSubject().getName() + " " + m.getMechanic() + " " + m.getObject().getName();
+						String subject = m.getSubject().getName();
+						String object = m.getObject().getName();
+						String mechanic = m.getMechanic();
+	
+	//							+ " " + m.getMechanic() + " " + m.getObject().getName();
+						String action = "";
+						if(mechanic.equals("KillSprite")) {
+							action = "destroys";
+						}
+						else if (mechanic.equals("TransformTo")) {
+							action = ", after colliding with " + m.getParentMechanic().getObject().getName() + ", transforms into";
+							
+						} 
+						else if(mechanic.equals("Shoot")) {
+							action = "swings";
+						}
+						else if(mechanic.equals("SpriteCounter")) {
+							action = "becomes " + m.getLimit() + ", then you will " + (m.getWin() ? "win" : "lose");
+							subject = m.getObject().getName();
+							object = null;
+						}
+						if(object != null) {
+							steps.add(subject + " " + action + " " + object);
+							
+						} else {
+							steps.add(subject + " " + action);
+						}
+					}
+				}
+				steps.add("\nStart Crit Path");
+	
 			}
-
 		}
-//		ArrayList<ArrayList<BFSNode>> chains = new ArrayList<ArrayList<BFSNode>>();
-//		for(BFSNode term : tree.getTerminalLeaves()) {
-//			ArrayList<BFSNode> chain = tree.traceLeaf(term);
-//			chains.add(chain);			
-//		}
-		// one by one, for every terminal leaf, check for which terminal condition it is
-		// and find the shortest path for each one back to the avatar
-//		ArrayList<Mechanic> termMechanics = graph.getTerminalMechanics();
-//		HashMap dict = new HashMap<Mechanic, ArrayList<BFSNode>>();
-//		
-//		for(Mechanic terminalMechanic : termMechanics) {
-//			// make a minimum length path chain
-//			ArrayList<BFSNode> chain = new ArrayList<BFSNode>();
-//			int minSize = Integer.MAX_VALUE;
-//			// compare mechanics to the terminalNode mechanics
-//			for(BFSNode term : tree.getTerminalLeaves()) {
-//				if(term.getNode().equals(terminalMechanic)) {
-//					ArrayList<BFSNode> temp = tree.traceLeaf(term);
-//					if(temp.size() < minSize) {
-//						minSize = temp.size();
-//						chain = temp;
-//					}
-//				}
-// 			}
-//			dict.put(terminalMechanic, chain);	
-//		}
+		// TODO : This is literally garbage code. Never do this kids. Pls remove ASAP
+		tutorialString += reverseArrayListToString(steps);
 		
-//		for(Mechanic terminalMechanic : termMechanics) {
-//			ArrayList<BFSNode> chain = (ArrayList<BFSNode>) dict.get(terminalMechanic);
-//			tutorialString += "\nStart";
-//			for(BFSNode n : chain) {
-//				Mechanic m = n.getNode();
-//				if(n.getParent() != null)
-//					tutorialString += "\nMechanic: " + m.getSubject().getName() + " " + m.getMechanic() + " " + m.getObject().getName();
-//			}
-//		}
-		
-//		for(BFSNode term : tree.getTerminalLeaves()) {
-//			ArrayList<BFSNode> temp = tree.traceLeaf(term);
-//			tutorialString += "\n**Possible Chain";
-//			for(BFSNode n : temp) {
-//				Mechanic m = n.getNode();
-//				if(n.getParent() != null)
-//					tutorialString += "\nMechanic: " + m.getSubject().getName() + " " + m.getMechanic() + " " + m.getObject().getName();
-//			}
-//			
-//		}	
 		return tutorialString;
 	}
 	
+	
+	public String reverseArrayListToString(ArrayList<String> reverseMe) {
+		String reversedString = "";
+		for(int i = reverseMe.size() - 1; i >= 0; i--) {
+			reversedString += reverseMe.get(i) + "\n";
+		
+		}
+		return reversedString;
+	}
 	@Override
 	public String[] generateTutorial(GameDescription game, SLDescription sl, ElapsedCpuTimer elapsedTimer) {
 		String[] generatedTutorial = new String[0];

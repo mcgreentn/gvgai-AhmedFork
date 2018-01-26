@@ -146,9 +146,12 @@ public class Graph {
 							// reverse mechanics for TransformTo and Spawn (they are weird
 							Mechanic newMech;
 							if(!intData.type.equals("TransformTo") && !intData.type.equals("Spawn")) {
-							newMech = sprite2Node.addMechanic(spriteNode, intData.type, intData.scoreChange);
+								// if this breaks, redo this
+//								newMech = sprite2Node.addMechanic(spriteNode, intData.type, intData.scoreChange);
+								newMech = sprite2Node.addMechanic(spriteNode, intData.type, intData.scoreChange);
 							} else {
-								newMech = spriteNode.addMechanic(sprite2Node, intData.type, intData.scoreChange);
+//								newMech = spriteNode.addMechanic(sprite2Node, intData.type, intData.scoreChange);
+								newMech = spriteNode.addMechanic(sprite2Node, "OffshootMechanic", intData.scoreChange);
 							}
 							
 							// add an offshootMechanic for TransformTo or Spawn
@@ -163,8 +166,9 @@ public class Graph {
 									}
 									if(verbose)
 										System.out.println("Spawn or TransformTo type detected. Creating OffshootMechanic: " + sprite3Node.getName()
-												+ " OffshootMechanic " + spriteNode.getName());
-									Mechanic m = new Mechanic(spriteNode, sprite3Node, "OffshootMechanic");
+												+ " TransformTo " + spriteNode.getName());
+									Mechanic m = new Mechanic(spriteNode, sprite3Node, intData.type);
+									m.setParentMechanic(newMech);
 									newMech.setOffshootMechanic(m);
 								}
 							}
@@ -385,6 +389,26 @@ public class Graph {
 		for(Mechanic terminal : searchNodeList("Terminator").getInteractionList()) {
 			returnedMechanics.add(terminal);
 			
+		}
+		return returnedMechanics;
+	}
+	
+	public ArrayList<Mechanic> getWinConditions() {
+		ArrayList<Mechanic> returnedMechanics = new ArrayList<Mechanic>();
+		for(Mechanic terminal : searchNodeList("Terminator").getInteractionList()) {
+			if(terminal.getWin()) {
+				returnedMechanics.add(terminal);
+			}
+		}
+		return returnedMechanics;
+	}
+	
+	public ArrayList<Mechanic> getLoseConditions() {
+		ArrayList<Mechanic> returnedMechanics = new ArrayList<Mechanic>();
+		for(Mechanic terminal : searchNodeList("Terminator").getInteractionList()) {
+			if(!terminal.getWin()) {
+				returnedMechanics.add(terminal);
+			}
 		}
 		return returnedMechanics;
 	}

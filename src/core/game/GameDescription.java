@@ -350,7 +350,7 @@ public class GameDescription {
 	 * Simple data class represents all game sprites
 	 */
 	public static class SpriteData implements Cloneable {
-		private HashMap<String, String> parameters;
+		public HashMap<String, String> parameters;
 
 		/**
 		 * VGDL class type for the current sprite

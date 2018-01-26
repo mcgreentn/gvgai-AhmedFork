@@ -1,0 +1,14 @@
+TutorialFile
+This is how you control your avatar:
+To move as the ShootAvatar, use the arrow keys to turn and move.
+Press space to release a bomb_10 (Immovable).
+
+This is how you win:
+If Door and ShootAvatar collide, then the Door sprite will be opened.
+If the Door sprite is opened, then you Win.
+
+This is how you get points:
+If the RandomNPC and the OrientedFlicker collide, then you will gain 5 points.
+If the wallBreak (Immovable) and the OrientedFlicker collide, then you will gain 1 points.
+If the Door and the ShootAvatar collide, then you will gain 10 points.
+

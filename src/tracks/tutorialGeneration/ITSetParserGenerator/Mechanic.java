@@ -9,6 +9,7 @@ public class Mechanic {
 	
 	
 	private Mechanic offshootMechanic;
+	private Mechanic parentMechanic;
 	
 	private boolean visited;
 	
@@ -77,5 +78,13 @@ public class Mechanic {
 	
 	public Mechanic getOffshootMechanic() {
 		return offshootMechanic;
+	}
+	
+	public void setParentMechanic(Mechanic m) {
+		parentMechanic = m;
+	}
+	
+	public Mechanic getParentMechanic() {
+		return parentMechanic;
 	}
 }

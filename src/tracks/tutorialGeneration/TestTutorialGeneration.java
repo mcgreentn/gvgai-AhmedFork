@@ -1,6 +1,8 @@
 package tracks.tutorialGeneration;
 
 import java.util.Random;
+
+import tracks.tutorialGeneration.ITSetParserGenerator.SharedData;
 /**
  * Created by mcgreentn on 17/08/2017.
  */
@@ -9,7 +11,8 @@ public class TestTutorialGeneration {
 		
 		
 		String ITSetParserGenerator = "tracks.tutorialGeneration.ITSetParserGenerator.TutorialGenerator";
-		
+		String BFSGraphBasedRepresentationGenerator = "tracks.tutorialGeneration.BFSBasedGraphRepresentationGenerator.TutorialGenerator";
+		String AgentBasedGraphRepresentationGenerator = "tracks.tutorialGeneration.AgentBasedGraphRepresentationGenerator.TutorialGenerator";
 		// Available games:
         String gamesPath = "examples/gridphysics/";
         String physicsGamesPath = "examples/contphysics/";
@@ -43,12 +46,13 @@ public class TestTutorialGeneration {
         // Other settings
         boolean visuals = true;
         int seed = new Random().nextInt();
-        int gameIdx = 90;
+        int gameIdx = 58;
         int levelIdx = 0; // level names from 0 to 4 (game_lvlN.txt).
         String game = generateTutorialPath + games[gameIdx] + ".txt";
         String level1 = gamesPath + games[gameIdx] + "_lvl" + levelIdx + ".txt";
         String recordTutorialFile = generateTutorialPath + games[gameIdx] + "_tutorial.txt";
-        TutorialGenMachine.generateOneTutorial(game, ITSetParserGenerator, level1, recordTutorialFile, seed);
+        SharedData.RandomSeed = seed;
+        TutorialGenMachine.generateOneTutorial(game, AgentBasedGraphRepresentationGenerator, level1, recordTutorialFile, seed);
 	}
 	
 }
