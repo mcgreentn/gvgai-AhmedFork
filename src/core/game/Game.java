@@ -21,9 +21,14 @@ import ontology.sprites.Resource;
 import tools.*;
 import tools.pathfinder.Node;
 import tools.pathfinder.PathFinder;
+import video.basics.Interaction;
+import video.basics.StoreFrame;
+import video.handlers.StoreInteraction;
 
 import javax.swing.*;
+
 import java.awt.*;
+import java.io.File;
 import java.util.*;
 
 /**
@@ -254,6 +259,9 @@ public abstract class Game {
 	public int[] counter;
 
 	public static KeyHandler ki;
+	
+	/*object that stores the interactions which happens in a game */
+	public StoreInteraction storeInteraction;
 
 	/**
 	 * Default constructor.
@@ -266,6 +274,7 @@ public abstract class Game {
 		terminations = new ArrayList<Termination>();
 		historicEvents = new TreeSet<Event>();
 		timeEffects = new TreeSet<TimeEffect>();
+		storeInteraction = new StoreInteraction();
 
 		// Game attributes:
 		size = new Dimension();
@@ -889,6 +898,9 @@ public abstract class Game {
 	 */
 
 	public double[] playGame(Player[] players, int randomSeed, boolean isHuman, int humanID) {
+		
+		//Object responsible to store the game frames
+		StoreFrame storeFrame = new StoreFrame();
 		// Prepare some structures and references for this game.
 		prepareGame(players, randomSeed, humanID);
 
@@ -927,6 +939,9 @@ public abstract class Game {
 
 			// Draw all sprites in the panel.
 			view.paint(this.spriteGroups);
+			
+			//storing this (view) frame
+			storeFrame.saveImage(new File("frames/frame" + this.gameTick + ".png"), view);
 
 			// Update the frame title to reflect current score and tick.
 			this.setTitle(frame);
@@ -939,6 +954,9 @@ public abstract class Game {
 				firstRun = false;
 			}
 		}
+		
+		//stores the interaction in a JSONFile
+		storeInteraction.writeInteractionJSONFile();
 
 		if (isHuman && !wi.windowClosed && CompetitionParameters.killWindowOnEnd) {
 			if (CompetitionParameters.dialogBoxOnStartAndEnd) {
@@ -1590,6 +1608,21 @@ public abstract class Game {
 			for (int i = 0; i < no_counters; i++) {
 				this.counter[i] += ef.getCounterElse(i);
 			}
+		}
+		
+		/*
+		 * This part stores the information of the interactions in a game
+		 * We use it (the stored interaction) later to retrieve the frames
+		 *  of the interaction we need
+		 */
+		if(s1 != null && s2 != null)
+		{
+			Interaction interaction = new Interaction(String.valueOf(this.gameTick), 
+					ef.getClass().getName(), 
+					s1.name, 
+					s2.name);
+
+			storeInteraction.storeAllInteraction(interaction);
 		}
 	}
 
