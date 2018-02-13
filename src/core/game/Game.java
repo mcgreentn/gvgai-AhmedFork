@@ -1617,10 +1617,13 @@ public abstract class Game {
 		 */
 		if(s1 != null && s2 != null)
 		{
+			String rule = ef.getClass().getName();
+			String sprite1 = VGDLRegistry.GetInstance().getRegisteredSpriteKey(s1.getType());
+			String sprite2 = VGDLRegistry.GetInstance().getRegisteredSpriteKey(s2.getType());
 			Interaction interaction = new Interaction(String.valueOf(this.gameTick), 
-					ef.getClass().getName(), 
-					s1.name, 
-					s2.name);
+					rule, 
+					sprite1, 
+					sprite2);
 
 			storeInteraction.storeAllInteraction(interaction);
 		}

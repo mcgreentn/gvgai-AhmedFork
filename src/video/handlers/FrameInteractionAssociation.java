@@ -13,7 +13,6 @@ import video.basics.Interaction;
 
 public class FrameInteractionAssociation 
 {
-	
 	public JSONArray interactionArray;
 	
 	public FrameInteractionAssociation(String interactionFileName) throws FileNotFoundException, IOException, ParseException
@@ -28,6 +27,26 @@ public class FrameInteractionAssociation
 			JSONObject interactionObject = (JSONObject)interactionArray.get(i);
 			String interactionName = (String) interactionObject.get("interaction");
 			if(interactionName.contains(interaction))
+			{
+				return interactionObject;
+			}
+		}
+		return null;
+	}
+	
+	public JSONObject retrieveInteraction(String interaction, String sprite1, String sprite2)
+	{
+		for (int i = 0; i < interactionArray.size(); i++) 
+		{
+			JSONObject interactionObject = (JSONObject)interactionArray.get(i);
+			
+			String interactionName = (String) interactionObject.get("interaction");
+			String sprite1Name = (String) interactionObject.get("sprite1");
+			String sprite2Name = (String) interactionObject.get("sprite2");
+			
+			if(interactionName.contains(interaction)
+					&& sprite1Name.contains(sprite1)
+					&& sprite2Name.contains(sprite2))
 			{
 				return interactionObject;
 			}
@@ -54,7 +73,7 @@ public class FrameInteractionAssociation
 		return null;
 	}
 	
-	public String[] retriveInteractionFrames(JSONObject interactionObject)
+	public String[] retrieveInteractionFrames(JSONObject interactionObject)
 	{
 		int tick = Integer.parseInt(interactionObject.get("tick").toString());
 		

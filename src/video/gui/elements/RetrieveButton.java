@@ -46,7 +46,7 @@ public class RetrieveButton extends JButton implements ActionListener{
 		JSONObject iteractionObject = 
 				this.frameInteractionAssociation.retrieveInteraction(interaction, tick);
 		
-		frames = this.frameInteractionAssociation.retriveInteractionFrames(iteractionObject);
+		frames = this.frameInteractionAssociation.retrieveInteractionFrames(iteractionObject);
 		this.frameLabel[0].updateFrame(frames[0]);
 		this.frameLabel[1].updateFrame(frames[1]);
 		this.frameLabel[2].updateFrame(frames[2]);

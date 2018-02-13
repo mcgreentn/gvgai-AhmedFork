@@ -1,5 +1,17 @@
 package tracks.tutorialGeneration;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
+
+import tracks.ArcadeMachine;
+import tracks.singlePlayer.Test;
+import video.gui.main.ShowFrames;
+import video.gui.main.VideoPlayer;
+import video.handlers.FrameInteractionAssociation;
+
 public class VisualDemonstrationInterfacer {
 
 	/*** 
@@ -9,16 +21,32 @@ public class VisualDemonstrationInterfacer {
 	/***
 	 * 
 	 */
-	public VisualDemonstrationInterfacer() {
+	
+	private ShowFrames showFrames;
+	
+	public VisualDemonstrationInterfacer() throws FileNotFoundException, IOException, ParseException {
 		
 	}
 	
-	public void queryVisualDemonstrator(String sprite1, String sprite2, String rule, String printText){
+	public void runGame(String game, String level1)
+	{
+		ArcadeMachine.playOneGame(game, level1, null, 0);
+	}
+	
+	public void queryVisualDemonstrator(String sprite1, String sprite2, String rule, String printText) throws FileNotFoundException, IOException, ParseException{
 		// TODO use the above information to query the visualization system
 		
-		
-		
-		
+		FrameInteractionAssociation frameInteractionAssociation = new FrameInteractionAssociation("interaction/interaction.json");
+		JSONObject interactionObject = frameInteractionAssociation.retrieveInteraction(rule, sprite1, sprite2);
+		String [] frames = frameInteractionAssociation.retrieveInteractionFrames(interactionObject);
+		VideoPlayer videoPlayer = new VideoPlayer(frames, 500);
 		// TODO save the video file locally and name it after the rule
+	}
+	
+	public static void main(String [] args) throws FileNotFoundException, IOException, ParseException
+	{
+		VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer();
+		vdi.runGame("examples/gridphysics/zelda.txt", "examples/gridphysics/zelda_lvl1.txt");
+		vdi.queryVisualDemonstrator("monsterSlow", "sword", "KillSprite", "");
 	}
 }

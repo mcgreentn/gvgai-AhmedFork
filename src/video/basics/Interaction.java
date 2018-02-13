@@ -27,6 +27,16 @@ public class Interaction {
 		return interactionNameReturn;
 	}
 	
+	public static String spriteName(String sprite)
+	{
+		String reverse = new StringBuilder(sprite).reverse().toString();
+		int index = reverse.indexOf(".");
+		String spriteNameReturn = reverse.substring(0, index);
+		spriteNameReturn = new StringBuilder(spriteNameReturn).reverse().toString();
+		
+		return spriteNameReturn;
+	}
+	
 	public Interaction()
 	{
 		
