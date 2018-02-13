@@ -3,20 +3,13 @@ package video.handlers;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import com.sun.javafx.scene.paint.GradientUtils.Parser;
-
 import video.basics.Interaction;
-
-/**
- * Code written by Tiago Machado (tiago.machado@nyu.edu)
- * Date: 06/02/2018
- * @author Tiago Machado
- */
 
 public class FrameInteractionAssociation 
 {

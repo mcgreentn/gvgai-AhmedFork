@@ -1,11 +1,5 @@
 package video.basics;
 
-/**
- * Code written by Tiago Machado (tiago.machado@nyu.edu)
- * Date: 06/02/2018
- * @author Tiago Machado
- */
-
 public class Interaction {
 	
 	public String interaction;

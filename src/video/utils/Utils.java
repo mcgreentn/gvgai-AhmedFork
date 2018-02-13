@@ -8,21 +8,20 @@ import java.util.Set;
 
 import javax.swing.JComboBox;
 
-/**
- * Code written by Tiago Machado (tiago.machado@nyu.edu)
- * Date: 06/02/2018
- * @author Tiago Machado
- */
-
 public abstract class Utils 
 {
-	public static void feedComboBox(JComboBox<String> comboBox, ArrayList<String> strings)
+	public static void feedComboBox(JComboBox<String> cbx, ArrayList<String> strings)
 	{
+		List<String> al = strings;
+		// add elements to al, including duplicates
 		Set<String> hs = new HashSet<>();
-		hs.addAll(strings);
-		for (String string : hs) 
+		hs.addAll(al);
+		al.clear();
+		al.addAll(hs);
+		Collections.sort(al);
+		for (String string : al) 
 		{
-			comboBox.addItem(string);
+			cbx.addItem(string);
 		}
 	}
 
