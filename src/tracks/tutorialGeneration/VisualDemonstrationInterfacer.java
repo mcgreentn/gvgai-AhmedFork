@@ -28,9 +28,9 @@ public class VisualDemonstrationInterfacer {
 		
 	}
 	
-	public void runGame(String game, String level1)
+	public void runGame(String game, String level1, String agentName)
 	{
-		ArcadeMachine.playOneGame(game, level1, null, 0);
+		ArcadeMachine.runOneGame(game, level1, true, agentName, "", 0, 0);
 	}
 	
 	public void queryVisualDemonstrator(String sprite1, String sprite2, String rule, String printText) throws FileNotFoundException, IOException, ParseException{
@@ -54,7 +54,9 @@ public class VisualDemonstrationInterfacer {
 	public static void main(String [] args) throws FileNotFoundException, IOException, ParseException
 	{
 		VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer();
-		vdi.runGame("examples/gridphysics/zelda.txt", "examples/gridphysics/zelda_lvl1.txt");
-		vdi.queryVisualDemonstrator("enemy", "sword", "KillSprite", "");
+		vdi.runGame("examples/gridphysics/zelda.txt", 
+					"examples/gridphysics/zelda_lvl1.txt", 
+					"tracks.singlePlayer.advanced.olets.Agent");
+		vdi.queryVisualDemonstrator("monsterSlow", "sword", "KillSprite", "");
 	}
 }
