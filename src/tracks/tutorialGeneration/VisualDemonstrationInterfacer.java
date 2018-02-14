@@ -37,9 +37,17 @@ public class VisualDemonstrationInterfacer {
 		// TODO use the above information to query the visualization system
 		
 		FrameInteractionAssociation frameInteractionAssociation = new FrameInteractionAssociation("interaction/interaction.json");
-		JSONObject interactionObject = frameInteractionAssociation.retrieveInteraction(rule, sprite1, sprite2);
-		String [] frames = frameInteractionAssociation.retrieveInteractionFrames(interactionObject);
-		VideoPlayer videoPlayer = new VideoPlayer(frames, 500);
+		JSONObject interactionObject = null;
+		interactionObject = frameInteractionAssociation.retrieveInteraction(rule, sprite1, sprite2);
+		String [] frames = null;
+		try{
+			 frames = frameInteractionAssociation.retrieveInteractionFrames(interactionObject);
+			 VideoPlayer videoPlayer = new VideoPlayer(frames, 500);
+		}
+		catch (NullPointerException e)
+		{
+			System.out.println("The interaction requested does not exist or is not stored with the same argument values");
+		}
 		// TODO save the video file locally and name it after the rule
 	}
 	
@@ -47,6 +55,6 @@ public class VisualDemonstrationInterfacer {
 	{
 		VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer();
 		vdi.runGame("examples/gridphysics/zelda.txt", "examples/gridphysics/zelda_lvl1.txt");
-		vdi.queryVisualDemonstrator("monsterSlow", "sword", "KillSprite", "");
+		vdi.queryVisualDemonstrator("enemy", "sword", "KillSprite", "");
 	}
 }

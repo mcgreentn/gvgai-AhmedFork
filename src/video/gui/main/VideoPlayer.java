@@ -39,11 +39,13 @@ public class VideoPlayer extends JFrame
 	
 	public boolean checkNulity()
 	{
-		for (int i = 0; i < frames.length; i++) {
-			if(frames[i] == null)
-				return true;
-		}
-		
+		if(frames != null)
+		{
+			for (int i = 0; i < frames.length; i++) {
+				if(frames[i] == null)
+					return true;
+			}
+		}	
 		return false;
 	}
 }

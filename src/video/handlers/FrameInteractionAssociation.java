@@ -76,11 +76,11 @@ public class FrameInteractionAssociation
 	public String[] retrieveInteractionFrames(JSONObject interactionObject)
 	{
 		int tick = Integer.parseInt(interactionObject.get("tick").toString());
-		
+
 		String frame0 = "frames/frame" + (tick - 1) + ".png";
 		String frame1 = "frames/frame" + (tick) + ".png";
 		String frame2 = "frames/frame" + (tick + 1) + ".png";
-		
+
 		return new String[]{frame0, frame1, frame2};
 	}
 	
