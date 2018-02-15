@@ -1,11 +1,5 @@
 package video.constants;
 
-/**
- * Code written by Tiago Machado (tiago.machado@nyu.edu)
- * Date: 06/02/2018
- * @author Tiago Machado
- */
-
 public class Interactions {
 
 	public final static String KILLSPRITE = "KillSprite";

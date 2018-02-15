@@ -7,21 +7,22 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import javax.swing.JTextField;
 import org.json.simple.parser.ParseException;
-
 import video.constants.InteractionsList;
-import video.gui.ComboBox;
-import video.gui.FrameLabel;
-import video.gui.RetrieveButton;
+import video.gui.elements.ComboBox;
+import video.gui.elements.FrameLabel;
+import video.gui.elements.RetrieveButton;
+import video.gui.elements.ShowVideoPlayerButton;
 import video.handlers.FrameInteractionAssociation;
 import video.utils.Utils;
-
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 /**
  * Code written by Tiago Machado (tiago.machado@nyu.edu)
- * Date: 06/02/2018
+ * Date: 12/02/2018
  * @author Tiago Machado
  */
 
@@ -35,6 +36,7 @@ public class ShowFrames extends JFrame{
 	private JLabel lblPreviousFrame;
 	private JLabel lblInteractionFrame;
 	private JLabel lblAfterInteraction;
+	private ShowVideoPlayerButton showVideoPlayerButton;
 	
 	public ShowFrames() throws FileNotFoundException, IOException, ParseException 
 	{
@@ -52,8 +54,25 @@ public class ShowFrames extends JFrame{
 	
 	public void startButtons() throws FileNotFoundException, IOException, ParseException
 	{
-		retrieveButton = new RetrieveButton(frameInteractionAssociation, comboBoxInteractions, frameLabel);
+		startShowVideoPlayerButton();
+		retrieveButton = 
+				new RetrieveButton(frameInteractionAssociation, 
+						comboBoxInteractions, 
+						frameLabel, 
+						showVideoPlayerButton);
 		getContentPane().add(retrieveButton);
+	}
+
+	/**
+	 * 
+	 */
+	public void startShowVideoPlayerButton() {
+		{
+			showVideoPlayerButton = new ShowVideoPlayerButton(null, 100);
+			showVideoPlayerButton.setBounds(974, 122, 100, 50);
+			showVideoPlayerButton.setVisible(false);
+			getContentPane().add(showVideoPlayerButton);
+		}
 	}
 	
 	public void startComboBoxes()

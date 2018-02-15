@@ -1,11 +1,5 @@
 package video.basics;
 
-/**
- * Code written by Tiago Machado (tiago.machado@nyu.edu)
- * Date: 06/02/2018
- * @author Tiago Machado
- */
-
 public class Interaction {
 	
 	public String interaction;
@@ -31,6 +25,16 @@ public class Interaction {
 		interactionNameReturn = new StringBuilder(interactionNameReturn).reverse().toString();
 		
 		return interactionNameReturn;
+	}
+	
+	public static String spriteName(String sprite)
+	{
+		String reverse = new StringBuilder(sprite).reverse().toString();
+		int index = reverse.indexOf(".");
+		String spriteNameReturn = reverse.substring(0, index);
+		spriteNameReturn = new StringBuilder(spriteNameReturn).reverse().toString();
+		
+		return spriteNameReturn;
 	}
 	
 	public Interaction()

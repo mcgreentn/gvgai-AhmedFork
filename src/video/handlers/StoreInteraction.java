@@ -8,12 +8,6 @@ import org.json.simple.JSONObject;
 
 import video.basics.Interaction;
 
-/**
- * Code written by Tiago Machado (tiago.machado@nyu.edu)
- * Date: 06/02/2018
- * @author Tiago Machado
- */
-
 public class StoreInteraction {
 	
 	JSONArray interactionArray;
