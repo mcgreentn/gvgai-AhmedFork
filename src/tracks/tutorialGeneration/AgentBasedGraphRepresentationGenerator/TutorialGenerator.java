@@ -52,6 +52,7 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 		generatedTutorialList.addAll(getControlsInformation(graph));
 		generatedTutorialList.addAll(traceCriticalPaths(graph));
 		generatedTutorialList.addAll(findPoints(graph));
+		generatedTutorialList.addAll(findLosses(graph));
 		
 		System.out.println("\n\nStart Tutorial File");
 		for(String instruction : generatedTutorialList) {
@@ -88,6 +89,17 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 		String tip = "This is how you get points:";
 		pathText.add(tip);
 		pathText.addAll(graph.scoreChangers());
+		pathText.add("");
+		
+		return pathText;
+	}
+	
+	public ArrayList<String> findLosses(GraphBuilder graph) {
+		ArrayList<String> pathText = new ArrayList<String>();
+		
+		String tip = "This is how you lose:";
+		pathText.add(tip);
+		pathText.addAll(graph.lossConditions());
 		pathText.add("");
 		
 		return pathText;
