@@ -755,6 +755,9 @@ public class GraphBuilder {
 						if(a.getOutputs().get(0).getSubtype().equals("Door")){
 							instruct += "opened.";
 						} 
+						else if(a.getOutputs().get(0).getSubtype().equals("Resource")) {
+							instruct += "collected.";
+						}
 						else {
 							instruct += "destroyed.";
 						}
@@ -813,11 +816,51 @@ public class GraphBuilder {
 				Mechanic mech = action.getMechanics().get(0);
 				BFSNode fakeNode = new BFSNode(mech);
 				mech = generalize(fakeNode).getMech();
-				String instruct = "If the " + mech.getObject1().getFullName() + " and the " + mech.getObject2().getFullName() + " collide, then you will gain " + action.getAttribute("ScoreChange").getValue() + " points.";
+				String instruct = "If the " + mech.getObject1().getFullName() + " and the " + mech.getObject2().getFullName() + " collide, then you will gain " + action.getAttribute("ScoreChange").getValue() + " point" + ((action.getAttribute("ScoreChange").getValue().equals("1") || action.getAttribute("ScoreChange").getValue().equals("-1")) ? "" : "s") + ".";
 				if(!instructions.contains(instruct)) {
 					instructions.add(instruct);
 				}
 			}
+		}
+		
+		return instructions;
+	}
+	
+	public ArrayList<String> lossConditions() {
+		ArrayList<String> instructions = new ArrayList<String>();
+		
+		for(Entity action : this.lossTerminations) {
+			Mechanic m = action.getMechanics().get(0);
+			Entity e1 = m.getObject1();
+			Entity c = m.getCondition();
+			
+			String instruct = "";
+			if(c.getName().equals("SpriteCounter") || c.getName().equals("MultiSpriteCounter")) {
+				// this is a sprite counter, so make it sound nice about the count being a certain amount
+				if(c.getAttribute("limit").getValue().equals("0")) {
+					instruct += "If there are no more ";
+					instruct += c.getInputs().get(0).getFullName() + " sprites ";
+					for(int i = 1; i < c.getInputs().size(); i++) {
+						instruct += "or " + c.getInputs().get(i).getFullName() + " sprites ";
+					}
+					 instruct += "then you will lose.";
+				}
+				else {
+					instruct += "If the total amount of ";
+					instruct += c.getInputs().get(0).getFullName() + " sprites ";
+					for(int i = 1; i < c.getInputs().size(); i++) {
+						instruct += "and " + c.getInputs().get(i).getFullName() + " sprites ";
+					}
+					instruct += "is " + c.getAttribute("limit").getValue() +", then you will lose.";
+//					instruct += e1.getFullName() + " sprites reaches " + c.getAttribute("limit").getValue() + ", then you will lose.";
+				}
+			} else{
+				// this is a timeout condition
+//				"You will " + (mech.getAction().getName().equals("Win") ? "win" : "lose") + " after " + mech.getAction().getAttribute("limit") + " seconds"
+				instruct += "If time reaches " + c.getAttribute("limit").getValue() + " seconds, then you will lose.";
+			}
+			instructions.add(instruct);
+			System.out.println(e1.getFullName() + " " + c.getName() + " " + action.getName());
 		}
 		
 		return instructions;
