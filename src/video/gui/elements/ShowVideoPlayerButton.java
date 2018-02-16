@@ -42,7 +42,7 @@ public class ShowVideoPlayerButton extends JButton implements ActionListener
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		new VideoPlayer(frames, delayTime);
+		new VideoPlayer(frames, delayTime, "");
 	}
 
 }

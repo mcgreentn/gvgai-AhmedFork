@@ -33,7 +33,7 @@ public class VisualDemonstrationInterfacer {
 		ArcadeMachine.runOneGame(game, level1, true, agentName, "", 0, 0);
 	}
 	
-	public void queryVisualDemonstrator(String sprite1, String sprite2, String rule, String printText) throws FileNotFoundException, IOException, ParseException{
+	public void queryVisualDemonstrator(String sprite1, String sprite2, String rule, String subtitleText) throws FileNotFoundException, IOException, ParseException{
 		// TODO use the above information to query the visualization system
 		
 		FrameInteractionAssociation frameInteractionAssociation = new FrameInteractionAssociation("interaction/interaction.json");
@@ -42,7 +42,7 @@ public class VisualDemonstrationInterfacer {
 		String [] frames = null;
 		try{
 			 frames = frameInteractionAssociation.retrieveInteractionFrames(interactionObject);
-			 VideoPlayer videoPlayer = new VideoPlayer(frames, 500);
+			 VideoPlayer videoPlayer = new VideoPlayer(frames, 500, subtitleText);
 		}
 		catch (NullPointerException e)
 		{
@@ -57,6 +57,6 @@ public class VisualDemonstrationInterfacer {
 		vdi.runGame("examples/gridphysics/zelda.txt", 
 					"examples/gridphysics/zelda_lvl1.txt", 
 					"tracks.singlePlayer.advanced.olets.Agent");
-		vdi.queryVisualDemonstrator("monsterSlow", "sword", "KillSprite", "");
+		vdi.queryVisualDemonstrator("monsterSlow", "sword", "KillSprite", "Go and kill that horrendous lobster!");
 	}
 }

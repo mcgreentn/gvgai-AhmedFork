@@ -4,6 +4,8 @@ import javax.swing.JFrame;
 
 import video.gui.elements.FrameLabel;
 import video.gui.elements.PlayVideoButton;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 
 /**
  * Code written by Tiago Machado (tiago.machado@nyu.edu)
@@ -18,10 +20,11 @@ public class VideoPlayer extends JFrame
 	public FrameLabel frameToShow;
 	public int delayTime;
 	public PlayVideoButton playVideoButton;
+	public JLabel subtitleLabel;
 	
-	public VideoPlayer(String [] frames, int delayTime)
+	public VideoPlayer(String [] frames, int delayTime, String subtitleString)
 	{
-		setBounds(0, 0, 455, 330);
+		setBounds(0, 0, 455, 356);
 		this.frames = frames;
 		this.delayTime = delayTime;
 		getContentPane().setLayout(null);
@@ -31,8 +34,13 @@ public class VideoPlayer extends JFrame
 		getContentPane().add(frameToShow);
 		
 		playVideoButton = new PlayVideoButton(this.frames, frameToShow, this.delayTime);
-		playVideoButton.setBounds(165, 281, 117, 29);
+		playVideoButton.setBounds(165, 303, 117, 29);
 		getContentPane().add(playVideoButton);
+		
+		subtitleLabel = new JLabel(subtitleString);
+		subtitleLabel.setBounds(16, 284, 428, 16);
+		subtitleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		getContentPane().add(subtitleLabel);
 		
 		setVisible(true);	
 	}
