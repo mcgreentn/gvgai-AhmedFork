@@ -8,7 +8,11 @@ import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-
+/**
+ * Code written by Tiago Machado (tiago.machado@nyu.edu)
+ * Date: 12/02/2018
+ * @author Tiago Machado
+ */
 public class StoreFrame {
 	
 	public StoreFrame()

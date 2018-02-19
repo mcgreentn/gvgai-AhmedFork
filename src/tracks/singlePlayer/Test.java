@@ -84,6 +84,5 @@ public class Test {
 //			ArcadeMachine.runGames(game, levels, M, sampleRHEAController, saveActions? actionFiles:null);
 //		}
 
-
     }
 }

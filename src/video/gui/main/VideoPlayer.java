@@ -1,7 +1,6 @@
 package video.gui.main;
 
 import javax.swing.JFrame;
-
 import video.gui.elements.FrameLabel;
 import video.gui.elements.PlayVideoButton;
 import javax.swing.JLabel;

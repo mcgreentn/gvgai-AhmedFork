@@ -3,7 +3,11 @@ package video.gui.elements;
 import javax.swing.JComboBox;
 
 import video.basics.Interaction;
-
+/**
+ * Code written by Tiago Machado (tiago.machado@nyu.edu)
+ * Date: 12/02/2018
+ * @author Tiago Machado
+ */
 public class ComboBox<String> extends JComboBox
 {
 	public Interaction [] interaction;
