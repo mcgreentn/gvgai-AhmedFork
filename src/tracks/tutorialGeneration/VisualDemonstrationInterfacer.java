@@ -104,6 +104,16 @@ public class VisualDemonstrationInterfacer {
 		}
 	}
 	
+	public String[] retrieveFramePaths(String rule, String sprite1, String sprite2) throws FileNotFoundException, IOException, ParseException
+	{
+		FrameInteractionAssociation frameInteractionAssociation = new FrameInteractionAssociation("interaction/interaction.json");
+		JSONObject interactionObject = null;
+		interactionObject = frameInteractionAssociation.retrieveInteraction(rule, sprite1, sprite2);
+		String [] frames = null;
+		frames = frameInteractionAssociation.retrieveInteractionFrames(interactionObject);
+		return frames;
+	}
+	
 	public static void main(String [] args) throws FileNotFoundException, IOException, ParseException
 	{
 /*1     Video Example - Killing the lobster
@@ -122,7 +132,7 @@ public class VisualDemonstrationInterfacer {
 		
 		
 /*3      Query for Frames Example - It will look for the interaction frames and saved them inside the folder
- * queriedFrames as a JSON file called qFrames.json*/
+ * queriedFrames as a JSON file called qFrames.json
 		VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer();
 		vdi.runGame("examples/gridphysics/zelda.txt", 
 					"examples/gridphysics/zelda_lvl1.txt", 
@@ -136,7 +146,22 @@ public class VisualDemonstrationInterfacer {
 		iqos[1] = iqo1;
 		HashMap<Integer, TupleRuleFrames> frames = vdi.queryVisualDemonstrations(iqos);
 		JSONArray frameArray = vdi.writeQueriedFramesInJSONArray(frames);
-		vdi.writeQueryFramesInJSONFile(frameArray);
+		vdi.writeQueryFramesInJSONFile(frameArray);*/
+		
+/*4     Run the game and returns the paths of the stored interaction frames as an array of strings*/
+		VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer();
+		
+		//1st - Running the game
+		vdi.runGame("examples/gridphysics/zelda.txt", 
+					"examples/gridphysics/zelda_lvl1.txt", 
+					"tracks.singlePlayer.advanced.olets.Agent");
+		
+		//2nd - Retrieving the sprites
+		String frames [] = vdi.retrieveFramePaths("KillSprite", "monsterSlow", "sword");
+		
+		for (int i = 0; i < frames.length; i++) {
+			System.out.println(frames[i]);
+		}
 	}
 }
 
