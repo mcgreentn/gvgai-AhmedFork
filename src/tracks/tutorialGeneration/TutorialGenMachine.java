@@ -35,7 +35,7 @@ public class TutorialGenMachine {
         GameDescription description = new GameDescription(toPlay);
         SLDescription slDescription = new SLDescription(toPlay, lines, randSeed);
         
-        AbstractTutorialGenerator generator = createTutorialGenerator(tutorialGenerator, slDescription, description);
+        AbstractTutorialGenerator generator = createTutorialGenerator(tutorialGenerator, slDescription, description, gameFile);
         String[] tutorial = getGeneratedTutorial(description, slDescription, toPlay, generator);
 
         if(tutorial.equals(null)) {
@@ -69,7 +69,7 @@ public class TutorialGenMachine {
 	/// 	PRIVATE METHODS	:
 
 
-	protected static AbstractTutorialGenerator createTutorialGenerator(String tutorialGenerator, SLDescription sl, GameDescription gd) 
+	protected static AbstractTutorialGenerator createTutorialGenerator(String tutorialGenerator, SLDescription sl, GameDescription gd, String gameFile) 
 			throws RuntimeException{
 		AbstractTutorialGenerator generator = null;
 		try {
@@ -77,7 +77,7 @@ public class TutorialGenMachine {
             // Get the class and the constructor with arguments
             Class<? extends AbstractTutorialGenerator> controllerClass = Class.forName(tutorialGenerator)
                     .asSubclass(AbstractTutorialGenerator.class);
-            Class[] gameArgClass = new Class[] { SLDescription.class, GameDescription.class, ElapsedCpuTimer.class };
+            Class[] gameArgClass = new Class[] { SLDescription.class, GameDescription.class, ElapsedCpuTimer.class, gameFile.getClass()};
             Constructor controllerArgsConstructor = controllerClass.getConstructor(gameArgClass);
             
             // Determine the time due for the controller creation.
@@ -85,7 +85,7 @@ public class TutorialGenMachine {
             ect.setMaxTimeMillis(CompetitionParameters.TUTORIAL_INITIALIZATION_TIME);
             
             // Call the constructor with the appropriate parameters.
-            Object[] constructorArgs = new Object[] { sl, gd, ect.copy() };
+            Object[] constructorArgs = new Object[] { sl, gd, ect.copy(), gameFile };
             generator = (AbstractTutorialGenerator) controllerArgsConstructor.newInstance(constructorArgs);
             
             // Check if we returned on time, and act in consequence.
