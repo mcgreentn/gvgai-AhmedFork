@@ -57,7 +57,7 @@ public class PlayVideoButton extends JButton implements ActionListener, Runnable
 		new Thread().sleep(timeDelay);
 		for (;;) {
 			frameIndex++;
-			if(frameIndex > 2)
+			if(frameIndex > 4)
 				frameIndex = 0;
 			System.out.println(frameIndex);
 			System.out.println(this.frames[frameIndex]);

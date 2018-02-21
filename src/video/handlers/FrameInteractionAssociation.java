@@ -77,11 +77,13 @@ public class FrameInteractionAssociation
 	{
 		int tick = Integer.parseInt(interactionObject.get("tick").toString());
 
-		String frame0 = "frames/frame" + (tick - 1) + ".png";
-		String frame1 = "frames/frame" + (tick) + ".png";
-		String frame2 = "frames/frame" + (tick + 1) + ".png";
+		String frame0 = "frames/frame" + (tick - 2) + ".png";
+		String frame1 = "frames/frame" + (tick - 1) + ".png";
+		String frame2 = "frames/frame" + (tick) + ".png";
+		String frame3 = "frames/frame" + (tick + 1) + ".png";
+		String frame4 = "frames/frame" + (tick + 2) + ".png";
 
-		return new String[]{frame0, frame1, frame2};
+		return new String[]{frame0, frame1, frame2, frame3, frame4};
 	}
 	
 	public JSONArray retrieveInteractionFile(String interactionFileName) throws FileNotFoundException, IOException, ParseException
