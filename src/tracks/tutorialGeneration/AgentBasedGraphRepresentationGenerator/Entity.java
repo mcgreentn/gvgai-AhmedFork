@@ -39,6 +39,7 @@ public class Entity {
 	 */
 	private ArrayList<Mechanic> mechanics;
 	
+	private ArrayList<String> parents;
  /***
   * Constructs an entity 
   * @param name
@@ -219,5 +220,13 @@ public class Entity {
 
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
+	}
+	
+	public void setParents(ArrayList<String> par) {
+		parents = par;
+	}
+	
+	public ArrayList<String> getParents() {
+		return parents;
 	}
 }
