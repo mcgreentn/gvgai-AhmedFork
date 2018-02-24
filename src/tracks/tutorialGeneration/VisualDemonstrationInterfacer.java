@@ -116,7 +116,7 @@ public class VisualDemonstrationInterfacer {
 	
 	public static void main(String [] args) throws FileNotFoundException, IOException, ParseException
 	{
-/*1     Video Example - Killing the lobster
+/*1    Video Example - Killing the lobster
 		VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer();
 		vdi.runGame("examples/gridphysics/zelda.txt", 
 					"examples/gridphysics/zelda_lvl1.txt", 
