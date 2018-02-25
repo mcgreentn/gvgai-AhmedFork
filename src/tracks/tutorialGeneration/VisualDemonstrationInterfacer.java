@@ -273,10 +273,10 @@ public class VisualDemonstrationInterfacer {
 		JSONArray frameArray = vdi.writeQueriedFramesInJSONArray(frames);
 		vdi.writeQueryFramesInJSONFile(frameArray);*/
 
-		/*4     Run the game and returns the paths of the stored interaction frames as an array of strings*/
+		/*4     Run the scalable version*/
 		VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer();
 
-//		//1st - Running the game
+//		//1st - configure your games
 		BunchOfGames bog1 = new BunchOfGames("examples/gridphysics/zelda.txt", 
 				"examples/gridphysics/zelda_lvl1.txt", 
 				"tracks.singlePlayer.advanced.olets.Agent");
@@ -288,17 +288,19 @@ public class VisualDemonstrationInterfacer {
 		BunchOfGames bog3 = new BunchOfGames("examples/gridphysics/zelda.txt", 
 				"examples/gridphysics/zelda_lvl1.txt", 
 				"tracks.singlePlayer.advanced.olets.Agent");
-		
 		ArrayList<BunchOfGames> bogs = new ArrayList<>();
-		
 		bogs.add(bog1); bogs.add(bog2); bogs.add(bog3);
 		
+		//2nd - configure the interactions you want to search for
 		ArrayList<Interaction> interactions = new ArrayList<>();
 		interactions.add(new Interaction("KillSprite", "monsterSlow", "sword"));
 		interactions.add(new Interaction("TransformTo", "nokey", "key"));
 		interactions.add(new Interaction("KillSprite", "monsterQuick", "sword"));
 		
+		
+		//3rd run the method runGameSimulations
 		ArrayList<InteractionFrame> frameCollection = vdi.runGameSimulations(bogs, interactions);
+		
 		System.out.println("-------------------------------------------");
 		for (int i = 0; i < frameCollection.size(); i++) {
 			InteractionFrame interactionFrame = frameCollection.get(i);
