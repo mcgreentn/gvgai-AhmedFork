@@ -6,7 +6,7 @@ package video.basics;
  */
 public class Interaction {
 	
-	public String interaction;
+	public String rule;
 	public String sprite1;
 	public String sprite2;
 	public String pairInteractionTick;
@@ -14,11 +14,18 @@ public class Interaction {
 	
 	public Interaction(String tick, String interaction, String sprite1, String sprite2)
 	{
-		this.interaction = interactionName(interaction);
+		this.rule = interactionName(interaction);
 		this.sprite1 = sprite1;
 		this.sprite2 = sprite2;
 		this.tick = tick;
-		this.pairInteractionTick = tick + " - " + this.interaction;
+		this.pairInteractionTick = tick + " - " + this.rule;
+	}
+	
+	public Interaction(String interaction, String sprite1, String sprite2)
+	{
+		this.rule = interaction;
+		this.sprite1 = sprite1;
+		this.sprite2 = sprite2;
 	}
 	
 	public static String interactionName(String interaction)

@@ -23,6 +23,7 @@ import tools.pathfinder.Node;
 import tools.pathfinder.PathFinder;
 import video.basics.Interaction;
 import video.basics.StoreFrame;
+import video.constants.StoreInteractionList;
 import video.handlers.StoreInteraction;
 
 import javax.swing.*;
@@ -946,7 +947,10 @@ public abstract class Game {
 			view.paint(this.spriteGroups);
 			
 			//storing this (view) frame
-			storeFrame.saveImage(new File("frames/frame" + this.gameTick + ".png"), view);
+			
+			storeFrame.saveImage(new File(
+					"simulation/game" + StoreInteractionList.counter +
+					"/" + "frames/frame" + this.gameTick + ".png"), view);
 
 			// Update the frame title to reflect current score and tick.
 			this.setTitle(frame);
@@ -961,8 +965,11 @@ public abstract class Game {
 		}
 		
 		//stores the interaction in a JSONFile
-		storeInteraction.writeInteractionJSONFile();
-
+		storeInteraction.writeInteractionJSONFile("simulation/game" + StoreInteractionList.counter +
+				"/" + "/interactions/interaction.json");
+		
+		StoreInteractionList.counter += 1;
+		
 		if (isHuman && !wi.windowClosed && CompetitionParameters.killWindowOnEnd) {
 			if (CompetitionParameters.dialogBoxOnStartAndEnd) {
 				if (no_players == 1) {
