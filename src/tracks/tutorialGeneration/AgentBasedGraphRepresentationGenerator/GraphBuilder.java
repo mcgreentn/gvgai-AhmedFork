@@ -23,6 +23,9 @@ public class GraphBuilder {
 	private GameAnalyzer ga;
 	private LevelAnalyzer la;
 	
+	// holds parent types, with their associated entities
+	private HashMap<String, ArrayList<Entity>> parentTypes;
+	
 	/**
 	 * represents the entity which the player controls in the game
 	 */
@@ -64,6 +67,8 @@ public class GraphBuilder {
 		victoryTerminations = new ArrayList<Entity>();
 		lossTerminations = new ArrayList<Entity>();
 		allRules = new ArrayList<Mechanic>();       
+		
+		parentTypes = new HashMap<String, ArrayList<Entity>>();
 		this.gd = gd;
 		this.sl = sl;
 		this.ga = ga;
@@ -163,13 +168,32 @@ public class GraphBuilder {
 	public void createSpriteEntity(SpriteData current) {
 		if(verbose)
 			System.out.println("Creating entity to represent : " + current.name);
-		Entity objectSprite = new Entity(current.name, current.name + " (" + current.type + ")", "Object", current.type);
+		String parent = "";
+		if(current.parents.size() > 0) {
+			parent = current.parents.get(current.parents.size() - 1);
+		}
+		Entity objectSprite;
+		if(!parent.equals("")) {
+			objectSprite = new Entity(current.name, current.name + " (" + parent + ")", "Object", current.type);
+		}
+		else {
+			objectSprite = new Entity(current.name, current.name + " (" + current.type + ")", "Object", current.type);
+		}
+		objectSprite.setParents(current.parents);
 		// add this entity to the lists
 		allEntities.add(objectSprite);
 		allObjects.add(objectSprite);
 		// check if this is an avatar
 		avatarCheck(current, objectSprite); 
 
+		if(!parent.equals("")) {
+			if(parentTypes.containsKey(parent)) {
+				parentTypes.get(parent).add(objectSprite);
+			} else {
+				parentTypes.put(parent, new ArrayList<Entity>());
+				parentTypes.get(parent).add(objectSprite);
+			}
+		}
 		// add behaviors to this new entity
 		HashMap<String,String> currParams = current.parameters;
 	    Iterator it = currParams.entrySet().iterator();
@@ -221,6 +245,7 @@ public class GraphBuilder {
 		if(verbose)
 			System.out.println("Creating entity to represent : Timeout");
 		Entity objectSprite = new Entity("Timeout", "Object", "n/a");
+		objectSprite.setParents(new ArrayList<String>());
 		allEntities.add(objectSprite);
 		allObjects.add(objectSprite);
 
@@ -450,13 +475,38 @@ public class GraphBuilder {
 	}
 	public Mechanic generalizeObject1(Mechanic m, ArrayList<Mechanic> siblingMechs) {
 		ArrayList<Mechanic> subSiblingMechs = new ArrayList<Mechanic>();
+		
 		if(m.getObject1() != null && m.getObject2() != null) {
-			String subtype1 = m.getObject1().getSubtype();
-			String subtype2 = m.getObject2().getSubtype();
+			String subtype1 = "";
+			String subtype2 = "";
+			// check if parent sizes are > 0, if so, they have a parent
+			if(m.getObject1().getParents().size() > 0) {
+				subtype1 = m.getObject1().getParents().get(m.getObject1().getParents().size()-1);
+			}
+			if(m.getObject2().getParents().size() > 0) {
+				subtype2 = m.getObject2().getParents().get(m.getObject2().getParents().size()-1);
+			}
+			
+		}
+		
+		if(m.getObject1() != null && m.getObject2() != null) {
+			String subtype1 = "";
+			String subtype2 = "";
+
+			if(m.getObject1().getParents().size() > 0) {
+				subtype1 = m.getObject1().getParents().get(m.getObject1().getParents().size()-1);
+			}
+			if(m.getObject2().getParents().size() > 0) {
+				subtype2 = m.getObject2().getParents().get(m.getObject2().getParents().size()-1);
+			}
 			ArrayList<Entity> spritesToSearch = new ArrayList<Entity>();
 			// query all objects and figure out which ones share a subtype with the first object
 			for(Entity object : allObjects) {
-				if(object.getSubtype().equals(subtype1)) {
+				String parent = "";
+				if(object.getParents().size() > 0) {
+					parent = object.getParents().get(object.getParents().size() - 1);
+				}
+				if(parent.equals(subtype1) && !parent.equals("")) {
 					spritesToSearch.add(object);
 				}
 			}
@@ -469,18 +519,25 @@ public class GraphBuilder {
 					// see if this mechanic is similar enough to the mechanic we are querying for
 					// don't even bother if it isnt a 2-object mechanic
 					if(aMech.getObject1() != null && aMech.getObject2() != null) {
-						String s1 = aMech.getObject1().getSubtype();
-						String s2 = aMech.getObject2().getSubtype();
+						String s1 = "";		
+						String s2 = "";
+						if(aMech.getObject1().getParents().size() > 0) {
+							s1 = aMech.getObject1().getParents().get(aMech.getObject1().getParents().size()-1);
+						}
+						if(aMech.getObject2().getParents().size() > 0) {
+							s2 = aMech.getObject2().getParents().get(aMech.getObject2().getParents().size()-1);
+						}
 						String a = aMech.getAction().getName();
-						if((s1.equals(subtype1)) && (s2.equals(subtype2)) && a.equals(m.getAction().getName())) {
+						if((s1.equals(subtype1)) && (s2.equals(subtype2)) && a.equals(m.getAction().getName()) && !aMech.equals(m)) {
 							subSiblingMechs.add(aMech);
 							works = 1;
 							break;
-						} else if(s1.equals(subtype2) && s2.equals(subtype1) && a.equals(m.getAction().getName())) {
-							subSiblingMechs.add(aMech);
-							works = 2;
-							break;
-						}
+						} 
+//						else if(s1.equals(subtype2) && s2.equals(subtype1) && a.equals(m.getAction().getName()) && aMech.equals(m)) {
+//							subSiblingMechs.add(aMech);
+//							works = 2;
+//							break;
+//						}
 					}
 				}
 				if(works == 0) {
@@ -498,6 +555,9 @@ public class GraphBuilder {
 			if(generalizable == 1 || generalizable == 2) {
 				// create a new node to replace this one, with the new generalized Mechanic for object1
 				Entity newObject = new Entity(subtype1, subtype1, "Object", subtype1);
+				ArrayList<String> falseParents = new ArrayList<String>();
+				falseParents.add(subtype1);
+				newObject.setParents(falseParents);
 				newObject.setAttributes(m.getObject1().getAttributes());
 				Mechanic newMech = null;
 				if(generalizable == 1)
@@ -510,11 +570,18 @@ public class GraphBuilder {
 		}
 		// just check for object 1 stuff then
 		else if(m.getObject1() != null) {
-			String subtype1 = m.getObject1().getSubtype();
+			String subtype1 = "";
+			if(m.getObject1().getParents().size() > 0) {
+				subtype1 = m.getObject1().getParents().get(m.getObject1().getParents().size() - 1);
+			}
 			ArrayList<Entity> spritesToSearch = new ArrayList<Entity>();
 			// query all objects and figure out which ones share a subtype with the first object
 			for(Entity object : allObjects) {
-				if(object.getSubtype().equals(subtype1)) {
+				String parent = "";
+				if(object.getParents().size() > 0) {
+					parent = object.getParents().get(object.getParents().size() - 1);
+				}
+				if(parent.equals(subtype1) && !parent.equals("")) {
 					spritesToSearch.add(object);
 				}
 			}
@@ -527,7 +594,10 @@ public class GraphBuilder {
 					// see if this mechanic is similar enough to the mechanic we are querying for
 					// don't even bother if it isnt a 1-object mechanic
 					if(aMech.getObject1() != null) {
-						String s1 = aMech.getObject1().getSubtype();
+						String s1 = "";
+						if(aMech.getObject1().getParents().size() > 0) {
+							s1 = aMech.getObject1().getParents().get(aMech.getObject1().getParents().size() - 1);
+						}
 						String a = aMech.getAction().getName();
 						if((s1.equals(subtype1)) && a.equals(m.getAction().getName())) {
 							subSiblingMechs.add(aMech);
@@ -548,6 +618,9 @@ public class GraphBuilder {
 			if(generalizable == 1) {
 				// create a new node to replace this one, with the new generalized Mechanic for object1
 				Entity newObject = new Entity(subtype1, subtype1, "Object", subtype1);
+				ArrayList<String> falseParents = new ArrayList<String>();
+				falseParents.add(subtype1);
+				newObject.setParents(falseParents);
 				newObject.setAttributes(m.getObject1().getAttributes());
 				Mechanic newMech = null;
 				if(generalizable == 1)
@@ -562,12 +635,23 @@ public class GraphBuilder {
 	public Mechanic generalizeObject2(Mechanic m, ArrayList<Mechanic> sibilngMechs) {
 		ArrayList<Mechanic> subSiblingMechs = new ArrayList<Mechanic>();
 		if(m.getObject1() != null && m.getObject2() != null) {
-			String subtype1 = m.getObject1().getSubtype();
-			String subtype2 = m.getObject2().getSubtype();
+			String subtype1 = "";
+			String subtype2 = "";
+			
+			if(m.getObject1().getParents().size() > 0) {
+				subtype1 = m.getObject1().getParents().get(m.getObject1().getParents().size() - 1);
+			}
+			if(m.getObject2().getParents().size() > 0) {
+				subtype2 = m.getObject2().getParents().get(m.getObject2().getParents().size() - 1);
+			}
 			ArrayList<Entity> spritesToSearch = new ArrayList<Entity>();
 			// query all objects and figure out which ones share a subtype with the first object
 			for(Entity object : allObjects) {
-				if(object.getSubtype().equals(subtype2)) {
+				String parent = "";
+				if(object.getParents().size() > 0) {
+					parent = object.getParents().get(object.getParents().size() - 1);
+				}
+				if(parent.equals(subtype2) && !parent.equals("")) {
 					spritesToSearch.add(object);
 				}
 			}
@@ -580,18 +664,28 @@ public class GraphBuilder {
 					// see if this mechanic is similar enough to the mechanic we are querying for
 					// don't even bother if it isnt a 2-object mechanic
 					if(aMech.getObject1() != null && aMech.getObject2() != null) {
-						String s1 = aMech.getObject1().getSubtype();
-						String s2 = aMech.getObject2().getSubtype();
+						String s1 = "";		
+						String s2 = "";
+						if(aMech.getObject1().getParents().size() > 0) {
+							s1 = aMech.getObject1().getParents().get(aMech.getObject1().getParents().size()-1);
+						}
+						if(aMech.getObject2().getParents().size() > 0) {
+							s2 = aMech.getObject2().getParents().get(aMech.getObject2().getParents().size()-1);
+						}
 						String a = aMech.getAction().getName();
-						if((s1.equals(subtype1)) && (s2.equals(subtype2)) && a.equals(m.getAction().getName())) {
+						// check to make sure the score attribute is the same
+						String l1 = m.getAction().getAttribute("ScoreChange").getValue();
+						String l2 = aMech.getAction().getAttribute("ScoreChange").getValue();
+						if((s1.equals(subtype1)) && (s2.equals(subtype2)) && a.equals(m.getAction().getName()) && !aMech.equals(m) && l1.equals(l2)) {
 							subSiblingMechs.add(aMech);
 							works = 1;
 							break;
-						} else if(s1.equals(subtype2) && s2.equals(subtype1) && a.equals(m.getAction().getName())) {
-							subSiblingMechs.add(aMech);
-							works = 2;
-							break;
-						}
+						} 
+//						else if(s1.equals(subtype2) && s2.equals(subtype1) && a.equals(m.getAction().getName()) && !aMech.equals(m) && l1.equals(l2)) {
+//							subSiblingMechs.add(aMech);
+//							works = 2;
+//							break;
+//						}
 					}
 				}
 				if(works == 0) {
@@ -608,6 +702,9 @@ public class GraphBuilder {
 			if(generalizable == 1 || generalizable == 2) {
 				// create a new node to replace this one, with the new generalized Mechanic for object1
 				Entity newObject = new Entity(subtype2, subtype2, "Object", subtype2);
+				ArrayList<String> falseParents = new ArrayList<String>();
+				falseParents.add(subtype2);
+				newObject.setParents(falseParents);
 				newObject.setAttributes(m.getObject2().getAttributes());
 				Mechanic newMech = null;
 				if(generalizable == 1) {
@@ -626,12 +723,23 @@ public class GraphBuilder {
 
 	public Mechanic generalizeActionOutput(Mechanic m) {
 		if(m.getObject1() != null && m.getObject2() != null) {
-			String subtype1 = m.getObject1().getSubtype();
-			String subtype2 = m.getObject2().getSubtype();
+			String subtype1 = "";
+			String subtype2 = "";
+			
+			if(m.getObject1().getParents().size() > 0) {
+				subtype1 = m.getObject1().getParents().get(m.getObject1().getParents().size() - 1);
+			} 
+			if(m.getObject2().getParents().size() > 0) {
+				subtype2 = m.getObject2().getParents().get(m.getObject2().getParents().size() - 1);
+			}
 			ArrayList<Entity> spritesToSearch = new ArrayList<Entity>();
 			// query all objects and figure out which ones share a subtype with the first object
 			for(Entity object : allObjects) {
-				if(object.getSubtype().equals(subtype1)) {
+				String parent = "";
+				if(object.getParents().size() > 0) {
+					parent = object.getParents().get(object.getParents().size() - 1);
+				}
+				if(parent.equals(subtype1) && !parent.equals("")) {
 					spritesToSearch.add(object);
 				}
 			}
@@ -644,16 +752,24 @@ public class GraphBuilder {
 					// see if this mechanic is similar enough to the mechanic we are querying for
 					// don't even bother if it isnt a 2-object mechanic
 					if(aMech.getObject1() != null && aMech.getObject2() != null) {
-						String s1 = aMech.getObject1().getSubtype();
-						String s2 = aMech.getObject2().getSubtype();
+						String s1 = "";
+						String s2 = "";
+						
+						if(aMech.getObject1().getParents().size() > 0) {
+							s1 = aMech.getObject1().getParents().get(aMech.getObject1().getParents().size() - 1);
+						}
+						if(aMech.getObject2().getParents().size() > 0) {
+							s2 = aMech.getObject2().getParents().get(aMech.getObject2().getParents().size() - 1);
+						}
 						String a = aMech.getAction().getName();
 						if((s1.equals(subtype1)) && (s2.equals(subtype2)) && a.equals(m.getAction().getName())) {
 							works = 1;
 							break;
-						} else if(s1.equals(subtype2) && s2.equals(subtype1) && a.equals(m.getAction().getName())) {
-							works = 2;
-							break;
-						}
+						} 
+//						else if(s1.equals(subtype2) && s2.equals(subtype1) && a.equals(m.getAction().getName())) {
+//							works = 2;
+//							break;
+//						}
 					}
 				}
 				if(works == 0) {
@@ -667,8 +783,19 @@ public class GraphBuilder {
 			if(generalizable == 1) {
 				// create a new node to replace this one, with the new generalized Mechanic for action
 				Entity newAction = new Entity(m.getAction().getName(), "Action", "Interaction");
+				
 				if(m.getAction().getOutputs().size() > 0) {
-					Entity newOutput = new Entity(m.getAction().getOutputs().get(0).getName(), m.getAction().getOutputs().get(0).getSubtype(), "Object", m.getAction().getOutputs().get(0).getSubtype());
+					String parent = "";
+					if(m.getAction().getOutputs().get(0).getParents().size() > 0) {
+						parent = m.getAction().getOutputs().get(0).getParents().get(m.getAction().getOutputs().get(0).getParents().size() - 1);
+					}
+					else {
+						parent = m.getAction().getOutputs().get(0).getName() + " (" + m.getAction().getOutputs().get(0).getSubtype() + ")";
+					}
+					Entity newOutput = new Entity(m.getAction().getOutputs().get(0).getName(),
+							parent,
+							"Object", 
+							parent);
 					newOutput.setAttributes(m.getAction().getOutputs().get(0).getAttributes());
 					newAction.addOutput(newOutput);
 				}
@@ -933,7 +1060,7 @@ public class GraphBuilder {
 				Entity e = c.getInputs().get(i);
 				ArrayList<Mechanic> possibleAffectants = e.getMechanics();
 				for(Mechanic aff : possibleAffectants) {
-					if(aff.getType().equals("KillSprite")) {
+					if(aff.getType().equals("KillSprite") && c.getAttribute("limit").getValue().equals("0") && aff.getAction().getOutputs().get(0).equals(e)) {
 						instructions.add(aff);
 					}
 				}
