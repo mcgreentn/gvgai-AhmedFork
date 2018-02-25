@@ -33,8 +33,10 @@ public class VisualDemonstrationInterfacer {
 
 	private ShowFrames showFrames;
 
-	public VisualDemonstrationInterfacer() throws FileNotFoundException, IOException, ParseException {
+	private int numberOfSimulations;
 
+	public VisualDemonstrationInterfacer() throws FileNotFoundException, IOException, ParseException {
+		numberOfSimulations = 0;
 	}
 
 	public void runGame(String game, String level1, String agentName)
@@ -117,7 +119,7 @@ public class VisualDemonstrationInterfacer {
 		frames = frameInteractionAssociation.retrieveInteractionFrames(interactionObject);
 		return frames;
 	}
-	
+
 	public String[] retrieveFramePathsInTheSpecificInteractionFile(String rule, String sprite1, String sprite2,
 			String filePath) throws FileNotFoundException, IOException, ParseException
 	{
@@ -128,7 +130,7 @@ public class VisualDemonstrationInterfacer {
 		frames = frameInteractionAssociation.retrieveInteractionFrames(interactionObject);
 		return frames;
 	}
-	
+
 	/*
 	 * It searches for the interaction passed as parameter in all the games whose frames are stored. 
 	 * It returns an array if the interaction was ever stored or an empty one otherwise. 
@@ -155,7 +157,7 @@ public class VisualDemonstrationInterfacer {
 		}
 		return new String[]{""};
 	}
-	
+
 	/*
 	 * It searches for the interaction passed as parameter in all the games whose frames are stored. 
 	 * It returns an array if the interaction was ever stored or an empty one otherwise. 
@@ -164,7 +166,7 @@ public class VisualDemonstrationInterfacer {
 			ArrayList<String> interactionPaths) throws FileNotFoundException, IOException, ParseException
 	{
 		ArrayList<InteractionFrame> frameCollection = new ArrayList<>();
-		
+
 		for(Interaction interaction :  interactions)
 		{
 			for(String path : interactionPaths)
@@ -189,15 +191,90 @@ public class VisualDemonstrationInterfacer {
 		}
 		return frameCollection;
 	}
-	
-	public void runBunchOfGames(ArrayList<BunchOfGames> bunchOfGames)
+
+	/*
+	 * It searches for the interaction passed as parameter in all the games whose frames are stored. 
+	 * It returns an array if the interaction was ever stored or an empty one otherwise. 
+	 */
+	public HashMap<Interaction, String[]> mapFramePathsInTheCollection(ArrayList<Interaction> interactions,
+			ArrayList<String> interactionPaths) throws FileNotFoundException, IOException, ParseException
 	{
+		HashMap<Interaction, String[]> frameCollection = new HashMap<Interaction, String[]>();
+
+		for(Interaction interaction :  interactions)
+		{
+			for(String path : interactionPaths)
+			{
+				FrameInteractionAssociation frameInteractionAssociation = new FrameInteractionAssociation(path);
+				JSONObject interactionObject = null;
+				interactionObject = frameInteractionAssociation.
+						retrieveInteraction(interaction.rule, interaction.sprite1, interaction.sprite2);
+				String [] frames = null;
+				if(interactionObject != null)
+				{
+					frames = frameInteractionAssociation.retrieveInteractionFrames(interactionObject);
+					path = path.replace("interactions/interaction.json", "");
+					for (int i = 0; i < frames.length; i++) 
+					{
+						frames[i] = path + frames[i];
+					}
+					frameCollection.put(new Interaction(interaction.rule, interaction.sprite1, interaction.sprite2),
+							frames);
+				}
+			}
+		}
+		return frameCollection;
+	}
+
+	/*
+	 * It searches for the interaction passed as parameter in all the games whose frames are stored. 
+	 * It returns an array if the interaction was ever stored or an empty one otherwise. 
+	 */
+	public String[] mapFramePathsInTheCollectionByInteraction(Interaction interaction) throws FileNotFoundException, IOException, ParseException
+	{
+		String [] frames = null;
+		ArrayList<String> interactionPaths = loadInteractionPaths(numberOfSimulations);
+		for(String path : interactionPaths)
+		{
+			FrameInteractionAssociation frameInteractionAssociation = new FrameInteractionAssociation(path);
+			JSONObject interactionObject = null;
+			interactionObject = frameInteractionAssociation.
+					retrieveInteraction(interaction.rule, interaction.sprite1, interaction.sprite2);
+			
+			if(interactionObject != null)
+			{
+				frames = frameInteractionAssociation.retrieveInteractionFrames(interactionObject);
+				path = path.replace("interactions/interaction.json", "");
+				for (int i = 0; i < frames.length; i++) 
+				{
+					frames[i] = path + frames[i];
+				}
+			}
+		}
+
+		return frames;
+	}
+
+	public ArrayList<String> loadInteractionPaths(int numberOfSimulations)
+	{
+		ArrayList<String> interactionpaths = new ArrayList<>();
+		for(int i = 0; i < numberOfSimulations; i++)
+		{
+			interactionpaths.add("simulation/game" + i + "/interactions/interaction.json");
+		}
+		return interactionpaths;
+	}
+
+	public void runBunchOfGames(ArrayList<BunchOfGames> bunchOfGames) throws IOException
+	{
+		numberOfSimulations = bunchOfGames.size();
+		this.createDirectories(numberOfSimulations);
 		for (BunchOfGames game : bunchOfGames) 
 		{
 			this.runGame(game.gamePath, game.gameLevelPath, game.playerPath);
 		}
 	}
-	
+
 	public void createDirectories(int numberOfSimulations) throws IOException
 	{
 		for(int i = 0; i < numberOfSimulations; i++)
@@ -206,9 +283,9 @@ public class VisualDemonstrationInterfacer {
 			Files.createDirectories(Paths.get("simulation/game" + i + "/interactions/"));
 		}
 	}
-	
+
 	public ArrayList<InteractionFrame> runGameSimulations(ArrayList<BunchOfGames> bunchOfgames,
-			ArrayList<Interaction> interactions)
+			ArrayList<Interaction> interactions) throws IOException
 	{
 		ArrayList<InteractionFrame> frameCollection = new ArrayList<>();
 		try {
@@ -218,13 +295,13 @@ public class VisualDemonstrationInterfacer {
 			e.printStackTrace();
 		}
 		this.runBunchOfGames(bunchOfgames);
-		
+
 		ArrayList<String> interactionFiles = new ArrayList<>();
 		for (int i = 0; i < bunchOfgames.size(); i++) 
 		{
 			interactionFiles.add("simulation/game" + i + "/interactions/interaction.json");
 		}
-		
+
 		try {
 			frameCollection = retrieveFramePathsInTheCollection(interactions, interactionFiles);
 		} catch (FileNotFoundException e) {
@@ -238,6 +315,55 @@ public class VisualDemonstrationInterfacer {
 			e.printStackTrace();
 		}
 		return frameCollection;
+	}
+
+	public HashMap<Interaction, String[]> runMultipleGameSimulations(ArrayList<BunchOfGames> bunchOfgames,
+			ArrayList<Interaction> interactions) throws IOException
+	{
+		HashMap<Interaction, String[]> frameCollection = new HashMap<Interaction, String[]>();
+		try {
+			this.createDirectories(bunchOfgames.size());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.runBunchOfGames(bunchOfgames);
+
+		ArrayList<String> interactionFiles = new ArrayList<>();
+		for (int i = 0; i < bunchOfgames.size(); i++) 
+		{
+			interactionFiles.add("simulation/game" + i + "/interactions/interaction.json");
+		}
+
+		try {
+			frameCollection = mapFramePathsInTheCollection(interactions, interactionFiles);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return frameCollection;
+	}
+
+	public String[] queryFrameCollection(HashMap<Interaction, String[]> frameMap, 
+			String rule, String sprite1, String sprite2)
+	{
+		Interaction interaction = new Interaction(rule,  sprite1, sprite2);
+		String [] frames = null;
+		try
+		{
+			frames = frameMap.get(interaction);
+		}
+		catch(NullPointerException e)
+		{
+			System.out.println("interaction was not registered during simulations or it does not exist.");
+		}
+		return frames;
 	}
 
 	public static void main(String [] args) throws FileNotFoundException, IOException, ParseException
@@ -274,49 +400,86 @@ public class VisualDemonstrationInterfacer {
 		vdi.writeQueryFramesInJSONFile(frameArray);*/
 
 		/*4     Run the scalable version*/
+		//		VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer();
+		//
+		////		//1st - configure your games
+		//		BunchOfGames bog1 = new BunchOfGames("examples/gridphysics/zelda.txt", 
+		//				"examples/gridphysics/zelda_lvl1.txt", 
+		//				"tracks.singlePlayer.advanced.olets.Agent");
+		//		
+		//		BunchOfGames bog2 = new BunchOfGames("examples/gridphysics/zelda.txt", 
+		//				"examples/gridphysics/zelda_lvl1.txt", 
+		//				"tracks.singlePlayer.advanced.olets.Agent");
+		//		
+		//		BunchOfGames bog3 = new BunchOfGames("examples/gridphysics/zelda.txt", 
+		//				"examples/gridphysics/zelda_lvl1.txt", 
+		//				"tracks.singlePlayer.advanced.olets.Agent");
+		//		ArrayList<BunchOfGames> bogs = new ArrayList<>();
+		//		bogs.add(bog1); bogs.add(bog2); bogs.add(bog3);
+		//		
+		//		//2nd - configure the interactions you want to search for
+		//		ArrayList<Interaction> interactions = new ArrayList<>();
+		//		interactions.add(new Interaction("KillSprite", "monsterSlow", "sword"));
+		//		interactions.add(new Interaction("TransformTo", "nokey", "key"));
+		//		interactions.add(new Interaction("KillSprite", "monsterQuick", "sword"));
+		//		
+		//		
+		//		//3rd run the method runMultipleGameSimulations
+		//		HashMap<Interaction, String[]> frameCollection = vdi.runMultipleGameSimulations(bogs, interactions);
+		//		
+		//		System.out.println("-------------------------------------------");
+		//		for (Interaction key : frameCollection.keySet()) {
+		//			
+		//			System.out.println("Interaction: " + key.rule);
+		//			System.out.println("Sprite1: " + key.sprite1);
+		//			System.out.println("Sprite2: " + key.sprite2);
+		//			System.out.println();
+		//			System.out.println("Interaction Frame List");
+		//			String [] frames = frameCollection.get(key);
+		//			for (int j = 0; j < frames.length; j++) {
+		//				System.out.println(j + " - " + frames[j]);
+		//			}
+		//			System.out.println("-------------------------------------------");
+		//			System.out.println();
+		//		}
+		//	}
+
+		/*5     Mapping Interactions*/
 		VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer();
 
-//		//1st - configure your games
+		//1st - configure your games
 		BunchOfGames bog1 = new BunchOfGames("examples/gridphysics/zelda.txt", 
 				"examples/gridphysics/zelda_lvl1.txt", 
 				"tracks.singlePlayer.advanced.olets.Agent");
-		
+
 		BunchOfGames bog2 = new BunchOfGames("examples/gridphysics/zelda.txt", 
 				"examples/gridphysics/zelda_lvl1.txt", 
 				"tracks.singlePlayer.advanced.olets.Agent");
-		
+
 		BunchOfGames bog3 = new BunchOfGames("examples/gridphysics/zelda.txt", 
 				"examples/gridphysics/zelda_lvl1.txt", 
 				"tracks.singlePlayer.advanced.olets.Agent");
 		ArrayList<BunchOfGames> bogs = new ArrayList<>();
 		bogs.add(bog1); bogs.add(bog2); bogs.add(bog3);
+
+		//2nd - run a bunch of games
+		vdi.runBunchOfGames(bogs);
+
+		//3rd run the method mapFramePathsInTheCollectionByInteraction
+		String [] frames = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction("KillSprite", "monsterSlow", "sword"));
 		
-		//2nd - configure the interactions you want to search for
-		ArrayList<Interaction> interactions = new ArrayList<>();
-		interactions.add(new Interaction("KillSprite", "monsterSlow", "sword"));
-		interactions.add(new Interaction("TransformTo", "nokey", "key"));
-		interactions.add(new Interaction("KillSprite", "monsterQuick", "sword"));
-		
-		
-		//3rd run the method runGameSimulations
-		ArrayList<InteractionFrame> frameCollection = vdi.runGameSimulations(bogs, interactions);
-		
-		System.out.println("-------------------------------------------");
-		for (int i = 0; i < frameCollection.size(); i++) {
-			InteractionFrame interactionFrame = frameCollection.get(i);
-			
-			System.out.println("Interaction: " + interactionFrame.interaction.rule);
-			System.out.println("Sprite1: " + interactionFrame.interaction.sprite1);
-			System.out.println("Sprite2: " + interactionFrame.interaction.sprite2);
-			System.out.println();
-			System.out.println("Interaction Frame List");
-			for (int j = 0; j < interactionFrame.frames.length; j++) {
-				System.out.println(j + " - " + interactionFrame.frames[j]);
-			}
-			System.out.println("-------------------------------------------");
-			System.out.println();
+		//4th it will return the frames of the interaction (if it exists) 
+		if(frames != null)
+		for (int i = 0; i < frames.length; i++) {
+			System.out.println(frames[i]);
 		}
+		else
+		{
+			System.out.println("interaction not registered!");
+		}
+
 	}
+
 }
 
 class TupleRuleFrames{
