@@ -1,5 +1,6 @@
 package video.handlers;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -75,6 +76,7 @@ public class FrameInteractionAssociation
 	
 	public String[] retrieveInteractionFrames(JSONObject interactionObject)
 	{
+		String frames [] = new String[5];
 		int tick = Integer.parseInt(interactionObject.get("tick").toString());
 
 		String frame0 = "frames/frame" + (tick - 2) + ".png";
@@ -83,20 +85,50 @@ public class FrameInteractionAssociation
 		String frame3 = "frames/frame" + (tick + 1) + ".png";
 		String frame4 = "frames/frame" + (tick + 2) + ".png";
 
-		return new String[]{frame0, frame1, frame2, frame3, frame4};
+		frames = new String[]{frame0, frame1, frame2, frame3, frame4};
+		
+		checkLastTwoFramesExistance(frames, tick);
+
+		return frames;
 	}
 	
 	public String[] retrieveInteractionFrames(JSONObject interactionObject, String interactionFilePath)
 	{
+		String frames [] = new String[5];
+		
 		int tick = Integer.parseInt(interactionObject.get("tick").toString());
-
 		String frame0 = "frames/frame" + (tick - 2) + ".png";
 		String frame1 = "frames/frame" + (tick - 1) + ".png";
 		String frame2 = "frames/frame" + (tick) + ".png";
 		String frame3 = "frames/frame" + (tick + 1) + ".png";
 		String frame4 = "frames/frame" + (tick + 2) + ".png";
+		
+		frames = new String[]{frame0, frame1, frame2, frame3, frame4};
+		
+		checkLastTwoFramesExistance(frames, tick);
 
-		return new String[]{frame0, frame1, frame2, frame3, frame4};
+		return frames;
+	}
+	
+	public boolean isThereSuchAFrame(String frame)
+	{
+		File f = new File(frame);
+		if(f.exists()) { 
+			return true;
+		}
+		return false;
+	}
+	
+	public void checkLastTwoFramesExistance(String[] frames, int tick)
+	{
+		if(!isThereSuchAFrame(frames[3]) || !isThereSuchAFrame(frames[4]))
+		{
+			frames[0] = "frames/frame" + (tick - 4) + ".png";
+			frames[1] = "frames/frame" + (tick - 3) + ".png";
+			frames[2] = "frames/frame" + (tick - 2) + ".png";
+			frames[3] = "frames/frame" + (tick - 1) + ".png";
+			frames[4] = "frames/frame" + (tick) + ".png";
+		}
 	}
 	
 	public JSONArray retrieveInteractionFile(String interactionFileName) throws FileNotFoundException, IOException, ParseException
