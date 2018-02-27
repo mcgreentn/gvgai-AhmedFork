@@ -1,5 +1,6 @@
 package tracks.tutorialGeneration;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,6 +12,8 @@ import java.util.HashMap;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
+
+import com.sun.deploy.uitoolkit.impl.fx.Utils;
 
 import tracks.ArcadeMachine;
 import video.basics.BunchOfGames;
@@ -37,6 +40,7 @@ public class VisualDemonstrationInterfacer {
 
 	public VisualDemonstrationInterfacer() throws FileNotFoundException, IOException, ParseException {
 		numberOfSimulations = 0;
+		video.utils.Utils.deleteFolder(new File("simulation"));
 	}
 
 	public void runGame(String game, String level1, String agentName)
@@ -232,7 +236,7 @@ public class VisualDemonstrationInterfacer {
 	 */
 	public String[] mapFramePathsInTheCollectionByInteraction(Interaction interaction) throws FileNotFoundException, IOException, ParseException
 	{
-		String [] frames = null;
+		String [] frames = new String[]{};
 		ArrayList<String> interactionPaths = loadInteractionPaths(numberOfSimulations);
 		for(String path : interactionPaths)
 		{
@@ -450,33 +454,40 @@ public class VisualDemonstrationInterfacer {
 		//1st - configure your games
 		BunchOfGames bog1 = new BunchOfGames("examples/gridphysics/zelda.txt", 
 				"examples/gridphysics/zelda_lvl1.txt", 
-				"tracks.singlePlayer.advanced.olets.Agent");
+				"tracks.singlePlayer.tools.human.Agent");
 
 		BunchOfGames bog2 = new BunchOfGames("examples/gridphysics/zelda.txt", 
 				"examples/gridphysics/zelda_lvl1.txt", 
-				"tracks.singlePlayer.advanced.olets.Agent");
-
-		BunchOfGames bog3 = new BunchOfGames("examples/gridphysics/zelda.txt", 
-				"examples/gridphysics/zelda_lvl1.txt", 
-				"tracks.singlePlayer.advanced.olets.Agent");
+				"tracks.singlePlayer.tools.human.Agent");
+//
+//		BunchOfGames bog3 = new BunchOfGames("examples/gridphysics/zelda.txt", 
+//				"examples/gridphysics/zelda_lvl1.txt", 
+//				"tracks.singlePlayer.advanced.olets.Agent");
 		ArrayList<BunchOfGames> bogs = new ArrayList<>();
-		bogs.add(bog1); bogs.add(bog2); bogs.add(bog3);
+		bogs.add(bog1); bogs.add(bog2); //bogs.add(bog3);
 
 		//2nd - run a bunch of games
 		vdi.runBunchOfGames(bogs);
 
 		//3rd run the method mapFramePathsInTheCollectionByInteraction
-		String [] frames = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction("KillSprite", "monsterSlow", "sword"));
 		
+		ArrayList<String[]> frameCollections = new ArrayList<>();
+		String [] frames1 = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction("KillSprite", "nokey", "monsterSlow"));
+		String [] frames2 = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction("KillSprite", "goal", "withkey"));
+		frameCollections.add(frames1); frameCollections.add(frames2);
 		//4th it will return the frames of the interaction (if it exists) 
-		if(frames != null)
-		for (int i = 0; i < frames.length; i++) {
-			System.out.println(frames[i]);
-		}
-		else
+		//if(frames != null)
+		for(String[] frames : frameCollections)
 		{
-			System.out.println("interaction not registered!");
+			for (int i = 0; i < frames.length; i++) {
+				System.out.println(frames[i]);
+			}
 		}
+
+//		else
+//		{
+//			System.out.println("interaction not registered!");
+//		}
 
 	}
 

@@ -1,5 +1,7 @@
 package video.utils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -32,4 +34,26 @@ public abstract class Utils
 			cbx.addItem(string);
 		}
 	}
+	
+	public static void deleteFolder(File file) throws IOException
+	{
+		if(!file.exists())
+			return;
+		
+		for (File childFile : file.listFiles()) {
+
+			if (childFile.isDirectory()) {
+				deleteFolder(childFile);
+			} else {
+				if (!childFile.delete()) {
+					throw new IOException();
+				}
+			}
+		}
+
+		if (!file.delete()) {
+			throw new IOException();
+		}
+	}
+	
 }
