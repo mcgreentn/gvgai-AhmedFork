@@ -1,1 +1,1 @@
-[{"interaction":"StepBack","tick":"8","pairInteractionTick":"8 - StepBack","sprite2":"wall","sprite1":"monsterNormal"},{"interaction":"StepBack","tick":"10","pairInteractionTick":"10 - StepBack","sprite2":"wall","sprite1":"monsterQuick"}]
+[{"interaction":"KillSprite","tick":"2","pairInteractionTick":"2 - KillSprite","sprite2":"monsterSlow","sprite1":"nokey"}]
