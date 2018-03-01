@@ -87,7 +87,8 @@ public class FrameInteractionAssociation
 
 		frames = new String[]{frame0, frame1, frame2, frame3, frame4};
 		
-		checkLastTwoFramesExistance(frames, tick);
+		checkLastTwoFramesAfterInteraction(frames, tick);
+		checkNegativeFramesBeforeTheInteraction(frames, tick);
 
 		return frames;
 	}
@@ -105,7 +106,7 @@ public class FrameInteractionAssociation
 		
 		frames = new String[]{frame0, frame1, frame2, frame3, frame4};
 		
-		checkLastTwoFramesExistance(frames, tick);
+		checkLastTwoFramesAfterInteraction(frames, tick);
 
 		return frames;
 	}
@@ -119,7 +120,7 @@ public class FrameInteractionAssociation
 		return false;
 	}
 	
-	public void checkLastTwoFramesExistance(String[] frames, int tick)
+	public void checkLastTwoFramesAfterInteraction(String[] frames, int tick)
 	{
 		if(!isThereSuchAFrame(frames[3]) || !isThereSuchAFrame(frames[4]))
 		{
@@ -128,6 +129,20 @@ public class FrameInteractionAssociation
 			frames[2] = "frames/frame" + (tick - 2) + ".png";
 			frames[3] = "frames/frame" + (tick - 1) + ".png";
 			frames[4] = "frames/frame" + (tick) + ".png";
+		}
+	}
+	
+	public void checkNegativeFramesBeforeTheInteraction(String[] frames, int tick)
+	{
+		if(frames[0].contains("-"))
+		{
+			frames[0] = frames[1];
+		}
+		
+		if(frames[1].contains("-"))
+		{
+			frames[1] = frames[2];
+			frames[0] = frames[1];
 		}
 	}
 	

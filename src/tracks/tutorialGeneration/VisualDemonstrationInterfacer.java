@@ -453,11 +453,11 @@ public class VisualDemonstrationInterfacer {
 
 		//1st - configure your games
 		BunchOfGames bog1 = new BunchOfGames("examples/gridphysics/zelda.txt", 
-				"examples/gridphysics/zelda_lvl1.txt", 
+				"examples/gridphysics/zelda_lvlTST.txt", 
 				"tracks.singlePlayer.tools.human.Agent");
 
 		BunchOfGames bog2 = new BunchOfGames("examples/gridphysics/zelda.txt", 
-				"examples/gridphysics/zelda_lvl1.txt", 
+				"examples/gridphysics/zelda_lvlTST.txt", 
 				"tracks.singlePlayer.tools.human.Agent");
 //
 //		BunchOfGames bog3 = new BunchOfGames("examples/gridphysics/zelda.txt", 
