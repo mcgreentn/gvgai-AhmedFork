@@ -117,13 +117,24 @@ public class Mechanic {
 	}
 	
 	public boolean equals(Mechanic other) {
-		if(this.getObject1().getName().equals(other.getObject1().getName())) {
-			if(this.getObject2() != null && other.getObject2() != null) {
-				if(this.getObject2().getName().equals(other.getObject2().getName())) {
+		if(this.getObject1() != null && other.getObject1() != null) {
+			if(this.getObject1().getName().equals(other.getObject1().getName())) {
+				if(this.getObject2() != null && other.getObject2() != null) {
+					if(this.getObject2().getName().equals(other.getObject2().getName())) {
+						if(this.getAction().getName().equals(other.getAction().getName())) {
+							return true;
+						}
+					}
+				}
+				else {
 					if(this.getAction().getName().equals(other.getAction().getName())) {
 						return true;
 					}
 				}
+			} 
+		}else {
+			if(this.getAction().getName().equals(other.getAction().getName())) {
+				return true;
 			}
 		}
 		return false;

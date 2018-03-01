@@ -18,6 +18,9 @@ public class Agent extends AbstractPlayer{
 	public ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
 		stateGraph.setNewRoot(stateObs);
         ACTIONS action = stateGraph.simulate(elapsedTimer);
+        if(action == null) {
+        	return ACTIONS.ACTION_NIL;
+        }
         return action;
 	}
 
