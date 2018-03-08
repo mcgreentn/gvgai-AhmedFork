@@ -449,40 +449,40 @@ public class VisualDemonstrationInterfacer {
 		//	}
 
 		/*5     Mapping Interactions*/
-		VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer();
+		//VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer();
 
 		//1st - configure your games
-		BunchOfGames bog1 = new BunchOfGames("examples/gridphysics/zelda.txt", 
-				"examples/gridphysics/zelda_lvlTST.txt", 
-				"tracks.singlePlayer.tools.human.Agent");
-
-		BunchOfGames bog2 = new BunchOfGames("examples/gridphysics/zelda.txt", 
-				"examples/gridphysics/zelda_lvlTST.txt", 
-				"tracks.singlePlayer.tools.human.Agent");
+//		BunchOfGames bog1 = new BunchOfGames("examples/gridphysics/zelda.txt", 
+//				"examples/gridphysics/zelda_lvlTST.txt", 
+//				"tracks.singlePlayer.tools.human.Agent");
 //
-//		BunchOfGames bog3 = new BunchOfGames("examples/gridphysics/zelda.txt", 
-//				"examples/gridphysics/zelda_lvl1.txt", 
-//				"tracks.singlePlayer.advanced.olets.Agent");
-		ArrayList<BunchOfGames> bogs = new ArrayList<>();
-		bogs.add(bog1); bogs.add(bog2); //bogs.add(bog3);
-
-		//2nd - run a bunch of games
-		vdi.runBunchOfGames(bogs);
-
-		//3rd run the method mapFramePathsInTheCollectionByInteraction
-		
-		ArrayList<String[]> frameCollections = new ArrayList<>();
-		String [] frames1 = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction("KillSprite", "nokey", "monsterSlow"));
-		String [] frames2 = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction("KillSprite", "goal", "withkey"));
-		frameCollections.add(frames1); frameCollections.add(frames2);
-		//4th it will return the frames of the interaction (if it exists) 
-		//if(frames != null)
-		for(String[] frames : frameCollections)
-		{
-			for (int i = 0; i < frames.length; i++) {
-				System.out.println(frames[i]);
-			}
-		}
+//		BunchOfGames bog2 = new BunchOfGames("examples/gridphysics/zelda.txt", 
+//				"examples/gridphysics/zelda_lvlTST.txt", 
+//				"tracks.singlePlayer.tools.human.Agent");
+////
+////		BunchOfGames bog3 = new BunchOfGames("examples/gridphysics/zelda.txt", 
+////				"examples/gridphysics/zelda_lvl1.txt", 
+////				"tracks.singlePlayer.advanced.olets.Agent");
+//		ArrayList<BunchOfGames> bogs = new ArrayList<>();
+//		bogs.add(bog1); bogs.add(bog2); //bogs.add(bog3);
+//
+//		//2nd - run a bunch of games
+//		vdi.runBunchOfGames(bogs);
+//
+//		//3rd run the method mapFramePathsInTheCollectionByInteraction
+//		
+//		ArrayList<String[]> frameCollections = new ArrayList<>();
+//		String [] frames1 = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction("TransformTo", "nokey", "key"));
+//		String [] frames2 = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction("KillSprite", "goal", "withkey"));
+//		frameCollections.add(frames1); frameCollections.add(frames2);
+//		//4th it will return the frames of the interaction (if it exists) 
+//		//if(frames != null)
+//		for(String[] frames : frameCollections)
+//		{
+//			for (int i = 0; i < frames.length; i++) {
+//				System.out.println(frames[i]);
+//			}
+//		}
 
 //		else
 //		{
