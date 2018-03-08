@@ -12,6 +12,7 @@ import core.game.GameDescription.SpriteData;
 import core.game.GameDescription.TerminationData;
 import tools.GameAnalyzer;
 import tools.LevelAnalyzer;
+import tracks.tutorialGeneration.Metrics;
 import tracks.tutorialGeneration.ITSetParserGenerator.Node;
 
 public class GraphBuilder {
@@ -117,6 +118,8 @@ public class GraphBuilder {
 		// get all sprite data
 		ArrayList<SpriteData> allSpriteData = gd.getAllSpriteData();
 		
+		Metrics.spriteCount = allSpriteData.size();
+		
 		for(SpriteData current : allSpriteData) {
 			// Create the given sprite
 			createSpriteEntity(current);
@@ -137,6 +140,7 @@ public class GraphBuilder {
 		// loop through every sprite paired with every other sprite
 		// get all sprite data
 		ArrayList<SpriteData> allSpriteData = gd.getAllSpriteData();
+		
 		for(SpriteData sprite1 : allSpriteData) {
 			for(SpriteData sprite2 : allSpriteData) {
 				// get all interactions between these two sprites
@@ -166,6 +170,11 @@ public class GraphBuilder {
 	 * @param current the sprite data to be classified
 	 */
 	public void createSpriteEntity(SpriteData current) {
+		
+		if(current.parents.size() > Metrics.maxHierarchy) {
+			Metrics.maxHierarchy = current.parents.size();
+		}
+		
 		if(verbose)
 			System.out.println("Creating entity to represent : " + current.name);
 		String parent = "";
@@ -260,6 +269,8 @@ public class GraphBuilder {
 		Entity condition = new Entity("Collision", "Condition", "n/a");
 		Entity action = new Entity(interaction.type, "Action", "Interaction");
 		
+		
+		Metrics.interactionCount++;
 		
 		action.addAttribute(new Pair("ScoreChange", interaction.scoreChange));
 		
@@ -800,7 +811,7 @@ public class GraphBuilder {
 							s2 = aMech.getObject2().getParents().get(aMech.getObject2().getParents().size() - 1);
 						}
 						String a = aMech.getAction().getName();
-						if((s1.equals(subtype1)) && (s2.equals(subtype2)) && a.equals(m.getAction().getName())) {
+						if((s1.equals(subtype1) || s1.equals(m.getObject1().getName())) && (s2.equals(subtype2) || s2.equals(m.getObject2().getName())) && a.equals(m.getAction().getName())) {
 							works = 1;
 							break;
 						} 
@@ -873,7 +884,7 @@ public class GraphBuilder {
 					if(aMech.getObject1() != null) {
 						String s1 = aMech.getObject1().getSubtype();
 						String a = aMech.getAction().getName();
-						if((s1.equals(subtype1)) && a.equals(m.getAction().getName())) {
+						if((s1.equals(subtype1) || s1.equals(m.getObject1().getName())) && a.equals(m.getAction().getName())) {
 							works = 1;
 							break;
 						} 
@@ -888,7 +899,6 @@ public class GraphBuilder {
 				}
 			}
 			if(generalizable == 1) {
-				// create a new node to replace this one, with the new generalized Mechanic for object1
 				// create a new node to replace this one, with the new generalized Mechanic for action
 				Entity newAction = new Entity(m.getAction().getName(), "Action", "Interaction");
 				if(m.getAction().getOutputs().size() > 0) {

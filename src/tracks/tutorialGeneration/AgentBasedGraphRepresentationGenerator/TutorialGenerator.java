@@ -14,6 +14,7 @@ import core.game.GameDescription.SpriteData;
 import tools.ElapsedCpuTimer;
 import tools.GameAnalyzer;
 import tools.LevelAnalyzer;
+import tracks.tutorialGeneration.Metrics;
 import tracks.tutorialGeneration.VisualDemonstrationInterfacer;
 import tracks.tutorialGeneration.ITSetParserGenerator.Graph;
 import video.basics.BunchOfGames;
@@ -54,6 +55,7 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 		return null;
 	}
 
+	
 	@Override
 	public String[] generateTutorial(GameDescription game, SLDescription sl, ElapsedCpuTimer elapsedTimer) {
 		String[] generatedTutorial = new String[0];
@@ -254,7 +256,7 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 				}
 			}
 //			vdi.runGame(gameFile, levelFile, "tracks.singlePlayer.advanced.olets.Agent");
-			vdi.runBunchOfGames(bogs);
+//			vdi.runBunchOfGames(bogs);
 
 			// Writes the win info to JSON
 			String two = writeWinInfo(winPath, graph, vdi);
@@ -264,6 +266,14 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 			
 			// gets rid of all the trash frames we don't need
 			throwAwayTrash();
+			
+			Metrics.printMetrics();
+			
+			String gameName = gameFile.replace(".txt", "");
+			gameName = gameName.substring(gameName.indexOf('/')+1);
+			gameName = gameName.substring(gameName.indexOf('/')+1);
+			
+			Metrics.saveMetricsCSV("queriedFrames/" + gameName + "_metrics.csv");
 			return tutorial;
 		} catch (IOException | ParseException e) {
 			// TODO Auto-generated catch block
@@ -338,6 +348,13 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 
 		ArrayList<ArrayList<Mechanic>> superP = graph.visualPathGeneralization(winPath);
 		
+		// Metric Data
+		Metrics.criticalPathVictoryCount = superP.size();
+		for(ArrayList<Mechanic> list : superP) {
+			for(int i = 1; i < list.size(); i++) {
+				Metrics.numberOfMergedInteractions++;
+			}
+		}
 		try (FileWriter file = new FileWriter("queriedFrames/" + gameName + "_visTutorial.json", true)) {
 			String stuffToWrite = "\n\t\"winRules\" : [\n";
 
@@ -378,6 +395,9 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 						for(String frame : frames){
 							allFrames.add(frame);
 						}
+						if(frames.length > 0) {
+							Metrics.shownInteractionCount++;
+						}
 						// add all frames to this guy
 					} catch(Exception e) {
 //						stuffToWrite += ", \"image" + 0 + "\" : \"" + "bah" + "\", \"image" + 1 + "\" : \"" + "bah" + "\",  \"image" + 2 + "\" : \"" + "bah" + "\"";
@@ -416,7 +436,14 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 		gameName = gameName.substring(gameName.indexOf('/')+1);
 		gameName = gameName.substring(gameName.indexOf('/')+1);
 		ArrayList<ArrayList<Mechanic>> superP = graph.visualPathGeneralization(losePath);
-
+		
+		// Metric Data
+		Metrics.criticalPathFailureCount = superP.size();
+		for(ArrayList<Mechanic> list : superP) {
+			for(int i = 1; i < list.size(); i++) {
+				Metrics.numberOfMergedInteractions++;
+			}
+		}
 		try (FileWriter file = new FileWriter("queriedFrames/" + gameName + "_visTutorial.json", true)) {
 			String stuffToWrite = "\n\t\"loseRules\" : [\n";
 
@@ -457,6 +484,9 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 						for(String frame : frames){
 							allFrames.add(frame);
 						}
+						if(frames.length > 0) {
+							Metrics.shownInteractionCount++;
+						}
 						// add all frames to this guy
 					} catch(Exception e) {
 //						stuffToWrite += ", \"image" + 0 + "\" : \"" + "bah" + "\", \"image" + 1 + "\" : \"" + "bah" + "\",  \"image" + 2 + "\" : \"" + "bah" + "\"";
@@ -496,6 +526,13 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 		gameName = gameName.substring(gameName.indexOf('/')+1);
 		ArrayList<ArrayList<Mechanic>> superP = graph.visualPathGeneralization(pointsPath);
 
+		// Metric Data
+		Metrics.pointsCount = superP.size();
+		for(ArrayList<Mechanic> list : superP) {
+			for(int i = 1; i < list.size(); i++) {
+				Metrics.numberOfMergedInteractions++;
+			}
+		}
 		try (FileWriter file = new FileWriter("queriedFrames/" + gameName + "_visTutorial.json", true)) {
 			String stuffToWrite = "\n\t\"pointsRules\" : [\n";
 
@@ -529,6 +566,9 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 //						String[] frames = vdi.retrieveFramePaths(win.getAction().getName(), win.getObject1().getName(), win.getObject2().getName());
 						for(String frame : frames){
 							allFrames.add(frame);
+						}
+						if(frames.length > 0) {
+							Metrics.shownInteractionCount++;
 						}
 						// add all frames to this guy
 					} catch(Exception e) {
