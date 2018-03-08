@@ -262,6 +262,7 @@ public class GraphBuilder {
 		
 		
 		action.addAttribute(new Pair("ScoreChange", interaction.scoreChange));
+		
 		if(verbose)
 			System.out.println("Creating action to represent: " + action.getName());
 		allActions.add(action);
@@ -280,12 +281,15 @@ public class GraphBuilder {
 			condition.addInput(one);
 			action.addInput(condition);
 			
-			// create the output for the action
-			createInteractionActionOutput(action, one, two, interaction);
+
 			// create attributes for the condition
 //			createInteractionConditionAttributes(condition, one, two, interaction);
 			//create a mechanic
 			Mechanic mech = createMechanic(action, one, two, condition);
+			
+			// create the output for the action
+			createInteractionActionOutput(action, one, two, interaction, mech);
+			
 			one.addMechanic(mech);
 			two.addMechanic(mech);
 			action.addMechanic(mech);
@@ -303,7 +307,7 @@ public class GraphBuilder {
 	 * @param two the second object entity for this family
 	 * @param interaction the interaction data for the action
 	 */
-	public void createInteractionActionOutput(Entity action, Entity one, Entity two, InteractionData interaction) {
+	public void createInteractionActionOutput(Entity action, Entity one, Entity two, InteractionData interaction, Mechanic m) {
 		// tracking for what kind of rule this is
 		String name = action.getName();
 		
@@ -313,8 +317,12 @@ public class GraphBuilder {
 			action.addOutput(one);
 		} else if(name.equals("KillAll") || name.equals("SpawnBehind") || name.equals("TransformTo") || name.equals("IncreaseSpeedToAll")
 				|| name.equals("DecreaseSpeedToAll") || name.equals("SetSpeedForAll")) {
-			action.addOutput(searchObjects(interaction.sprites.get(0)));
-		
+			Entity stype = searchObjects(interaction.sprites.get(0));
+			action.addOutput(stype);
+			stype.addMechanic(m);
+		} else if(name.equals("KillBoth")) {
+			action.addOutput(one);
+			action.addOutput(two);
 		}
 	}
 	/**
@@ -460,19 +468,23 @@ public class GraphBuilder {
 	public BFSNode generalize(BFSNode node, ArrayList<Mechanic> siblingMechs) {
 		Mechanic m = node.getMech();
 		siblingMechs.add(m);
-		String subtype1 = null;
-		String subtype2 = null;
+
 		// the specific mechanic in question is a 2-object mechanic
-//		if(m.getObject1() != null && m.getObject2() != null) {
+		Mechanic temp = null;
+		BFSNode newNode = new BFSNode(m);
+		int limit = 0;
+		while((temp == null || !m.equals(temp)) && limit < 10) {
+			temp = m;
 			Mechanic generalizedObj1 = generalizeObject1(m, siblingMechs);
 			Mechanic generalizedObj2 = generalizeObject2(generalizedObj1, siblingMechs);
 			Mechanic generalizedActionOutput = generalizedObj2;
 			if(!generalizedObj1.equals(m) && generalizedActionOutput.getAction().getOutputs().size() > 0)
 				generalizedActionOutput = generalizeActionOutput(generalizedObj2);
-			BFSNode newNode = new BFSNode(generalizedActionOutput);
-			return newNode;	
-//		}
-//		return node;
+			newNode = new BFSNode(generalizedActionOutput);
+			m = generalizedActionOutput;
+			limit++;
+		}
+		return newNode;	
 	}
 	public Mechanic generalizeObject1(Mechanic m, ArrayList<Mechanic> siblingMechs) {
 		ArrayList<Mechanic> subSiblingMechs = new ArrayList<Mechanic>();
@@ -495,6 +507,7 @@ public class GraphBuilder {
 					if(!object.equals(m.getObject1())) {
 						if(object.getParents().size() > 0) {
 							parent = object.getParents().get(object.getParents().size() - 1);
+//							parent = object.getParents().get(0);
 						}
 						if(parent.equals(subtype1)) {
 							spritesToSearch.add(object);
@@ -542,8 +555,18 @@ public class GraphBuilder {
 			if(generalizable == 1 || generalizable == 2) {
 				// create a new node to replace this one, with the new generalized Mechanic for object1
 				Entity newObject = new Entity(subtype1, subtype1, "Object", subtype1);
+//				allObjects.add(newObject);
 				ArrayList<String> falseParents = new ArrayList<String>();
-				falseParents.add(subtype1);
+				// get the real parents, insert everything but the last parent into false parents list
+				ArrayList<String> realParents = m.getObject1().getParents();
+				if(realParents.size() > 1) {
+					for(int i = realParents.size() - 2; i >= 0; i--) {
+						falseParents.add(realParents.get(i));
+					}
+				}
+				if(falseParents.size() == 0) {
+					falseParents.add(subtype1);
+				}
 				newObject.setParents(falseParents);
 				newObject.setAttributes(m.getObject1().getAttributes());
 				Mechanic newMech = null;
@@ -607,8 +630,19 @@ public class GraphBuilder {
 			if(generalizable == 1) {
 				// create a new node to replace this one, with the new generalized Mechanic for object1
 				Entity newObject = new Entity(subtype1, subtype1, "Object", subtype1);
+//				allObjects.add(newObject);
+
 				ArrayList<String> falseParents = new ArrayList<String>();
-				falseParents.add(subtype1);
+				// get the real parents, insert everything but the last parent into false parents list
+				ArrayList<String> realParents = m.getObject1().getParents();
+				if(realParents.size() > 1) {
+					for(int i = realParents.size() - 2; i >= 0; i--) {
+						falseParents.add(realParents.get(i));
+					}
+				}
+				if(falseParents.size() == 0) {
+					falseParents.add(subtype1);
+				}
 				newObject.setParents(falseParents);
 				newObject.setAttributes(m.getObject1().getAttributes());
 				Mechanic newMech = null;
@@ -669,16 +703,11 @@ public class GraphBuilder {
 						// check to make sure the score attribute is the same
 						String l1 = m.getAction().getAttribute("ScoreChange").getValue();
 						String l2 = aMech.getAction().getAttribute("ScoreChange").getValue();
-						if((s1.equals(subtype1)) && (s2.equals(subtype2)) && a.equals(m.getAction().getName()) && !aMech.equals(m) && l1.equals(l2)) {
+						if((s1.equals(subtype1) || s1.equals(m.getObject1().getName())) && (s2.equals(subtype2)) && a.equals(m.getAction().getName()) && !aMech.equals(m) && l1.equals(l2)) {
 							subSiblingMechs.add(aMech);
 							works = 1;
 							break;
-						} 
-//						else if(s1.equals(subtype2) && s2.equals(subtype1) && a.equals(m.getAction().getName()) && !aMech.equals(m) && l1.equals(l2)) {
-//							subSiblingMechs.add(aMech);
-//							works = 2;
-//							break;
-//						}
+						}
 					}
 				}
 				if(works == 0) {
@@ -695,8 +724,19 @@ public class GraphBuilder {
 			if(generalizable == 1 || generalizable == 2) {
 				// create a new node to replace this one, with the new generalized Mechanic for object1
 				Entity newObject = new Entity(subtype2, subtype2, "Object", subtype2);
+//				allObjects.add(newObject);
+
 				ArrayList<String> falseParents = new ArrayList<String>();
-				falseParents.add(subtype2);
+				// get the real parents, insert everything but the last parent into false parents list
+				ArrayList<String> realParents = m.getObject2().getParents();
+				if(realParents.size() > 1) {
+					for(int i = realParents.size() - 2; i >= 0; i--) {
+						falseParents.add(realParents.get(i));
+					}
+				} 
+				if(falseParents.size() == 0) {
+					falseParents.add(subtype2);
+				}
 				newObject.setParents(falseParents);
 				newObject.setAttributes(m.getObject2().getAttributes());
 				Mechanic newMech = null;
@@ -777,7 +817,8 @@ public class GraphBuilder {
 			if(generalizable == 1) {
 				// create a new node to replace this one, with the new generalized Mechanic for action
 				Entity newAction = new Entity(m.getAction().getName(), "Action", "Interaction");
-				
+//				allActions.add(newAction);
+				newAction.setAttributes(m.getAction().getAttributes());
 				if(m.getAction().getOutputs().size() > 0) {
 					String parent = "";
 					if(m.getAction().getOutputs().get(0).getParents().size() > 0) {
@@ -790,7 +831,20 @@ public class GraphBuilder {
 							parent,
 							"Object", 
 							parent);
+					ArrayList<String> falseParents = new ArrayList<String>();
+					// get the real parents, insert everything but the last parent into false parents list
+					ArrayList<String> realParents = m.getAction().getOutputs().get(0).getParents();
+					if(realParents.size() > 1) {
+						for(int i = realParents.size() - 2; i >= 0; i--) {
+							falseParents.add(realParents.get(i));
+						}
+					}
+					if(falseParents.size() == 0) {
+						falseParents.add(subtype1);
+					}
 					newOutput.setAttributes(m.getAction().getOutputs().get(0).getAttributes());
+
+					newOutput.setParents(falseParents);
 					newAction.addOutput(newOutput);
 				}
 				
@@ -902,6 +956,7 @@ public class GraphBuilder {
 			Entity c = winMech.getCondition();
 			String instruct = "If time reaches " + winMech.getCondition().getAttribute("limit").getValue() + " then you " + a.getName();
 			instructions.add(instruct);
+			winPath.add(winMech);
 		}
 		return instructions;
 	}
@@ -1008,7 +1063,7 @@ public class GraphBuilder {
 			}
 		}
 		else if(type == 1) {
-			if(m.getAction().getName() != "Win" && m.getAction().getName() != "Lose") {
+			if(!m.getAction().getName().equals("Win") && !m.getAction().getName().equals("Lose")) {
 				Entity e1 = m.getObject1();
 				Entity e2 = m.getObject2();
 				Entity a = m.getAction();
@@ -1043,6 +1098,16 @@ public class GraphBuilder {
 						instruct += "release a " + stypeObject.getName() + "(Item).";
 					}
 				}
+				else if(a.getName().equals("KillBoth")) {
+					instruct = "If " + e1.getFullName() + " and " + e2.getFullName() + " collide, then both sprites will be destroyed.";
+				}
+				else if(a.getName().equals("CollectResource")) {
+					instruct = "If " + e1.getFullName() + " and " + e2.getFullName() + " collide, then " +e2.getFullName() + " will be collected.";
+				}
+				else if(a.getName().equals("KillIfOtherHasMore")) {
+					instruct = "If " + e1.getFullName() + " and " + e2.getFullName() + " collide and " + e2.getFullName() + "has more than " 
+							+ a.getAttribute("limit").getValue() + " " + a.getAttribute("resource") + " then " + e1.getFullName() + " will be destroyed.";
+				}
 //				+ a.getName();
 					
 			}
@@ -1054,7 +1119,7 @@ public class GraphBuilder {
 				if(e1.getSubtype().equals("Door")) {
 					instruct = "If the " + e1.getFullName() + " sprite is opened, then you " + a.getName() + ".";
 				} else{
-				instruct = "If the " + e1.getFullName() + " sprite reaches " + m.getCondition().getAttribute("limit").getValue() + " then you " + a.getName() + ".";
+				instruct = "If the " + e1.getFullName() + " sprite reaches " + m.getCondition().getAttribute("limit").getValue() + " then you " + a.getName().toLowerCase() + ".";
 			
 				}
 			}
@@ -1063,7 +1128,36 @@ public class GraphBuilder {
 //			BFSNode fakeNode = new BFSNode(m);
 //			ArrayList<Mechanic> siblings = new ArrayList<Mechanic>();
 //			m = generalize(fakeNode, siblings).getMech();
-			instruct = "If the " + m.getObject1().getFullName() + " and the " + m.getObject2().getFullName() + " collide, then you will gain " + m.getAction().getAttribute("ScoreChange").getValue() + " point" + ((m.getAction().getAttribute("ScoreChange").getValue().equals("1") || m.getAction().getAttribute("ScoreChange").getValue().equals("-1")) ? "" : "s") + ".";
+			if(!m.getAction().getName().equals("Win") && !m.getAction().getName().equals("Lose")) {
+				instruct = "If the " + m.getObject1().getFullName() + " and the " + m.getObject2().getFullName() + " collide, then you will gain " + m.getAction().getAttribute("ScoreChange").getValue() + " point" + ((m.getAction().getAttribute("ScoreChange").getValue().equals("1") || m.getAction().getAttribute("ScoreChange").getValue().equals("-1")) ? "" : "s") + ".";
+			}
+			else {
+				Entity c = m.getCondition();
+				if(c.getName().equals("SpriteCounter") || c.getName().equals("MultiSpriteCounter")) {
+					// this is a sprite counter, so make it sound nice about the count being a certain amount
+					if(c.getAttribute("limit").getValue().equals("0")) {
+						instruct += "If there are no more ";
+						instruct += c.getInputs().get(0).getFullName() + " sprites ";
+						for(int i = 1; i < c.getInputs().size(); i++) {
+							instruct += "or " + c.getInputs().get(i).getFullName() + " sprites ";
+						}
+						 instruct += "then you will " + m.getAction().getName().toLowerCase() + ".";
+					}
+					else {
+						instruct += "If the total amount of ";
+						instruct += c.getInputs().get(0).getFullName() + " sprites ";
+						for(int i = 1; i < c.getInputs().size(); i++) {
+							instruct += "and " + c.getInputs().get(i).getFullName() + " sprites ";
+						}
+						instruct += "is " + c.getAttribute("limit").getValue() +", then you will " + m.getAction().getName().toLowerCase() + ".";
+//						instruct += e1.getFullName() + " sprites reaches " + c.getAttribute("limit").getValue() + ", then you will lose.";
+					}
+				} else{
+					// this is a timeout condition
+//					"You will " + (mech.getAction().getName().equals("Win") ? "win" : "lose") + " after " + mech.getAction().getAttribute("limit") + " seconds"
+					instruct += "If time reaches " + c.getAttribute("limit").getValue() + " seconds, then you will " + m.getAction().getName().toLowerCase() + ".";
+				}
+			}
 		}
 		return instruct;
 	}
@@ -1080,9 +1174,13 @@ public class GraphBuilder {
 					if(aff.getType().equals("KillSprite") && c.getAttribute("limit").getValue().equals("0") && aff.getAction().getOutputs().get(0).equals(e)) {
 						instructions.add(aff);
 					}
+					else if((aff.getType().equals("TransformTo") || aff.getType().equals("Spawn")) && !c.getAttribute("limit").getValue().equals("0")) {
+						instructions.add(aff);
+					}
 				}
 
 			}
+			instructions.add(m);
 		}
 		return instructions;
 	}

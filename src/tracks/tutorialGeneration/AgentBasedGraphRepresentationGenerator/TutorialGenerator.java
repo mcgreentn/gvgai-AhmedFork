@@ -26,7 +26,7 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 	private GameDescription game;
 	private String gameFile;
 	
-	private String[] agents = {"adrienctx.Agent", "NovelTS.Agent", "NovTea.Agent", "Number27.Agent", "YOLOBOT.Agent"};
+	private String[] agents = {"adrienctx.Agent", "NovelTS.Agent", "NovTea.Agent", "Number27.Agent", "YOLOBOT.Agent", "tracks.singlePlayer.simple.doNothing.Agent", "tracks.singlePlayer.simple.sampleonesteplookahead.Agent"};
 	
 	private ArrayList<String> necessaryFrames;
 	public TutorialGenerator(SLDescription sl, GameDescription game, ElapsedCpuTimer time, String gameFile) {
@@ -67,27 +67,28 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 		 * Path information
 		 */
 		ArrayList<String> controls = getControlsInformation(graph);
-		ArrayList<String> winPathString = traceCriticalPaths(graph);
-		ArrayList<String> pointsPathString = findPoints(graph);
-		ArrayList<String> losePathString = findLosses(graph);
+		traceCriticalPaths(graph);
+//		ArrayList<String> pointsPathString = findPoints(graph);
+//		ArrayList<String> losePathString = findLosses(graph);
 		
 		ArrayList<Mechanic> winPath = graph.winPath;
 		ArrayList<Mechanic> losePath = graph.losePath();
 		ArrayList<Mechanic> pointsPath = graph.pointsPath();
 		// viz tutorial
-		createVisualTutorial(winPath, pointsPath, losePath, controls, graph, winPathString, losePathString, pointsPathString);
+		String[] tutorial = createTutorial(winPath, pointsPath, losePath, controls, graph);
 		
 		// written tutorial
-		generatedTutorialList.addAll(controls);
-		generatedTutorialList.addAll(winPathString);
-		generatedTutorialList.addAll(pointsPathString);
-		generatedTutorialList.addAll(losePathString);
+//		generatedTutorialList.addAll(controls);
+//		generatedTutorialList.addAll(winPathString);
+//		generatedTutorialList.addAll(pointsPathString);
+//		generatedTutorialList.addAll(losePathString);
 		
 		System.out.println("\n\nStart Tutorial File");
-		for(String instruction : generatedTutorialList) {
+		for(String instruction : tutorial) {
 			System.out.println(instruction);
 		}
-		return generatedTutorialList.toArray(generatedTutorial);
+		return tutorial;
+//		return generatedTutorialList.toArray(generatedTutorial);
 	}
 	
 	public ArrayList<String> traceCriticalPaths(GraphBuilder graph) {
@@ -233,12 +234,12 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 	 * @param losePath
 	 * @param controls
 	 */
-	public void createVisualTutorial(ArrayList<Mechanic> winPath, ArrayList<Mechanic> pointsPath, ArrayList<Mechanic> losePath, ArrayList<String> controls, GraphBuilder graph, ArrayList<String> winText, ArrayList<String> loseText, ArrayList<String> pointsText) {
+	public String[] createTutorial(ArrayList<Mechanic> winPath, ArrayList<Mechanic> pointsPath, ArrayList<Mechanic> losePath, ArrayList<String> controls, GraphBuilder graph) {
 		try {
 
 			
 			// Writes the game info to JSON
-			writeGameInfo(controls, graph);
+			String one = writeGameInfo(controls, graph);
 			// the visual demonstrator which creates frames
 			VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer();
 			String levelFile = "";
@@ -256,25 +257,31 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 			vdi.runBunchOfGames(bogs);
 
 			// Writes the win info to JSON
-			writeWinInfo(winPath, graph, vdi, winText);
-			writeLoseInfo(losePath, graph, vdi, loseText);
-			writePointsInfo(pointsPath, graph, vdi, pointsText);
+			String two = writeWinInfo(winPath, graph, vdi);
+			String three = writeLoseInfo(losePath, graph, vdi);
+			String four = writePointsInfo(pointsPath, graph, vdi);
+			String[] tutorial = {one, two, three, four};
 			
 			// gets rid of all the trash frames we don't need
 			throwAwayTrash();
+			return tutorial;
 		} catch (IOException | ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return null;
 	}
 	
 	
 	public void throwAwayTrash() {
 		try{
-			final File folder = new File("frames");
-			for (final File fileEntry : folder.listFiles()) {
-				if(!necessaryFrames.contains("frames/" + fileEntry.getName())) {
-					fileEntry.delete();
+			final File folder = new File("simulation");
+			for (final File game : folder.listFiles()) {
+				final File frames = new File("simulation/" + game.getName() + "/" + "frames");
+				for(final File fileEntry : frames.listFiles()) {
+					if(!necessaryFrames.contains(fileEntry.getPath())) {
+						fileEntry.delete();
+					} 
 				}
 		        
 		    }
@@ -283,10 +290,12 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 			e.printStackTrace();
 		}
 	}
-	public void writeGameInfo(ArrayList<String> controls, GraphBuilder graph) {
+	public String writeGameInfo(ArrayList<String> controls, GraphBuilder graph) {
 		String gameName = gameFile.replace(".txt", "");
 		gameName = gameName.substring(gameName.indexOf('/')+1);
 		gameName = gameName.substring(gameName.indexOf('/')+1);
+		String returnMe = "The game is " + gameName + ".\n";
+
 		try (FileWriter file = new FileWriter("queriedFrames/" + gameName + "_visTutorial.json")) {
 			// start and game info writing
 			String stuffToWrite = "{\n\t\"gameInfo\" : {\n";
@@ -300,10 +309,12 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 				parent = graph.getAvatarEntites().get(0).getSubtype();
 			}
 			stuffToWrite += "\t\t\"avatarInfo\"\t: \"You are the " + parent + ".\",\n";
+			returnMe += "You are the " + parent + ".\n";
 			stuffToWrite += "\t\t\"controlsInfo\"\t: \"";
 			for(int i = 1; i < controls.size(); i++) {
 				String control = controls.get(i);
 				stuffToWrite += control;
+				returnMe += control + "\n";
 			}
 			stuffToWrite += "\",\n";
 			stuffToWrite += "\t\t\"avatarImage\"\t: \"" + game.getAvatar().get(0).parameters.get("img") + "\"";
@@ -313,16 +324,18 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 			file.write(stuffToWrite);
 			file.flush();
 			file.close();
-
 		} catch (IOException e) {
 			e.printStackTrace();
-		}		
+		}	
+		return returnMe;
 	}
 	
-	public void writeWinInfo(ArrayList<Mechanic> winPath, GraphBuilder graph, VisualDemonstrationInterfacer vdi, ArrayList<String> winText) {
+	public String writeWinInfo(ArrayList<Mechanic> winPath, GraphBuilder graph, VisualDemonstrationInterfacer vdi) {
+		String returnMe = "This is how you win:\n";
 		String gameName = gameFile.replace(".txt", "");
 		gameName = gameName.substring(gameName.indexOf('/')+1);
 		gameName = gameName.substring(gameName.indexOf('/')+1);
+
 		ArrayList<ArrayList<Mechanic>> superP = graph.visualPathGeneralization(winPath);
 		
 		try (FileWriter file = new FileWriter("queriedFrames/" + gameName + "_visTutorial.json", true)) {
@@ -330,89 +343,17 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 
 			
 			// Writes the win path to JSON
-			for(int i = 0; i < winPath.size()-1; i++) {
-				Mechanic win = winPath.get(i);
-				stuffToWrite += (i != 0 ? "," : "") + "\n\t\t{\"text\" : \t\"" + graph.getInteractionString(win, 1) + "\"";
-				int index = 0;
-				try{
-					String[] frames = vdi.retrieveFramePaths(win.getAction().getName(), win.getObject1().getName(), win.getObject2().getName());
-					for(int j = 0; j < frames.length; j++) {
-						stuffToWrite += ", \"image" + j + "\" : \"" + frames[j] + "\"";
-						necessaryFrames.add(frames[j]);
-						index++;
-					}
-					// add all frames to this guy
-				} catch(Exception e) {
-					stuffToWrite += ", \"image" + 0 + "\" : \"" + "bah" + "\", \"image" + 1 + "\" : \"" + "bah" + "\",  \"image" + 2 + "\" : \"" + "bah" + "\"";
-					index++;
-					e.printStackTrace();
-				}
-				stuffToWrite += "}";
-			}
-			
-			stuffToWrite += "\n\t],";
-			file.write(stuffToWrite);
-			file.flush();
-			file.close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	public void writeLoseInfo(ArrayList<Mechanic> losePath, GraphBuilder graph, VisualDemonstrationInterfacer vdi, ArrayList<String> loseText) {
-		String gameName = gameFile.replace(".txt", "");
-		gameName = gameName.substring(gameName.indexOf('/')+1);
-		gameName = gameName.substring(gameName.indexOf('/')+1);
-		ArrayList<ArrayList<Mechanic>> superP = graph.visualPathGeneralization(losePath);
-
-		try (FileWriter file = new FileWriter("queriedFrames/" + gameName + "_visTutorial.json", true)) {
-			String stuffToWrite = "\n\t\"loseRules\" : [\n";
-
-			
-			// Writes the win path to JSON
-			for(int i = 0; i < losePath.size(); i++) {
-				Mechanic win = losePath.get(i);
-				int index = 0;
-				stuffToWrite += (i != 0 ? "," : "") + "\n\t\t{\"text\" : \t\"" + graph.getInteractionString(win, 1) + "\"";
-				try{
-					String[] frames = vdi.retrieveFramePaths(win.getAction().getName(), win.getObject1().getName(), win.getObject2().getName());
-					for(int j = 0; j < frames.length; j++) {
-						stuffToWrite += ", \"image" + j + "\" : \"" + frames[j] + "\"";
-						necessaryFrames.add(frames[j]);
-						index++;
-					}
-					// add all frames to this guy
-				} catch(Exception e) {
-					stuffToWrite += ", \"image" + 0 + "\" : \"" + "bah" + "\", \"image" + 1 + "\" : \"" + "bah" + "\",  \"image" + 2 + "\" : \"" + "bah" + "\"";
-					index++;
-					e.printStackTrace();
-				}
-				stuffToWrite += "}";
-			}
-			
-			stuffToWrite += "\n\t],";
-			file.write(stuffToWrite);
-			file.flush();
-			file.close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	public void writePointsInfo(ArrayList<Mechanic> pointsPath, GraphBuilder graph, VisualDemonstrationInterfacer vdi, ArrayList<String> pointsText) {
-		String gameName = gameFile.replace(".txt", "");
-		gameName = gameName.substring(gameName.indexOf('/')+1);
-		gameName = gameName.substring(gameName.indexOf('/')+1);
-		ArrayList<ArrayList<Mechanic>> superP = graph.visualPathGeneralization(pointsPath);
-
-		try (FileWriter file = new FileWriter("queriedFrames/" + gameName + "_visTutorial.json", true)) {
-			String stuffToWrite = "\n\t\"pointsRules\" : [\n";
-
-			
-			// Writes the win path to JSON
 			for(int i = 0; i < superP.size(); i++) {
 				Mechanic win = superP.get(i).get(0);
-				stuffToWrite += (i != 0 ? "," : "") + "\n\t\t{\"text\" : \t\"" + graph.getInteractionString(win, 2) + "\"";
+				String intString = "";
+				if(i != superP.size() - 1) {
+					intString = graph.getInteractionString(win, 1);
+					stuffToWrite += (i != 0 ? "," : "") + "\n\t\t{\"text\" : \t\"" + intString + "\"";
+				} else {
+					intString = graph.getInteractionString(win, 2);
+					stuffToWrite += (i != 0 ? "," : "") + "\n\t\t{\"text\" : \t\"" + intString + "\"";
+				}
+				returnMe += intString + "\n";
 				int index = 0;
 				
 				// need to get the frames for each interaction after the 0 index for this superP list
@@ -425,27 +366,17 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 					mechsToSearch.add(win);
 				}
 				int counter = 0;
+				ArrayList<String> allFrames = new ArrayList<String>();
 				stuffToWrite += ", \"images\":[";
 				for(int k = 0; k < mechsToSearch.size(); k++) {
 					Mechanic mech = mechsToSearch.get(k);
 					try{
 						
 	//					for(int j = 0; j < super)
-						String[] frames = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction(mech.getObject1().getName(), mech.getObject2().getName(), mech.getAction().getOutputs().get(0).getName()));
+						String[] frames = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction(mech.getAction().getName(), mech.getObject1().getName(), mech.getObject2().getName()));
 //						String[] frames = vdi.retrieveFramePaths(win.getAction().getName(), win.getObject1().getName(), win.getObject2().getName());
-						if(frames != null) {
-							for(int j = 0; j < frames.length; j++) {
-								stuffToWrite += frames[j];
-								necessaryFrames.add(frames[j]);
-								if(k != mechsToSearch.size() - 1 && j != frames.length - 1) {
-									stuffToWrite += ", ";
-								}
-								index++;
-								
-							}
-						}
-						else {
-							
+						for(String frame : frames){
+							allFrames.add(frame);
 						}
 						// add all frames to this guy
 					} catch(Exception e) {
@@ -453,6 +384,174 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 						index++;
 						e.printStackTrace();
 					}
+				}
+				if(allFrames.size() > 0) {
+					for(int j = 0; j < allFrames.size(); j++) {
+						stuffToWrite += "\"" + allFrames.get(j);
+						necessaryFrames.add(allFrames.get(j));
+						if(j < allFrames.size() - 1) {
+							stuffToWrite += "\", ";
+						} else {
+							stuffToWrite += "\"";
+						}
+						index++;
+						
+					}
+				}
+				stuffToWrite += "]}";
+			}				
+			stuffToWrite += "\n\t],";
+			file.write(stuffToWrite);
+			file.flush();
+			file.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return returnMe;
+	}
+	public String writeLoseInfo(ArrayList<Mechanic> losePath, GraphBuilder graph, VisualDemonstrationInterfacer vdi) {
+		String returnMe = "This is how you lose:\n";
+		String gameName = gameFile.replace(".txt", "");
+		gameName = gameName.substring(gameName.indexOf('/')+1);
+		gameName = gameName.substring(gameName.indexOf('/')+1);
+		ArrayList<ArrayList<Mechanic>> superP = graph.visualPathGeneralization(losePath);
+
+		try (FileWriter file = new FileWriter("queriedFrames/" + gameName + "_visTutorial.json", true)) {
+			String stuffToWrite = "\n\t\"loseRules\" : [\n";
+
+			
+			// Writes the win path to JSON
+			for(int i = 0; i < superP.size(); i++) {
+				Mechanic win = superP.get(i).get(0);
+				String intString = "";
+				if(i != superP.size() - 1) {
+					intString = graph.getInteractionString(win, 1);
+					stuffToWrite += (i != 0 ? "," : "") + "\n\t\t{\"text\" : \t\"" + intString + "\"";
+				} else {
+					intString = graph.getInteractionString(win, 2);
+					stuffToWrite += (i != 0 ? "," : "") + "\n\t\t{\"text\" : \t\"" + intString + "\"";
+				}
+				returnMe += intString + "\n";
+				int index = 0;
+				
+				// need to get the frames for each interaction after the 0 index for this superP list
+				ArrayList<Mechanic> mechsToSearch = new ArrayList<Mechanic>();
+				if(superP.get(i).size() > 1) {
+					for(int k = 1; k < superP.get(i).size(); k++) {
+						mechsToSearch.add(superP.get(i).get(k));
+					}
+				} else {
+					mechsToSearch.add(win);
+				}
+				int counter = 0;
+				ArrayList<String> allFrames = new ArrayList<String>();
+				stuffToWrite += ", \"images\":[";
+				for(int k = 0; k < mechsToSearch.size(); k++) {
+					Mechanic mech = mechsToSearch.get(k);
+					try{
+						
+	//					for(int j = 0; j < super)
+						String[] frames = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction(mech.getAction().getName(), mech.getObject1().getName(), mech.getObject2().getName()));
+//						String[] frames = vdi.retrieveFramePaths(win.getAction().getName(), win.getObject1().getName(), win.getObject2().getName());
+						for(String frame : frames){
+							allFrames.add(frame);
+						}
+						// add all frames to this guy
+					} catch(Exception e) {
+//						stuffToWrite += ", \"image" + 0 + "\" : \"" + "bah" + "\", \"image" + 1 + "\" : \"" + "bah" + "\",  \"image" + 2 + "\" : \"" + "bah" + "\"";
+						index++;
+						e.printStackTrace();
+					}
+				}
+				if(allFrames.size() > 0) {
+					for(int j = 0; j < allFrames.size(); j++) {
+						stuffToWrite += "\"" + allFrames.get(j);
+						necessaryFrames.add(allFrames.get(j));
+						if(j < allFrames.size() - 1) {
+							stuffToWrite += "\", ";
+						} else {
+							stuffToWrite += "\"";
+						}
+						index++;					
+					}
+				}
+				stuffToWrite += "]}";
+
+			}
+			stuffToWrite += "\n\t],";
+			file.write(stuffToWrite);
+			file.flush();
+			file.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return returnMe;
+	}
+	public String writePointsInfo(ArrayList<Mechanic> pointsPath, GraphBuilder graph, VisualDemonstrationInterfacer vdi) {
+		String returnMe = "This is how you get points:\n";
+		String gameName = gameFile.replace(".txt", "");
+		gameName = gameName.substring(gameName.indexOf('/')+1);
+		gameName = gameName.substring(gameName.indexOf('/')+1);
+		ArrayList<ArrayList<Mechanic>> superP = graph.visualPathGeneralization(pointsPath);
+
+		try (FileWriter file = new FileWriter("queriedFrames/" + gameName + "_visTutorial.json", true)) {
+			String stuffToWrite = "\n\t\"pointsRules\" : [\n";
+
+			
+			// Writes the win path to JSON
+			for(int i = 0; i < superP.size(); i++) {
+				Mechanic win = superP.get(i).get(0);
+				String stringInt = graph.getInteractionString(win, 2);
+				stuffToWrite += (i != 0 ? "," : "") + "\n\t\t{\"text\" : \t\"" + stringInt + "\"";
+				returnMe += stringInt + "\n";
+				int index = 0;
+				
+				// need to get the frames for each interaction after the 0 index for this superP list
+				ArrayList<Mechanic> mechsToSearch = new ArrayList<Mechanic>();
+				if(superP.get(i).size() > 1) {
+					for(int k = 1; k < superP.get(i).size(); k++) {
+						mechsToSearch.add(superP.get(i).get(k));
+					}
+				} else {
+					mechsToSearch.add(win);
+				}
+				int counter = 0;
+				ArrayList<String> allFrames = new ArrayList<String>();
+				stuffToWrite += ", \"images\":[";
+				for(int k = 0; k < mechsToSearch.size(); k++) {
+					Mechanic mech = mechsToSearch.get(k);
+					try{
+						
+	//					for(int j = 0; j < super)
+						String[] frames = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction(mech.getAction().getName(), mech.getObject1().getName(), mech.getObject2().getName()));
+//						String[] frames = vdi.retrieveFramePaths(win.getAction().getName(), win.getObject1().getName(), win.getObject2().getName());
+						for(String frame : frames){
+							allFrames.add(frame);
+						}
+						// add all frames to this guy
+					} catch(Exception e) {
+//						stuffToWrite += ", \"image" + 0 + "\" : \"" + "bah" + "\", \"image" + 1 + "\" : \"" + "bah" + "\",  \"image" + 2 + "\" : \"" + "bah" + "\"";
+						index++;
+						e.printStackTrace();
+					}
+				}
+				if(allFrames.size() > 0) {
+					for(int j = 0; j < allFrames.size(); j++) {
+						stuffToWrite += "\"" + allFrames.get(j);
+						necessaryFrames.add(allFrames.get(j));
+						if(j < allFrames.size() - 1) {
+							stuffToWrite += "\", ";
+						} else {
+							stuffToWrite += "\"";
+						}
+						index++;
+						
+					}
+				}
+				else {
+					
 				}
 				stuffToWrite += "]}";
 
@@ -466,5 +565,6 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return returnMe;
 	}
 }

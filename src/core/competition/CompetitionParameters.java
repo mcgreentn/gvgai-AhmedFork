@@ -17,7 +17,7 @@ public class CompetitionParameters
     /**
      * Milliseconds for controller disqualification, if it returns an action after this time.
      */
-    public static final int ACTION_TIME_DISQ = 110;
+    public static final int ACTION_TIME_DISQ = 510;
 
     /**
      * Milliseconds allowed for controller initialization.
@@ -63,11 +63,11 @@ public class CompetitionParameters
     /**
      * Milliseconds allowed for the tutorial generator to generate a tutorial
      */
-    public static final int TUTORIAL_ACTION_TIME = 3600000;
+    public static final int TUTORIAL_ACTION_TIME = 360000000;
     /**
      * Milliseconds allowed for the tutorial generation disqualification, if it returns a tutorial after this time
      */
-    public static final int TUTORIAL_ACTION_TIME_DISQ = 21600000;
+    public static final int TUTORIAL_ACTION_TIME_DISQ = 216000000;
     /**
      * Milliseconds allowed for the tutorial generator to initialize
      */

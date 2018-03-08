@@ -47,7 +47,7 @@ public class BFSTree {
 		try {
 			PrintWriter out = new PrintWriter(new FileWriter("output.txt"));
 			int count = 0;
-			while(!queue.isEmpty()) {
+			while(!queue.isEmpty() && queue.size() < 10000) {
 				count++;
 				BFSNode current = queue.get(0);
 				queue.remove(0);
@@ -56,10 +56,10 @@ public class BFSTree {
 					for(Mechanic mech : current.getMech().getOutputs()) {
 						if(!current.getAncestors().contains(mech) && !current.equals(mech)) {
 							System.out.println("current path");
-							for(Mechanic anc : current.getAncestors()) {
-								System.out.println(anc.toString());
-							}
-							System.out.println(mech.toString());
+//							for(Mechanic anc : current.getAncestors()) {
+//								System.out.println(anc.toString());
+//							}
+//							System.out.println(mech.toString());
 //							out.println(mech.toString());
 //							&& current.getAncestors().size() < 6
 							BFSNode child = new BFSNode(mech);
@@ -71,7 +71,7 @@ public class BFSTree {
 							child.addAncestor(mech);
 							child.setParent(current);
 							queue.add(child);
-							System.out.println(child.getAncestors().size());
+//							System.out.println(child.getAncestors().size());
 						} 
 					}
 				}
