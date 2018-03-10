@@ -14,9 +14,10 @@ public class StoreGameSimulationResult
 		gameResult = new JSONObject();
 	}
 
-	public void storeGameSimulationResult(String result)
+	public void storeGameSimulationResult(String result, String tick)
 	{
 		this.gameResult.put("result", result);
+		this.gameResult.put("tick", tick);
 	}
 
 	public void writeResultToAJSONFile(String interactionFile) throws IOException

@@ -1201,12 +1201,12 @@ public abstract class Game {
 		}
 
 		// Prints the result: score, time and winner.
-		try {
-			printResult();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			printResult();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 
 		double[] scores = new double[no_players];
 		for (int i = 0; i < no_players; i++) {
@@ -1254,10 +1254,12 @@ public abstract class Game {
 		}
 		
 		storeGameSimulationResult.
-			storeGameSimulationResult(String.valueOf((avatars[0].getWinState().key())));
+			storeGameSimulationResult(String.valueOf((avatars[0].getWinState().key()))
+					,String.valueOf(gameTick));
 		storeGameSimulationResult.
-			writeResultToAJSONFile("simulation/game" + SimulationCounter.counter +
+			writeResultToAJSONFile("simulation/game" + SimulationCounter.resultsCounter +
 					"/" + "result/result.json");
+		SimulationCounter.resultsCounter += 1;
 
 		System.out.println("Result (1->win; 0->lose): " + sb1 + sb2 + "timesteps:" + this.getGameTick());
 		// System.out.println("Result (1->win; 0->lose):"+ winner.key() + ",

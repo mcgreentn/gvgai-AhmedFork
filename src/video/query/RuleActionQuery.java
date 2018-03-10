@@ -3,12 +3,16 @@ package video.query;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import tracks.tutorialGeneration.VisualDemonstrationInterfacer;
+import video.basics.BunchOfGames;
+import video.basics.FrameKeeper;
 import video.constants.SimulationCounter;
 import video.handlers.FrameInteractionAssociation;
 
@@ -17,16 +21,20 @@ public class RuleActionQuery extends FrameInteractionAssociation{
 	
 	public String fileInteraction;//rules
 	public String fileAction;
-	public int simulationNumber;
+	public String fileResult;
+	private QueryGameResult queryGameResult;
 	
 	public RuleActionQuery(String fileInteraction,
-	 String fileAction, int simulationNumber) throws FileNotFoundException, IOException, ParseException
+	 String fileAction, String fileResult) throws FileNotFoundException, IOException, ParseException
 	{
 		super(fileInteraction);
 		this.fileInteraction = fileInteraction;
 		this.fileAction = fileAction;
-		this.simulationNumber = simulationNumber;
+		this.fileResult = fileResult;
+		queryGameResult = new QueryGameResult(this.fileResult);
 	}
+	
+	public RuleActionQuery(){};
 	
 	public String getFirstRuleActionFrame(String spriteFilter) throws FileNotFoundException, IOException, ParseException
 	{
@@ -47,7 +55,7 @@ public class RuleActionQuery extends FrameInteractionAssociation{
 		return "-1";
 	}
 	
-	public String[] getFirstEventActionFrames(String spriteFilter) throws FileNotFoundException, IOException, ParseException
+	public String[] getFirstEventActionFrames(String spriteFilter, String simulationNumber) throws FileNotFoundException, IOException, ParseException
 	{
 		String [] frames = null;
 		String frameNumber = getFirstRuleActionFrame(spriteFilter);
@@ -89,23 +97,61 @@ public class RuleActionQuery extends FrameInteractionAssociation{
 		return null;
 	}
 	
+	public FrameKeeper[] multipleQueryForFirstAndLastEvents(String [] entityFilter) throws FileNotFoundException, IOException, ParseException
+	{
+		FrameKeeper [] frameKeeper = new FrameKeeper[entityFilter.length];
+		for (int i = 0; i < entityFilter.length; i++) 
+		{
+			String fileInteraction = "simulation/game" 
+					+ i + "/interactions/interaction.json";
+			String fileActions = "simulation/game" 
+					+ i + "/actions/actions.json";
+			String fileResult = "simulation/game" 
+					+ i + "/result/result.json";
+			RuleActionQuery raq = new 
+					RuleActionQuery(fileInteraction, fileActions, fileResult);
+			
+			String framesBegin [] = raq.getFirstEventActionFrames(entityFilter[i], String.valueOf(i));
+			String framesEnd [] = raq.queryGameResult.
+					getLastFrames(i, raq.queryGameResult.gameResultRetrievalSprites());
+			super.applyPrefixToAFrameName(framesEnd, "simulation/" + "game" + i + "/");
+			frameKeeper[i] = new FrameKeeper(framesBegin, framesEnd, raq.queryGameResult.getResult());
+			}
+		return frameKeeper;
+		}
+	
+	
 	public static void main(String[] args) throws FileNotFoundException, IOException, ParseException
 	{
 		//It associates the first time a player hit a (valid) sprite with its object by pressing
 		//the space key. Then it retrieves the frame of the interaction and returns a sequence of frames
 		//wrapping the event
-		RuleActionQuery raq = new RuleActionQuery(
-				"simulation/game0/interactions/interaction.json",
-				"simulation/game0/actions/actions.json", 0);
+		RuleActionQuery raq = new RuleActionQuery();
 		
-		String [] frames = raq.getFirstEventActionFrames("sword");
+	    //1st - configure your games and run the simulations to generate the data
+		BunchOfGames bog1 = new BunchOfGames("examples/gridphysics/zelda.txt", 
+					"examples/gridphysics/zelda_lvl1.txt", 
+					"tracks.singlePlayer.tools.human.Agent");
+			
+		BunchOfGames bog2 = new BunchOfGames("examples/gridphysics/zelda.txt", 
+					"examples/gridphysics/zelda_lvl1.txt", 
+					"tracks.singlePlayer.tools.human.Agent");
 		
-		if(frames != null)
-		{
-			for (int i = 0; i < frames.length; i++) {
-				System.out.println(frames[i]);
-			}
+		ArrayList<BunchOfGames> bogs = new ArrayList<>();
+		bogs.add(bog1); bogs.add(bog2); 
+		VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer();	
+		vdi.runBunchOfGames(bogs);
+		
+		//2 - store your entities (elements which collides with other objecs and are casted out by the player)
+		String entityFilter [] = new String[]{"sword", "sword"};
+		
+		//3 - collect the first (interaction) frames and the last ones (win/lose)
+		//It says with "result:1" if it is a win state and "result:0" if it is a lose one
+		FrameKeeper[] frameKeepers = raq.multipleQueryForFirstAndLastEvents(entityFilter);
+		for (int i = 0; i < frameKeepers.length; i++) {
+			frameKeepers[i].print();
 		}
+		
 	}
 
 }
