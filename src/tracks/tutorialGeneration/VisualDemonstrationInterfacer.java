@@ -285,6 +285,8 @@ public class VisualDemonstrationInterfacer {
 		{
 			Files.createDirectories(Paths.get("simulation/game" + i + "/frames/"));
 			Files.createDirectories(Paths.get("simulation/game" + i + "/interactions/"));
+			Files.createDirectories(Paths.get("simulation/game" + i + "/actions/"));
+			Files.createDirectories(Paths.get("simulation/game" + i + "/result/"));
 		}
 	}
 
