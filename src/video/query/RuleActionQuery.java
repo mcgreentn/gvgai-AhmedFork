@@ -13,7 +13,7 @@ import org.json.simple.parser.ParseException;
 import tracks.tutorialGeneration.VisualDemonstrationInterfacer;
 import video.basics.BunchOfGames;
 import video.basics.FrameKeeper;
-import video.constants.SimulationCounter;
+import video.basics.Interaction;
 import video.handlers.FrameInteractionAssociation;
 
 
@@ -97,10 +97,10 @@ public class RuleActionQuery extends FrameInteractionAssociation{
 		return null;
 	}
 	
-	public FrameKeeper[] multipleQueryForFirstAndLastEvents(String [] entityFilter) throws FileNotFoundException, IOException, ParseException
+	public FrameKeeper[] multipleQueryForFirstAndLastEvents(ArrayList<Interaction> interactions) throws FileNotFoundException, IOException, ParseException
 	{
-		FrameKeeper [] frameKeeper = new FrameKeeper[entityFilter.length];
-		for (int i = 0; i < entityFilter.length; i++) 
+		FrameKeeper [] frameKeeper = new FrameKeeper[interactions.size()];
+		for (int i = 0; i < interactions.size(); i++) 
 		{
 			String fileInteraction = "simulation/game" 
 					+ i + "/interactions/interaction.json";
@@ -108,10 +108,19 @@ public class RuleActionQuery extends FrameInteractionAssociation{
 					+ i + "/actions/actions.json";
 			String fileResult = "simulation/game" 
 					+ i + "/result/result.json";
+			String fileCapture = "simulation/game" 
+					 + i + "/capture/capture.json";
+			
+			RuleCaptureQuery rcq = new 
+					RuleCaptureQuery(fileInteraction, fileCapture, i);
+			
 			RuleActionQuery raq = new 
 					RuleActionQuery(fileInteraction, fileActions, fileResult);
 			
-			String framesBegin [] = raq.getFirstEventActionFrames(entityFilter[i], String.valueOf(i));
+			
+			String framesBegin [] = rcq.
+					getFrameCollectionOfTheVeryFirstTimeThisEventHappened
+					(interactions.get(i).rule, interactions.get(i).sprite1, interactions.get(i).sprite2);
 			String framesEnd [] = raq.queryGameResult.
 					getLastFrames(i, raq.queryGameResult.gameResultRetrievalSprites());
 			super.applyPrefixToAFrameName(framesEnd, "simulation/" + "game" + i + "/");
@@ -129,8 +138,8 @@ public class RuleActionQuery extends FrameInteractionAssociation{
 		RuleActionQuery raq = new RuleActionQuery();
 		
 	    //1st - configure your games and run the simulations to generate the data
-		BunchOfGames bog1 = new BunchOfGames("examples/gridphysics/zelda.txt", 
-					"examples/gridphysics/zelda_lvl1.txt", 
+		BunchOfGames bog1 = new BunchOfGames("examples/gridphysics/aliens.txt", 
+					"examples/gridphysics/aliens_lvl1.txt", 
 					"tracks.singlePlayer.tools.human.Agent");
 			
 		BunchOfGames bog2 = new BunchOfGames("examples/gridphysics/zelda.txt", 
@@ -142,12 +151,14 @@ public class RuleActionQuery extends FrameInteractionAssociation{
 		VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer();	
 		vdi.runBunchOfGames(bogs);
 		
-		//2 - store your entities (elements which collides with other objecs and are casted out by the player)
-		String entityFilter [] = new String[]{"sword", "sword"};
+		//2 - store your interactions 
+		ArrayList<Interaction> interactions = new ArrayList<>();
+		interactions.add(new Interaction("KillSprite", "alienGreen", "sam"));
+		interactions.add(new Interaction("KillSprite", "monsterSlow", "sword"));
 		
 		//3 - collect the first (interaction) frames and the last ones (win/lose)
-		//It says with "result:1" if it is a win state and "result:0" if it is a lose one
-		FrameKeeper[] frameKeepers = raq.multipleQueryForFirstAndLastEvents(entityFilter);
+		//It says with "result:1" if it is a win state and with "result:0" if it is a lose one
+		FrameKeeper[] frameKeepers = raq.multipleQueryForFirstAndLastEvents(interactions);
 		for (int i = 0; i < frameKeepers.length; i++) {
 			frameKeepers[i].print();
 		}

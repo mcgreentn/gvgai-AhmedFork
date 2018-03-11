@@ -12,5 +12,6 @@ public class SimulationCounter {
 
 	public static int counter = 0;
 	public static int resultsCounter = 0;
+	public static int spriteCaptureCounter = 0;
 	
 }

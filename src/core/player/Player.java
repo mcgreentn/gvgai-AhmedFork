@@ -5,7 +5,6 @@ import core.game.StateObservation;
 import core.game.StateObservationMulti;
 import ontology.Types;
 import tools.ElapsedCpuTimer;
-
 import java.awt.*;
 import java.io.BufferedWriter;
 import java.io.File;
