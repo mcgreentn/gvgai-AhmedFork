@@ -21,6 +21,8 @@ public class FrameInteractionAssociation
 		interactionArray = retrieveInteractionFile(interactionFileName);
 	}
 	
+	public FrameInteractionAssociation(){}
+	
 	public JSONObject retrieveInteraction(String interaction)
 	{
 		for (int i = 0; i < interactionArray.size(); i++) 
@@ -130,6 +132,15 @@ public class FrameInteractionAssociation
 			frames[3] = "frames/frame" + (tick - 1) + ".png";
 			frames[4] = "frames/frame" + (tick) + ".png";
 		}
+	}
+	
+	public void applyPrefixToAFrameName(String[] frames, String prefix)
+	{
+		frames[0] = prefix + frames[0];
+		frames[1] = prefix + frames[1];
+		frames[2] = prefix + frames[2];
+		frames[3] = prefix + frames[3];
+		frames[4] = prefix + frames[4];
 	}
 	
 	public void checkNegativeFramesBeforeTheInteraction(String[] frames, int tick)

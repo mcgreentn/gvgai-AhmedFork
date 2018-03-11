@@ -166,7 +166,12 @@ public class RuleGenMachine
 
 		// This, the last thing to do in this method, always:
 		toPlay.handleResult();
-		toPlay.printResult();
+		try {
+			toPlay.printResult();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		return toPlay.getFullResult();
 	}
@@ -218,7 +223,12 @@ public class RuleGenMachine
 		} catch (Exception e) {
 			toPlay.disqualify();
 			toPlay.handleResult();
-			toPlay.printResult();
+			try {
+				toPlay.printResult();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 			return false;

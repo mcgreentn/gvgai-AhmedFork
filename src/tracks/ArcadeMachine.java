@@ -155,7 +155,12 @@ public class ArcadeMachine {
 
 			// Get the score for the result.
 			toPlay.handleResult();
-			toPlay.printResult();
+			try {
+				toPlay.printResult();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			return toPlay.getFullResult();
 			}
 		}
@@ -172,7 +177,12 @@ public class ArcadeMachine {
 
 		// This, the last thing to do in this method, always:
 		toPlay.handleResult();
-		toPlay.printResult();
+		try {
+			toPlay.printResult();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		return toPlay.getFullResult();
 	}
@@ -250,7 +260,12 @@ public class ArcadeMachine {
 
 			// Get the score for the result.
 			double result[] = toPlay.handleResult();
-			toPlay.printResult();
+			try {
+				toPlay.printResult();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			return result;
 			}
 		}
@@ -372,7 +387,12 @@ public class ArcadeMachine {
 		}
 
 		double result[] = toPlay.handleResult();
-		toPlay.printResult();
+		try {
+			toPlay.printResult();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return result;
     }
 
@@ -476,18 +496,33 @@ public class ArcadeMachine {
 		if ((no_players - disqCount) >= toPlay.no_players) {
 		    score = toPlay.runGame(players, randomSeed);
 		    //score = toPlay.playGame(players, randomSeed, false, 0);
-		    toPlay.printResult();
+		    try {
+				toPlay.printResult();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else {
 		    // Get the score for the result.
 		    score = toPlay.handleResult();
-		    toPlay.printResult();
+		    try {
+				toPlay.printResult();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		// Finally, when the game is over, we need to tear the players
 		// down.
 		if (!ArcadeMachine.tearPlayerDown(toPlay, players, filename, randomSeed, true)) {
 		    score = toPlay.handleResult();
-		    toPlay.printResult();
+		    try {
+				toPlay.printResult();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		// Get players stats

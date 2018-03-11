@@ -55,7 +55,12 @@ public class TutorialGenMachine {
         catch (Exception e) {
 			toPlay.disqualify();
 			toPlay.handleResult();
-			toPlay.printResult();
+			try {
+				toPlay.printResult();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 			return false;

@@ -34,6 +34,7 @@ public class Agent extends AbstractPlayer {
      * @param elapsedTimer Timer for the controller creation.
      */
     public Agent(StateObservation so, ElapsedCpuTimer elapsedTimer) {
+    	
         //Get the actions in a static array.
         ArrayList<Types.ACTIONS> act = so.getAvailableActions();
         actions = new Types.ACTIONS[act.size()];

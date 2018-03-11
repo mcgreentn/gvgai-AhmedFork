@@ -28,6 +28,7 @@ import ontology.physics.Physics;
 import tools.Direction;
 import tools.Utils;
 import tools.Vector2d;
+import video.basics.SpriteCapture;
 
 /**
  * Created with IntelliJ IDEA.
@@ -333,6 +334,8 @@ public abstract class VGDLSprite {
      */
     public double max_speed;
 
+	public ArrayList<String> tickCollector = new ArrayList<>();
+
     /**
      * Initializes the sprite, giving its position and dimensions.
      * @param position position of the sprite
@@ -377,7 +380,6 @@ public abstract class VGDLSprite {
         rotation = 0.0;
         max_speed = -1.0;
         images = new HashMap<String,ArrayList<Image>>();
-
         this.size = size;
         determinePhysics(physicstype, size);
         setRandomColor();
@@ -455,7 +457,7 @@ public abstract class VGDLSprite {
      * @param game the current game that is being played.
      */
     public void update(Game game)
-    {
+    {  	
         updatePassive();
         if (timeToLive > -1) {
             if (timeToLive > 0) timeToLive--;
@@ -463,7 +465,25 @@ public abstract class VGDLSprite {
         }
     }
 
-    public void updateAvatar(Game game, boolean request, boolean[] actionMask) {}
+	/**
+	 * @param game
+	 */
+	public void captureSpriteAlongItsExistance(Game game, 
+			ArrayList<VGDLSprite> spriteCopies) {
+		
+		if(is_from_avatar)
+        {
+			tickCollector.add(String.valueOf(game.getGameTick()));
+			if(!spriteCopies.contains(this))
+				spriteCopies.add(this);
+        }
+		
+	}
+
+    public void updateAvatar(Game game, boolean request, boolean[] actionMask) 
+    {
+    	 
+    }
 
 
     /**
@@ -523,6 +543,7 @@ public abstract class VGDLSprite {
         if (!is_static && !only_active) {
             physics.passiveMovement(this);
         }
+        
     }
 
 
