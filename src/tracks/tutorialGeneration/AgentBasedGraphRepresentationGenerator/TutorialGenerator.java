@@ -19,6 +19,7 @@ import tracks.tutorialGeneration.VisualDemonstrationInterfacer;
 import tracks.tutorialGeneration.ITSetParserGenerator.Graph;
 import video.basics.BunchOfGames;
 import video.basics.Interaction;
+import video.query.ScalableQuery;
 import core.logging.Logger;
 
 public class TutorialGenerator extends AbstractTutorialGenerator{
@@ -153,7 +154,7 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 		String avatarParent = "";
 		Entity avatar = graph.getAvatarEntites().get(0);
 		
-		if(avatar.getParents().size() > 0) {
+		if(avatar.getParents().size() > 0 && graph.gd.getAvatar().size() > 1) {
 			avatarParent = avatar.getParents().get(avatar.getParents().size() - 1);
 		}
 		else {
@@ -258,6 +259,12 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 //			vdi.runGame(gameFile, levelFile, "tracks.singlePlayer.advanced.olets.Agent");
 //			vdi.runBunchOfGames(bogs);
 
+			String gameName = gameFile.replace(".txt", "");
+			gameName = gameName.substring(gameName.indexOf('/')+1);
+			gameName = gameName.substring(gameName.indexOf('/')+1);
+			// get other game metrics
+//			Metrics.getAgentMetrics(bogs, gameName, game);
+			
 			// Writes the win info to JSON
 			String two = writeWinInfo(winPath, graph, vdi);
 			String three = writeLoseInfo(losePath, graph, vdi);
@@ -267,13 +274,11 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 			// gets rid of all the trash frames we don't need
 			throwAwayTrash();
 			
-			Metrics.printMetrics();
+
 			
-			String gameName = gameFile.replace(".txt", "");
-			gameName = gameName.substring(gameName.indexOf('/')+1);
-			gameName = gameName.substring(gameName.indexOf('/')+1);
+//			Metrics.printMetrics();
 			
-			Metrics.saveMetricsCSV("queriedFrames/" + gameName + "_metrics.csv");
+//			Metrics.saveMetricsCSV(gameName + "_metrics.csv");
 			return tutorial;
 		} catch (IOException | ParseException e) {
 			// TODO Auto-generated catch block
@@ -312,7 +317,7 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 
 			stuffToWrite += "\t\t\"gameName\"\t\t: \"" + gameName + "\",\n";
 			String parent = "";
-			if(graph.getAvatarEntites().get(0).getParents().size() > 0) {
+			if(graph.getAvatarEntites().get(0).getParents().size() > 0 && graph.gd.getAvatar().size() > 1) {
 				parent = graph.getAvatarEntites().get(0).getParents().get(graph.getAvatarEntites().get(0).getParents().size() - 1);
 			}
 			else {
@@ -347,7 +352,7 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 		gameName = gameName.substring(gameName.indexOf('/')+1);
 
 		ArrayList<ArrayList<Mechanic>> superP = graph.visualPathGeneralization(winPath);
-		
+		Metrics.winPathing(superP);
 		// Metric Data
 		Metrics.criticalPathVictoryCount = superP.size();
 		for(ArrayList<Mechanic> list : superP) {
@@ -607,4 +612,5 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 		}
 		return returnMe;
 	}
+
 }

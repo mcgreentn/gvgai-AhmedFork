@@ -19,7 +19,7 @@ public class GraphBuilder {
 	/**
 	 * Information parsed from the VGDL File
 	 */
-	private GameDescription gd;
+	public GameDescription gd;
 	private SLDescription sl;
 	private GameAnalyzer ga;
 	private LevelAnalyzer la;
