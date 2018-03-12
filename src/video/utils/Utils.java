@@ -10,6 +10,9 @@ import java.util.Set;
 
 import javax.swing.JComboBox;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 public abstract class Utils 
 {
 	public static void feedComboBox(JComboBox<String> cbx, ArrayList<String> strings)
@@ -33,6 +36,19 @@ public abstract class Utils
 		{
 			cbx.addItem(string);
 		}
+	}
+	
+	public static boolean isValueValid(JSONArray array, String value)
+	{
+		for (int i = 0; i < array.size(); i++) 
+		{
+			JSONObject obj = (JSONObject) array.get(i);
+			if (obj.containsValue(value))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public static void deleteFolder(File file) throws IOException

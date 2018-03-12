@@ -10,7 +10,10 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import tracks.tutorialGeneration.AgentBasedGraphRepresentationGenerator.Entity;
+import tracks.tutorialGeneration.AgentBasedGraphRepresentationGenerator.Mechanic;
 import video.basics.Interaction;
+import video.utils.Utils;
 
 public class RuleCaptureQuery 
 {
@@ -49,12 +52,39 @@ public class RuleCaptureQuery
 		return frames;
 	}
 	
+	public String[] getShootFrameAndCollisionFrameActivateFromTheFirstTimeInThisMechanicList(ArrayList<ArrayList<Mechanic>> mechanics) throws FileNotFoundException, IOException, ParseException
+	{
+		String frames [] = null;
+		//Navigate in the ArrayList<ArrayList<Mechanic>>
+		ArrayList<Mechanic> ms = mechanics.get(1);
+		for (int j = 0; j < ms.size(); j++) 
+		{
+			Mechanic m  =  ms.get(j);
+			Entity obj1 =  m.getObject1();
+			Entity obj2 =  m.getObject2();
+			Entity act  =  m.getAction();
+			
+			frames = getFrameCollectionOfTheVeryFirstTimeThisEventHappened(act.getName(), obj1.getName(), obj2.getName());
+			if(frames != null)
+			{
+				frames = new String[]{frames[0], frames[frames.length-1]};
+				return frames;
+			}
+		}
+		
+		return null;
+	}
+	
 	public String[] getFrameCollection(JSONObject objCaptured, String lastFrame, Interaction interaction) throws FileNotFoundException, IOException, ParseException
 	{
 		String frames[] = null;
 		JSONParser parser = new JSONParser();
 		JSONArray interactionArray = 
 				(JSONArray) parser.parse(new FileReader(this.actionFile));
+		
+		if(!checkIfInteractionValuesAreValid(interaction, interactionArray))
+			return null;
+		
 		for (int i = 0; i < interactionArray.size(); i++) 
 		{
 			JSONObject obj = (JSONObject)interactionArray.get(i);
@@ -76,6 +106,18 @@ public class RuleCaptureQuery
 			}
 		}
 		return frames;
+	}
+
+	/**
+	 * @param interaction
+	 * @param interactionArray
+	 */
+	public boolean checkIfInteractionValuesAreValid(Interaction interaction, JSONArray interactionArray) {
+		if(Utils.isValueValid(interactionArray, interaction.sprite1) && Utils.isValueValid(interactionArray, interaction.sprite2))
+		{
+			return true;
+		}
+		return false;
 	}
 
 	public String[] getFramesThisFrameCollection(JSONObject objCaptured) 
@@ -101,6 +143,8 @@ public class RuleCaptureQuery
 		return frames.toArray(new String[frames.size()]);
 	}
 	
+	
+	
 	public static void main(String [] args) throws FileNotFoundException, IOException, ParseException
 	{
 		String fileInteraction = "simulation/game" 
@@ -110,15 +154,61 @@ public class RuleCaptureQuery
 		int simulation = 0;
 		RuleCaptureQuery rcq = new 
 				RuleCaptureQuery(fileInteraction, fileCapture, simulation);
+//		
+//		String frames [] = 
+//				rcq.
+//					getFrameCollectionOfTheVeryFirstTimeThisEventHappened
+//						("KillSprite", "monsterSlow", "sword");
+//		for (int i = 0; i < frames.length; i++) 
+//		{
+//			System.out.println(frames[i]);
+//		}
 		
-		String frames [] = 
-				rcq.
-					getFrameCollectionOfTheVeryFirstTimeThisEventHappened
-						("KillSprite", "monsterSlow", "sword");
-		for (int i = 0; i < frames.length; i++) 
-		{
-			System.out.println(frames[i]);
-		}
+		ArrayList<ArrayList<Mechanic>> superP = new ArrayList<ArrayList<Mechanic>>();		
+		// example critical path
+		// first mechanic
+		ArrayList<Mechanic> first = new ArrayList<Mechanic>();
+		Mechanic input = new Mechanic(
+				new Entity("avatar", "Object", "FlakAvatar"), 
+				new Entity("Press Space", "Condition", "Player Input"), 
+				new Entity("Shoot", "Action", "Interaction"));
+		
+		input.getAction().getOutputs().add(new Entity("sam","Object","Missile"));
+		first.add(input);
+		first.add(input);
+		superP.add(first);
+		
+		ArrayList<Mechanic> next1 = new ArrayList<Mechanic>();
+		next1.add(new Mechanic(
+				new Entity("alien", "Object", "alien"), 
+				new Entity("sam", "Object", "Missile"), 
+				new Entity("Collision", "Condition", "n/a"),
+				new Entity("KillSprite", "Action", "Interaction")));
+		next1.add(new Mechanic(
+				new Entity("alienGreen", "Object", "Bomber"), 
+				new Entity("sam", "Object", "Missile"), 
+				new Entity("Collision", "Condition", "n/a"), 
+				new Entity("KillSprite", "Action", "Interaction")));
+		next1.add(new Mechanic(
+				new Entity("alienBlue", "Object", "Bomber"), 
+				new Entity("sam", "Object", "Missile"),
+				new Entity("Collision", "Condition", "n/a"), 
+				new Entity("KillSprite", "Action", "Interaction")));
+		superP.add(next1);
+		
+		ArrayList<Mechanic> last = new ArrayList<Mechanic>();
+		last.add(new Mechanic(
+				new Entity("alien", "Object", "alien"), 
+				new Entity("MultiSpriteCounter", "Condition", "n/a"), 
+				new Entity("Win", "Action","Termination")));
+		superP.add(last);
+		
+		String frames[] = rcq.wrapper(superP);
+		
+		System.out.println(frames[0]);
+		System.out.println(frames[1]);
+		
+		
 		
 	}
 	

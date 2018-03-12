@@ -147,17 +147,18 @@ public class RuleActionQuery extends FrameInteractionAssociation{
 					"tracks.singlePlayer.tools.human.Agent");
 		
 		ArrayList<BunchOfGames> bogs = new ArrayList<>();
-		bogs.add(bog1); bogs.add(bog2); 
+		bogs.add(bog1); /*bogs.add(bog2);*/ 
 		VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer();	
 		vdi.runBunchOfGames(bogs);
 		
 		//2 - store your interactions 
 		ArrayList<Interaction> interactions = new ArrayList<>();
 		interactions.add(new Interaction("KillSprite", "alienGreen", "sam"));
-		interactions.add(new Interaction("KillSprite", "monsterSlow", "sword"));
+		//interactions.add(new Interaction("KillSprite", "monsterSlow", "sword"));
 		
 		//3 - collect the first (interaction) frames and the last ones (win/lose)
-		//It says with "result:1" if it is a win state and with "result:0" if it is a lose one
+		//It says with "result:1" if it the final state is a win state 
+		//and with "result:0" if it is a lose one
 		FrameKeeper[] frameKeepers = raq.multipleQueryForFirstAndLastEvents(interactions);
 		for (int i = 0; i < frameKeepers.length; i++) {
 			frameKeepers[i].print();

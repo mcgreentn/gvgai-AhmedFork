@@ -497,22 +497,58 @@ public class VisualDemonstrationInterfacer {
 		// example critical path
 		// first mechanic
 		ArrayList<Mechanic> first = new ArrayList<Mechanic>();
-		Mechanic input = new Mechanic(new Entity("avatar", "Object", "FlakAvatar"), new Entity("Press Space", "Condition", "Player Input"), new Entity("Shoot", "Action", "Interaction"));
+		Mechanic input = new Mechanic(
+				new Entity("avatar", "Object", "FlakAvatar"), 
+				new Entity("Press Space", "Condition", "Player Input"), 
+				new Entity("Shoot", "Action", "Interaction"));
+		
 		input.getAction().getOutputs().add(new Entity("sam","Object","Missile"));
 		first.add(input);
 		first.add(input);
 		superP.add(first);
 		
 		ArrayList<Mechanic> next1 = new ArrayList<Mechanic>();
-		next1.add(new Mechanic(new Entity("alien", "Object", "alien"), new Entity("sam", "Object", "Missile"), new Entity("Collision", "Condition", "n/a"), new Entity("KillSprite", "Action", "Interaction")));
-		next1.add(new Mechanic(new Entity("alienGreen", "Object", "Bomber"), new Entity("sam", "Object", "Missile"), new Entity("Collision", "Condition", "n/a"), new Entity("KillSprite", "Action", "Interaction")));
-		next1.add(new Mechanic(new Entity("alienBlue", "Object", "Bomber"), new Entity("sam", "Object", "Missile"), new Entity("Collision", "Condition", "n/a"), new Entity("KillSprite", "Action", "Interaction")));
+		next1.add(new Mechanic(
+				new Entity("alien", "Object", "alien"), 
+				new Entity("sam", "Object", "Missile"), 
+				new Entity("Collision", "Condition", "n/a"),
+				new Entity("KillSprite", "Action", "Interaction")));
+		next1.add(new Mechanic(
+				new Entity("alienGreen", "Object", "Bomber"), 
+				new Entity("sam", "Object", "Missile"), 
+				new Entity("Collision", "Condition", "n/a"), 
+				new Entity("KillSprite", "Action", "Interaction")));
+		next1.add(new Mechanic(
+				new Entity("alienBlue", "Object", "Bomber"), 
+				new Entity("sam", "Object", "Missile"),
+				new Entity("Collision", "Condition", "n/a"), 
+				new Entity("KillSprite", "Action", "Interaction")));
 		superP.add(next1);
 		
 		ArrayList<Mechanic> last = new ArrayList<Mechanic>();
-		last.add(new Mechanic(new Entity("alien", "Object", "alien"), new Entity("MultiSpriteCounter", "Condition", "n/a"), new Entity("Win", "Action","Termination")));
+		last.add(new Mechanic(
+				new Entity("alien", "Object", "alien"), 
+				new Entity("MultiSpriteCounter", "Condition", "n/a"), 
+				new Entity("Win", "Action","Termination")));
 		superP.add(last);
+		
+		//Navigate in the ArrayList<ArrayList<Mechanic>>
+		ArrayList<Mechanic> ms = superP.get(1);
+		for (int j = 0; j < ms.size(); j++) 
+		{
+			Mechanic m  =  ms.get(j);
+			Entity obj1 =  m.getObject1();
+			Entity obj2 =  m.getObject2();
+			Entity act  =  m.getAction();
+			//Entity cond =  m.getCondition();
+			
+			System.out.println(obj1.getName());
+			System.out.println(obj2.getName());
+			System.out.println(act.getName());
+			//System.out.println(cond.getName());
+		}
 	}
+	
 
 }
 

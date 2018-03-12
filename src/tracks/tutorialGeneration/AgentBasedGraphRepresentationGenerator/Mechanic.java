@@ -15,6 +15,7 @@ public class Mechanic {
 	private String type;
 	
 	private boolean generalized;
+	
 	public Mechanic(Entity object1, Entity object2, Entity condition, Entity action) {
 		this.object1 = object1;
 		this.object2 = object2;
