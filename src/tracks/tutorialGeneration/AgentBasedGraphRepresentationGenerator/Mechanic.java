@@ -25,6 +25,12 @@ public class Mechanic {
 		outputs = new ArrayList<Mechanic>();
 	}
 	
+	/**
+	 * Inits a mechanic with one object, condition, and action
+	 * @param object1
+	 * @param condition
+	 * @param action
+	 */
 	public Mechanic(Entity object1, Entity condition, Entity action){
 		this.object1 = object1;
 		this.condition = condition;
@@ -103,6 +109,11 @@ public class Mechanic {
 			}
 			else {
 				mechAsString = condition.getName() + " in " + condition.getAttribute("limit") + " seconds";
+			}
+		} else if(object1 != null && object2 == null) {
+			mechAsString = object1.getName() + " " + condition.getName() + " = " + action.getName();
+			if(action.getOutputs().size() > 0) {
+				mechAsString += " " + action.getOutputs().get(0).getName();
 			}
 		}
 		return mechAsString;

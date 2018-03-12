@@ -16,6 +16,8 @@ import org.json.simple.parser.ParseException;
 import com.sun.deploy.uitoolkit.impl.fx.Utils;
 
 import tracks.ArcadeMachine;
+import tracks.tutorialGeneration.AgentBasedGraphRepresentationGenerator.Entity;
+import tracks.tutorialGeneration.AgentBasedGraphRepresentationGenerator.Mechanic;
 import video.basics.BunchOfGames;
 import video.basics.Interaction;
 import video.basics.InteractionFrame;
@@ -491,7 +493,25 @@ public class VisualDemonstrationInterfacer {
 //		{
 //			System.out.println("interaction not registered!");
 //		}
-
+		ArrayList<ArrayList<Mechanic>> superP = new ArrayList<ArrayList<Mechanic>>();		
+		// example critical path
+		// first mechanic
+		ArrayList<Mechanic> first = new ArrayList<Mechanic>();
+		Mechanic input = new Mechanic(new Entity("avatar", "Object", "FlakAvatar"), new Entity("Press Space", "Condition", "Player Input"), new Entity("Shoot", "Action", "Interaction"));
+		input.getAction().getOutputs().add(new Entity("sam","Object","Missile"));
+		first.add(input);
+		first.add(input);
+		superP.add(first);
+		
+		ArrayList<Mechanic> next1 = new ArrayList<Mechanic>();
+		next1.add(new Mechanic(new Entity("alien", "Object", "alien"), new Entity("sam", "Object", "Missile"), new Entity("Collision", "Condition", "n/a"), new Entity("KillSprite", "Action", "Interaction")));
+		next1.add(new Mechanic(new Entity("alienGreen", "Object", "Bomber"), new Entity("sam", "Object", "Missile"), new Entity("Collision", "Condition", "n/a"), new Entity("KillSprite", "Action", "Interaction")));
+		next1.add(new Mechanic(new Entity("alienBlue", "Object", "Bomber"), new Entity("sam", "Object", "Missile"), new Entity("Collision", "Condition", "n/a"), new Entity("KillSprite", "Action", "Interaction")));
+		superP.add(next1);
+		
+		ArrayList<Mechanic> last = new ArrayList<Mechanic>();
+		last.add(new Mechanic(new Entity("alien", "Object", "alien"), new Entity("MultiSpriteCounter", "Condition", "n/a"), new Entity("Win", "Action","Termination")));
+		superP.add(last);
 	}
 
 }
