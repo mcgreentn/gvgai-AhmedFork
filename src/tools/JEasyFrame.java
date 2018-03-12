@@ -5,6 +5,8 @@ import java.awt.Component;
 
 import javax.swing.JFrame;
 
+import com.sun.glass.events.WindowEvent;
+
 import core.competition.CompetitionParameters;
 
 /**
@@ -36,6 +38,11 @@ public class JEasyFrame extends JFrame {
         	setDefaultCloseOperation(EXIT_ON_CLOSE);
         }
         repaint();
+    }
+    
+    public void closeWindow()
+    {
+    	dispose();
     }
 
     /**

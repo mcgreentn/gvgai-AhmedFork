@@ -12,6 +12,7 @@ import org.json.simple.parser.ParseException;
 
 import tracks.tutorialGeneration.AgentBasedGraphRepresentationGenerator.Entity;
 import tracks.tutorialGeneration.AgentBasedGraphRepresentationGenerator.Mechanic;
+import video.basics.BunchOfGames;
 import video.basics.Interaction;
 import video.utils.Utils;
 
@@ -203,12 +204,10 @@ public class RuleCaptureQuery
 				new Entity("Win", "Action","Termination")));
 		superP.add(last);
 		
-		String frames[] = rcq.wrapper(superP);
+		String frames[] = rcq.getShootFrameAndCollisionFrameActivateFromTheFirstTimeInThisMechanicList(superP);
 		
 		System.out.println(frames[0]);
-		System.out.println(frames[1]);
-		
-		
+		System.out.println(frames[1]);		
 		
 	}
 	

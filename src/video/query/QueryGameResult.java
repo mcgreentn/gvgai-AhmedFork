@@ -26,7 +26,7 @@ public class QueryGameResult extends FrameInteractionAssociation
 	
 	public int getResult() throws FileNotFoundException, IOException, ParseException
 	{
-		JSONObject resultObj = getGameResult();
+		JSONObject resultObj = getGameResultObject();
 		int result = Integer.parseInt((String)resultObj.get("result"));
 		return result;
 	}
@@ -39,15 +39,16 @@ public class QueryGameResult extends FrameInteractionAssociation
 		return resultObj;
 	}
 	
-	public JSONObject getGameResult() throws FileNotFoundException, IOException, ParseException
+	public JSONObject getGameResultObject() throws FileNotFoundException, IOException, ParseException
 	{
 		JSONObject resultObj = gameResultRetrievalSprites();
 		return resultObj;
 	}
 	
-	public String[] getLastFrames(int numberOfSimulation, JSONObject resultObj) throws FileNotFoundException, IOException, ParseException
+	public String[] getLastFrames(int numberOfSimulation) throws FileNotFoundException, IOException, ParseException
 	{
 		String [] frames = new String[5];
+		JSONObject resultObj = this.getGameResultObject();
 		int tick = Integer.parseInt((String)resultObj.get("tick"));
 		String prefix = "simulation/game" + numberOfSimulation + "/";
 		String frame0 = prefix + "frames/frame" + (tick - 2) + ".png";

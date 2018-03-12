@@ -19,12 +19,15 @@ import tracks.ArcadeMachine;
 import tracks.tutorialGeneration.AgentBasedGraphRepresentationGenerator.Entity;
 import tracks.tutorialGeneration.AgentBasedGraphRepresentationGenerator.Mechanic;
 import video.basics.BunchOfGames;
+import video.basics.GameSimulationResult;
 import video.basics.Interaction;
 import video.basics.InteractionFrame;
 import video.basics.InteractionQueryObject;
 import video.gui.main.ShowFrames;
 import video.gui.main.VideoPlayer;
 import video.handlers.FrameInteractionAssociation;
+import video.query.QueryGameResult;
+import video.query.RuleCaptureQuery;
 
 public class VisualDemonstrationInterfacer {
 
@@ -374,182 +377,125 @@ public class VisualDemonstrationInterfacer {
 		}
 		return frames;
 	}
+	
+	/**
+	 * @param superP
+	 * @param bunchOfGames
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	public static String[][] retrieveFramesCollisionAndEndState(ArrayList<ArrayList<Mechanic>> superP, ArrayList<BunchOfGames> bunchOfGames)
+			throws FileNotFoundException, IOException, ParseException {
+		
+		String allFrames[][] = null;
+		String [] shootAndCollisionFrames;
+		String [] lastFrames;
+		
+		VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer();
+		vdi.runBunchOfGames(bunchOfGames);
+		
+		int simulationNumber = bunchOfGames.size();
+		for (int i = 0; i < simulationNumber; i++) {
+			
+			//1 - Load Files
+			String fileInteraction = "simulation/game" 
+					 + i + "/interactions/interaction.json";
+			String fileCapture = "simulation/game" 
+					 + i + "/capture/capture.json";
+			String fileResult = "simulation/game" 
+					+ i + "/result/result.json";
+
+			//2 - Initialize Auxiliary classes
+			QueryGameResult qgr = new QueryGameResult(fileResult);
+			if(qgr.getResult() == 1)
+			{
+				RuleCaptureQuery rcq = new RuleCaptureQuery(fileInteraction, fileCapture, i);
+				shootAndCollisionFrames = rcq.getShootFrameAndCollisionFrameActivateFromTheFirstTimeInThisMechanicList(superP);
+				lastFrames = qgr.getLastFrames(i);
+				allFrames = new String[][]{
+						shootAndCollisionFrames,
+						lastFrames
+				};
+				return allFrames;
+			}
+			
+		}
+		return null;
+	}
 
 	public static void main(String [] args) throws FileNotFoundException, IOException, ParseException
 	{
-		/*1    Video Example - Killing the lobster
-		VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer();
-		vdi.runGame("examples/gridphysics/zelda.txt", 
-					"examples/gridphysics/zelda_lvl1.txt", 
-					"tracks.singlePlayer.advanced.olets.Agent");
-		vdi.queryVisualDemonstrator("monsterSlow", "sword", "KillSprite", "Go and kill that horrendous lobster!");*/
+		//0 - Configure the critical path
+			ArrayList<ArrayList<Mechanic>> superP = new ArrayList<ArrayList<Mechanic>>();		
+			// example critical path
+			// first mechanic
+			ArrayList<Mechanic> first = new ArrayList<Mechanic>();
+			Mechanic input = new Mechanic(
+					new Entity("avatar", "Object", "FlakAvatar"), 
+					new Entity("Press Space", "Condition", "Player Input"), 
+					new Entity("Shoot", "Action", "Interaction"));
 
-		/*2     Video Example - Avatar being killed
-		VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer();
-		vdi.runGame("examples/gridphysics/zelda.txt", 
-					"examples/gridphysics/zelda_lvl1.txt", 
+			input.getAction().getOutputs().add(new Entity("sam","Object","Missile"));
+			first.add(input);
+			first.add(input);
+			superP.add(first);
+
+			ArrayList<Mechanic> next1 = new ArrayList<Mechanic>();
+			next1.add(new Mechanic(
+					new Entity("alien", "Object", "alien"), 
+					new Entity("sam", "Object", "Missile"), 
+					new Entity("Collision", "Condition", "n/a"),
+					new Entity("KillSprite", "Action", "Interaction")));
+			next1.add(new Mechanic(
+					new Entity("alienGreen", "Object", "Bomber"), 
+					new Entity("sam", "Object", "Missile"), 
+					new Entity("Collision", "Condition", "n/a"), 
+					new Entity("KillSprite", "Action", "Interaction")));
+			next1.add(new Mechanic(
+					new Entity("alienBlue", "Object", "Bomber"), 
+					new Entity("sam", "Object", "Missile"),
+					new Entity("Collision", "Condition", "n/a"), 
+					new Entity("KillSprite", "Action", "Interaction")));
+			superP.add(next1);
+
+			ArrayList<Mechanic> last = new ArrayList<Mechanic>();
+			last.add(new Mechanic(
+					new Entity("alien", "Object", "alien"), 
+					new Entity("MultiSpriteCounter", "Condition", "n/a"), 
+					new Entity("Win", "Action","Termination")));
+			superP.add(last);
+		
+		//1 - Configure your games
+		
+			BunchOfGames bog1 = new BunchOfGames("examples/gridphysics/aliens.txt", 
+					"examples/gridphysics/aliens_lvl0.txt", 
 					"tracks.singlePlayer.tools.human.Agent");
-		vdi.queryVisualDemonstrator("nokey", "monsterSlow", "KillSprite", "Got killed by a lobster! - (Allergy?)");*/
 
-		/*3      Query for Frames Example - It will look for the interaction frames and saved them inside the folder
-		 * queriedFrames as a JSON file called qFrames.json
-		VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer();
-		vdi.runGame("examples/gridphysics/zelda.txt", 
-					"examples/gridphysics/zelda_lvl1.txt", 
-					"tracks.singlePlayer.advanced.olets.Agent");
-		InteractionQueryObject iqo1 = new InteractionQueryObject
-				("nokey", "key", "TransformTo", "Getting the key");
-		InteractionQueryObject iqo2 = new InteractionQueryObject
-				("monsterSlow", "sword", "KillSprite", "Go and kill that horrendous lobster!");
-		InteractionQueryObject [] iqos = new InteractionQueryObject[2];
-		iqos[0] = iqo2;
-		iqos[1] = iqo1;
-		HashMap<Integer, TupleRuleFrames> frames = vdi.queryVisualDemonstrations(iqos);
-		JSONArray frameArray = vdi.writeQueriedFramesInJSONArray(frames);
-		vdi.writeQueryFramesInJSONFile(frameArray);*/
+			BunchOfGames bog2 = new BunchOfGames("examples/gridphysics/aliens.txt", 
+					"examples/gridphysics/aliens_lvl0.txt", 
+					"tracks.singlePlayer.tools.human.Agent");
 
-		/*4     Run the scalable version*/
-		//		VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer();
-		//
-		////		//1st - configure your games
-		//		BunchOfGames bog1 = new BunchOfGames("examples/gridphysics/zelda.txt", 
-		//				"examples/gridphysics/zelda_lvl1.txt", 
-		//				"tracks.singlePlayer.advanced.olets.Agent");
-		//		
-		//		BunchOfGames bog2 = new BunchOfGames("examples/gridphysics/zelda.txt", 
-		//				"examples/gridphysics/zelda_lvl1.txt", 
-		//				"tracks.singlePlayer.advanced.olets.Agent");
-		//		
-		//		BunchOfGames bog3 = new BunchOfGames("examples/gridphysics/zelda.txt", 
-		//				"examples/gridphysics/zelda_lvl1.txt", 
-		//				"tracks.singlePlayer.advanced.olets.Agent");
-		//		ArrayList<BunchOfGames> bogs = new ArrayList<>();
-		//		bogs.add(bog1); bogs.add(bog2); bogs.add(bog3);
-		//		
-		//		//2nd - configure the interactions you want to search for
-		//		ArrayList<Interaction> interactions = new ArrayList<>();
-		//		interactions.add(new Interaction("KillSprite", "monsterSlow", "sword"));
-		//		interactions.add(new Interaction("TransformTo", "nokey", "key"));
-		//		interactions.add(new Interaction("KillSprite", "monsterQuick", "sword"));
-		//		
-		//		
-		//		//3rd run the method runMultipleGameSimulations
-		//		HashMap<Interaction, String[]> frameCollection = vdi.runMultipleGameSimulations(bogs, interactions);
-		//		
-		//		System.out.println("-------------------------------------------");
-		//		for (Interaction key : frameCollection.keySet()) {
-		//			
-		//			System.out.println("Interaction: " + key.rule);
-		//			System.out.println("Sprite1: " + key.sprite1);
-		//			System.out.println("Sprite2: " + key.sprite2);
-		//			System.out.println();
-		//			System.out.println("Interaction Frame List");
-		//			String [] frames = frameCollection.get(key);
-		//			for (int j = 0; j < frames.length; j++) {
-		//				System.out.println(j + " - " + frames[j]);
-		//			}
-		//			System.out.println("-------------------------------------------");
-		//			System.out.println();
-		//		}
-		//	}
-
-		/*5     Mapping Interactions*/
-		//VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer();
-
-		//1st - configure your games
-//		BunchOfGames bog1 = new BunchOfGames("examples/gridphysics/zelda.txt", 
-//				"examples/gridphysics/zelda_lvlTST.txt", 
-//				"tracks.singlePlayer.tools.human.Agent");
-//
-//		BunchOfGames bog2 = new BunchOfGames("examples/gridphysics/zelda.txt", 
-//				"examples/gridphysics/zelda_lvlTST.txt", 
-//				"tracks.singlePlayer.tools.human.Agent");
-////
-////		BunchOfGames bog3 = new BunchOfGames("examples/gridphysics/zelda.txt", 
-////				"examples/gridphysics/zelda_lvl1.txt", 
-////				"tracks.singlePlayer.advanced.olets.Agent");
-//		ArrayList<BunchOfGames> bogs = new ArrayList<>();
-//		bogs.add(bog1); bogs.add(bog2); //bogs.add(bog3);
-//
-//		//2nd - run a bunch of games
-//		vdi.runBunchOfGames(bogs);
-//
-//		//3rd run the method mapFramePathsInTheCollectionByInteraction
-//		
-//		ArrayList<String[]> frameCollections = new ArrayList<>();
-//		String [] frames1 = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction("TransformTo", "nokey", "key"));
-//		String [] frames2 = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction("KillSprite", "goal", "withkey"));
-//		frameCollections.add(frames1); frameCollections.add(frames2);
-//		//4th it will return the frames of the interaction (if it exists) 
-//		//if(frames != null)
-//		for(String[] frames : frameCollections)
-//		{
-//			for (int i = 0; i < frames.length; i++) {
-//				System.out.println(frames[i]);
-//			}
-//		}
-
-//		else
-//		{
-//			System.out.println("interaction not registered!");
-//		}
-		ArrayList<ArrayList<Mechanic>> superP = new ArrayList<ArrayList<Mechanic>>();		
-		// example critical path
-		// first mechanic
-		ArrayList<Mechanic> first = new ArrayList<Mechanic>();
-		Mechanic input = new Mechanic(
-				new Entity("avatar", "Object", "FlakAvatar"), 
-				new Entity("Press Space", "Condition", "Player Input"), 
-				new Entity("Shoot", "Action", "Interaction"));
+			ArrayList<BunchOfGames> bunchOfGames = new ArrayList<>();
+			bunchOfGames.add(bog1); bunchOfGames.add(bog2);
 		
-		input.getAction().getOutputs().add(new Entity("sam","Object","Missile"));
-		first.add(input);
-		first.add(input);
-		superP.add(first);
+		//2 - Run the following method and get the sprites
+		String [][] collisionAndLastFrames = retrieveFramesCollisionAndEndState(superP, bunchOfGames);
 		
-		ArrayList<Mechanic> next1 = new ArrayList<Mechanic>();
-		next1.add(new Mechanic(
-				new Entity("alien", "Object", "alien"), 
-				new Entity("sam", "Object", "Missile"), 
-				new Entity("Collision", "Condition", "n/a"),
-				new Entity("KillSprite", "Action", "Interaction")));
-		next1.add(new Mechanic(
-				new Entity("alienGreen", "Object", "Bomber"), 
-				new Entity("sam", "Object", "Missile"), 
-				new Entity("Collision", "Condition", "n/a"), 
-				new Entity("KillSprite", "Action", "Interaction")));
-		next1.add(new Mechanic(
-				new Entity("alienBlue", "Object", "Bomber"), 
-				new Entity("sam", "Object", "Missile"),
-				new Entity("Collision", "Condition", "n/a"), 
-				new Entity("KillSprite", "Action", "Interaction")));
-		superP.add(next1);
-		
-		ArrayList<Mechanic> last = new ArrayList<Mechanic>();
-		last.add(new Mechanic(
-				new Entity("alien", "Object", "alien"), 
-				new Entity("MultiSpriteCounter", "Condition", "n/a"), 
-				new Entity("Win", "Action","Termination")));
-		superP.add(last);
-		
-		//Navigate in the ArrayList<ArrayList<Mechanic>>
-		ArrayList<Mechanic> ms = superP.get(1);
-		for (int j = 0; j < ms.size(); j++) 
-		{
-			Mechanic m  =  ms.get(j);
-			Entity obj1 =  m.getObject1();
-			Entity obj2 =  m.getObject2();
-			Entity act  =  m.getAction();
-			//Entity cond =  m.getCondition();
-			
-			System.out.println(obj1.getName());
-			System.out.println(obj2.getName());
-			System.out.println(act.getName());
-			//System.out.println(cond.getName());
+		System.out.println();
+		for (int i = 0; i < collisionAndLastFrames.length; i++) {
+			if(i == 0)
+				System.out.println("collision frames: ");
+			else
+				System.out.println("last frames collection: ");
+			String [] frames = collisionAndLastFrames[i];
+			for (int j = 0; j < frames.length; j++) {
+				System.out.println(frames[j]);
+			}
+			System.out.println();
 		}
 	}
 	
-
 }
 
 class TupleRuleFrames{

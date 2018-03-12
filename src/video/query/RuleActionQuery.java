@@ -122,7 +122,7 @@ public class RuleActionQuery extends FrameInteractionAssociation{
 					getFrameCollectionOfTheVeryFirstTimeThisEventHappened
 					(interactions.get(i).rule, interactions.get(i).sprite1, interactions.get(i).sprite2);
 			String framesEnd [] = raq.queryGameResult.
-					getLastFrames(i, raq.queryGameResult.gameResultRetrievalSprites());
+					getLastFrames(i);
 			super.applyPrefixToAFrameName(framesEnd, "simulation/" + "game" + i + "/");
 			frameKeeper[i] = new FrameKeeper(framesBegin, framesEnd, raq.queryGameResult.getResult());
 			}

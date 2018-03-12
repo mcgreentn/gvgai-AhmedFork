@@ -308,6 +308,9 @@ public abstract class Game {
 	/*object that stores the ticks of sprites created by an avatar*/
 	public StoreSpriteCapture storeSpriteCapute;
 
+	/*object JEasyFrame - responsible for creating the game window*/
+	public JEasyFrame frame;
+
 	/**
 	 * Default constructor.
 	 */
@@ -960,7 +963,7 @@ public abstract class Game {
 
 		// Create and initialize the panel for the graphics.
 		VGDLViewer view = new VGDLViewer(this, players[humanID]);
-		JEasyFrame frame;
+		
 		frame = new JEasyFrame(view, "Java-VGDL");
 
 		frame.addKeyListener(ki);
@@ -1275,6 +1278,7 @@ public abstract class Game {
 		storeGameSimulationResult.
 			writeResultToAJSONFile("simulation/game" + SimulationCounter.resultsCounter +
 					"/" + "result/result.json");
+		System.out.println(this.getClass().getSimpleName());
 		SimulationCounter.resultsCounter += 1;
 
 		System.out.println("Result (1->win; 0->lose): " + sb1 + sb2 + "timesteps:" + this.getGameTick());
@@ -1287,15 +1291,15 @@ public abstract class Game {
 			spritesCaptured.add(sc);
 		}
 		
-		StoreSpriteCapture storeSpriteCapute = new StoreSpriteCapture();
+		StoreSpriteCapture storeSpriteCapture = new StoreSpriteCapture();
 		
 		for (SpriteCapture spriteCapture : spritesCaptured) 
 		{
 			JSONObject obj = spriteCapture.toJSONObject();
-			storeSpriteCapute.storeAllSpritesCaptured(obj);
+			storeSpriteCapture.storeAllSpritesCaptured(obj);
 		}
 		
-		storeSpriteCapute.
+		storeSpriteCapture.
 			writeSpriteCaptureJSONFile
 				("simulation/game" + SimulationCounter.spriteCaptureCounter +
 						"/" + "capture/capture.json");
@@ -1303,6 +1307,7 @@ public abstract class Game {
 		
 		// System.out.println("Result (1->win; 0->lose):"+ winner.key() + ",
 		// Score:" + score + ", timesteps:" + this.getGameTick());
+		frame.closeWindow();
 	}
 
 	/**
