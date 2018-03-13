@@ -596,6 +596,7 @@ public class VisualDemonstrationInterfacer {
 //			
 		//3 - Query for specific interactions
 			System.out.println();
+			
 			String [] frames = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction("KillBoth", "base", "sam"));
 			for (int i = 0; i < frames.length; i++) {
 				System.out.println(frames[i]);

@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.json.simple.parser.ParseException;
 
@@ -37,6 +38,8 @@ public class Metrics {
 	public static int bogsSize;
 	public static ArrayList<ArrayList<Mechanic>> superP;
 	public static int[][][] winPath;
+	public static HashMap<Integer, int[]> relevantFrames;
+	
 	public static void printMetrics() {
 		System.out.println("Metrics");
 		System.out.println("**************");
@@ -113,7 +116,18 @@ public class Metrics {
 				}
 			}
 		}
-        
+		sb.append("Win Path Proof");
+		for (Integer i : relevantFrames.keySet()) 
+		{
+			System.out.println("number of the win path simulation: " + i);
+			int frameIntegers [] = relevantFrames.get(i);
+			for (int j = 0; j < frameIntegers.length; j++) {
+				sb.append(frameIntegers[j] + ",");		
+			}
+			sb.append("\n");
+		}
+		
+		
         pw.write(sb.toString());
         pw.close();
 	}
@@ -148,24 +162,23 @@ public class Metrics {
 		}
 	}
 	
-	public static void winPathing(ArrayList<ArrayList<Mechanic>> superP) {
-		Metrics.superP = superP;
-		ScalableQuery scalableQuery = new ScalableQuery();
-		winPath = new int[superP.size()][][];
-		for(int i = 1; i < superP.size()-1; i++) {
-			winPath[i] = new int[superP.get(i).size()][];
-			for(int j = 1; j < superP.get(i).size(); j++) {
-				String sprite1 = superP.get(i).get(j).getObject1().getName();
-				String sprite2 = superP.get(i).get(j).getObject2().getName();
-				String action = superP.get(i).get(j).getAction().getName(); 
-				
-				try {
-					winPath[i][j-1] = scalableQuery.firstFrameOfSpecifiedInteraction(new Interaction(action, sprite1, sprite2), bogsSize);
-				} catch (IOException | ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
+	public static void winPathing(HashMap<Integer, int[]> relevantFrames) {
+		Metrics.relevantFrames = relevantFrames;
+//		winPath = new int[superP.size()][][];
+//		for(int i = 1; i < superP.size()-1; i++) {
+//			winPath[i] = new int[superP.get(i).size()][];
+//			for(int j = 1; j < superP.get(i).size(); j++) {
+//				String sprite1 = superP.get(i).get(j).getObject1().getName();
+//				String sprite2 = superP.get(i).get(j).getObject2().getName();
+//				String action = superP.get(i).get(j).getAction().getName(); 
+//				
+//				try {
+//					winPath[i][j-1] = scalableQuery.firstFrameOfSpecifiedInteraction(new Interaction(action, sprite1, sprite2), bogsSize);
+//				} catch (IOException | ParseException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+//		}
 	}
 }

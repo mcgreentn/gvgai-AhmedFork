@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.json.simple.parser.ParseException;
 
@@ -28,7 +29,8 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 	private GameDescription game;
 	private String gameFile;
 	
-	private String[] agents = {"adrienctx.Agent", "NovelTS.Agent", "NovTea.Agent", "Number27.Agent", "YOLOBOT.Agent", "tracks.singlePlayer.simple.doNothing.Agent", "tracks.singlePlayer.simple.sampleonesteplookahead.Agent"};
+	private String[] agents = {"adrienctx.Agent"};
+//			, "NovelTS.Agent", "NovTea.Agent", "Number27.Agent", "YOLOBOT.Agent", "tracks.singlePlayer.simple.doNothing.Agent", "tracks.singlePlayer.simple.sampleonesteplookahead.Agent"};
 	
 	private ArrayList<String> necessaryFrames;
 	public TutorialGenerator(SLDescription sl, GameDescription game, ElapsedCpuTimer time, String gameFile) {
@@ -251,13 +253,13 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 			ArrayList<BunchOfGames> bogs = new ArrayList<>();
 			/** Add games for all agents on all levels **/
 			for(int i = 0; i < agents.length; i++) {
-				for(int j = 0; j < 5; j++) {
+				for(int j = 0; j < 1; j++) {
 					levelFile = gameFile.replace(".txt", "_lvl" + j + ".txt");
 					bogs.add(new BunchOfGames(gameFile, levelFile, agents[i]));
 				}
 			}
 //			vdi.runGame(gameFile, levelFile, "tracks.singlePlayer.advanced.olets.Agent");
-//			vdi.runBunchOfGames(bogs);
+			vdi.runBunchOfGames(bogs);
 
 			String gameName = gameFile.replace(".txt", "");
 			gameName = gameName.substring(gameName.indexOf('/')+1);
@@ -266,10 +268,11 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 //			Metrics.getAgentMetrics(bogs, gameName, game);
 			
 			// Writes the win info to JSON
-			String two = writeWinInfo(winPath, graph, vdi);
+			String two = writeWinInfo(winPath, graph, vdi, bogs);
 			String three = writeLoseInfo(losePath, graph, vdi);
 			String four = writePointsInfo(pointsPath, graph, vdi);
 			String[] tutorial = {one, two, three, four};
+			
 			
 			// gets rid of all the trash frames we don't need
 			throwAwayTrash();
@@ -278,7 +281,7 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 			
 //			Metrics.printMetrics();
 			
-//			Metrics.saveMetricsCSV(gameName + "_metrics.csv");
+			Metrics.saveMetricsCSV(gameName + "_metrics.csv");
 			return tutorial;
 		} catch (IOException | ParseException e) {
 			// TODO Auto-generated catch block
@@ -345,14 +348,22 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 		return returnMe;
 	}
 	
-	public String writeWinInfo(ArrayList<Mechanic> winPath, GraphBuilder graph, VisualDemonstrationInterfacer vdi) {
+	public String writeWinInfo(ArrayList<Mechanic> winPath, GraphBuilder graph, VisualDemonstrationInterfacer vdi, ArrayList<BunchOfGames> bogs) {
 		String returnMe = "This is how you win:\n";
 		String gameName = gameFile.replace(".txt", "");
 		gameName = gameName.substring(gameName.indexOf('/')+1);
 		gameName = gameName.substring(gameName.indexOf('/')+1);
 
 		ArrayList<ArrayList<Mechanic>> superP = graph.visualPathGeneralization(winPath);
-		Metrics.winPathing(superP);
+		
+		try {
+			HashMap<Integer, int[]> relevantFrames = vdi.getAllRelevantFrames(superP, bogs);
+			Metrics.winPathing(relevantFrames);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+//		Metrics.winPathing(superP);
 		// Metric Data
 		Metrics.criticalPathVictoryCount = superP.size();
 		for(ArrayList<Mechanic> list : superP) {
@@ -395,11 +406,12 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 					try{
 						
 	//					for(int j = 0; j < super)
-//						String[] frames = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction(mech.getAction().getName(), mech.getObject1().getName(), mech.getObject2().getName()));
+						String[] frames = vdi.mapFramePathsInTheCollectionByMechanic(mech);
+//								vdi.mapFramePathsInTheCollectionByInteraction(new Interaction(mech.getAction().getName(), mech.getObject1().getName(), mech.getObject2().getName()));
 ////						String[] frames = vdi.retrieveFramePaths(win.getAction().getName(), win.getObject1().getName(), win.getObject2().getName());
-//						for(String frame : frames){
-//							allFrames.add(frame);
-//						}
+						for(String frame : frames){
+							allFrames.add(frame);
+						}
 //						if(frames.length > 0) {
 //							Metrics.shownInteractionCount++;
 //						}
@@ -484,11 +496,12 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 					try{
 						
 	//					for(int j = 0; j < super)
-//						String[] frames = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction(mech.getAction().getName(), mech.getObject1().getName(), mech.getObject2().getName()));
+						String[] frames = vdi.mapFramePathsInTheCollectionByMechanic(mech);
+//								vdi.mapFramePathsInTheCollectionByInteraction(new Interaction(mech.getAction().getName(), mech.getObject1().getName(), mech.getObject2().getName()));
 ////						String[] frames = vdi.retrieveFramePaths(win.getAction().getName(), win.getObject1().getName(), win.getObject2().getName());
-//						for(String frame : frames){
-//							allFrames.add(frame);
-//						}
+						for(String frame : frames){
+							allFrames.add(frame);
+						}
 //						if(frames.length > 0) {
 //							Metrics.shownInteractionCount++;
 //						}
@@ -567,11 +580,12 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 					try{
 						
 //	//					for(int j = 0; j < super)
-//				//		String[] frames = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction(mech.getAction().getName(), mech.getObject1().getName(), mech.getObject2().getName()));
+						String[] frames = vdi.mapFramePathsInTheCollectionByMechanic(mech);
+//								vdi.mapFramePathsInTheCollectionByInteraction(new Interaction(mech.getAction().getName(), mech.getObject1().getName(), mech.getObject2().getName()));
 ////						String[] frames = vdi.retrieveFramePaths(win.getAction().getName(), win.getObject1().getName(), win.getObject2().getName());
-//						for(String frame : frames){
-//							allFrames.add(frame);
-//						}
+						for(String frame : frames){
+							allFrames.add(frame);
+						}
 //						if(frames.length > 0) {
 //							Metrics.shownInteractionCount++;
 //						}
