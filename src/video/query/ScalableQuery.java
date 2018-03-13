@@ -105,7 +105,7 @@ public class ScalableQuery extends Query {
 				"examples/gridphysics/zelda_lvl0.txt", "tracks.singlePlayer.tools.human.Agent");
 		ArrayList<BunchOfGames> bunchOfGames = new ArrayList<>();
 		bunchOfGames.add(bog1); bunchOfGames.add(bog2); bunchOfGames.add(bog3);
-		VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer();
+		VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer(true);
 		vdi.runBunchOfGames(bunchOfGames);
 		
 		ScalableQuery scalableQuery = new ScalableQuery();

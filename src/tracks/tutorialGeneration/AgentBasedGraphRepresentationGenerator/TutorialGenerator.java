@@ -244,7 +244,7 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 			// Writes the game info to JSON
 			String one = writeGameInfo(controls, graph);
 			// the visual demonstrator which creates frames
-			VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer();
+			VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer(true);
 			String levelFile = "";
 			
 			
@@ -395,14 +395,14 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 					try{
 						
 	//					for(int j = 0; j < super)
-						String[] frames = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction(mech.getAction().getName(), mech.getObject1().getName(), mech.getObject2().getName()));
-//						String[] frames = vdi.retrieveFramePaths(win.getAction().getName(), win.getObject1().getName(), win.getObject2().getName());
-						for(String frame : frames){
-							allFrames.add(frame);
-						}
-						if(frames.length > 0) {
-							Metrics.shownInteractionCount++;
-						}
+//						String[] frames = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction(mech.getAction().getName(), mech.getObject1().getName(), mech.getObject2().getName()));
+////						String[] frames = vdi.retrieveFramePaths(win.getAction().getName(), win.getObject1().getName(), win.getObject2().getName());
+//						for(String frame : frames){
+//							allFrames.add(frame);
+//						}
+//						if(frames.length > 0) {
+//							Metrics.shownInteractionCount++;
+//						}
 						// add all frames to this guy
 					} catch(Exception e) {
 //						stuffToWrite += ", \"image" + 0 + "\" : \"" + "bah" + "\", \"image" + 1 + "\" : \"" + "bah" + "\",  \"image" + 2 + "\" : \"" + "bah" + "\"";
@@ -484,14 +484,14 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 					try{
 						
 	//					for(int j = 0; j < super)
-						String[] frames = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction(mech.getAction().getName(), mech.getObject1().getName(), mech.getObject2().getName()));
-//						String[] frames = vdi.retrieveFramePaths(win.getAction().getName(), win.getObject1().getName(), win.getObject2().getName());
-						for(String frame : frames){
-							allFrames.add(frame);
-						}
-						if(frames.length > 0) {
-							Metrics.shownInteractionCount++;
-						}
+//						String[] frames = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction(mech.getAction().getName(), mech.getObject1().getName(), mech.getObject2().getName()));
+////						String[] frames = vdi.retrieveFramePaths(win.getAction().getName(), win.getObject1().getName(), win.getObject2().getName());
+//						for(String frame : frames){
+//							allFrames.add(frame);
+//						}
+//						if(frames.length > 0) {
+//							Metrics.shownInteractionCount++;
+//						}
 						// add all frames to this guy
 					} catch(Exception e) {
 //						stuffToWrite += ", \"image" + 0 + "\" : \"" + "bah" + "\", \"image" + 1 + "\" : \"" + "bah" + "\",  \"image" + 2 + "\" : \"" + "bah" + "\"";
@@ -566,15 +566,15 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 					Mechanic mech = mechsToSearch.get(k);
 					try{
 						
-	//					for(int j = 0; j < super)
-						String[] frames = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction(mech.getAction().getName(), mech.getObject1().getName(), mech.getObject2().getName()));
-//						String[] frames = vdi.retrieveFramePaths(win.getAction().getName(), win.getObject1().getName(), win.getObject2().getName());
-						for(String frame : frames){
-							allFrames.add(frame);
-						}
-						if(frames.length > 0) {
-							Metrics.shownInteractionCount++;
-						}
+//	//					for(int j = 0; j < super)
+//				//		String[] frames = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction(mech.getAction().getName(), mech.getObject1().getName(), mech.getObject2().getName()));
+////						String[] frames = vdi.retrieveFramePaths(win.getAction().getName(), win.getObject1().getName(), win.getObject2().getName());
+//						for(String frame : frames){
+//							allFrames.add(frame);
+//						}
+//						if(frames.length > 0) {
+//							Metrics.shownInteractionCount++;
+//						}
 						// add all frames to this guy
 					} catch(Exception e) {
 //						stuffToWrite += ", \"image" + 0 + "\" : \"" + "bah" + "\", \"image" + 1 + "\" : \"" + "bah" + "\",  \"image" + 2 + "\" : \"" + "bah" + "\"";

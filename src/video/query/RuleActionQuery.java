@@ -148,7 +148,7 @@ public class RuleActionQuery extends FrameInteractionAssociation{
 		
 		ArrayList<BunchOfGames> bogs = new ArrayList<>();
 		bogs.add(bog1); /*bogs.add(bog2);*/ 
-		VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer();	
+		VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer(true);	
 		vdi.runBunchOfGames(bogs);
 		
 		//2 - store your interactions 

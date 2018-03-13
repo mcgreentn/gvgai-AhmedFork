@@ -41,13 +41,28 @@ public class VisualDemonstrationInterfacer {
 
 	private ShowFrames showFrames;
 
-	private int numberOfSimulations;
+	private long numberOfSimulations;
 
-	public VisualDemonstrationInterfacer() throws FileNotFoundException, IOException, ParseException {
+	public VisualDemonstrationInterfacer(boolean deleteFolders) throws FileNotFoundException, IOException, ParseException {
 		numberOfSimulations = 0;
-		video.utils.Utils.deleteFolder(new File("simulation"));
+		if(deleteFolders)
+			video.utils.Utils.deleteFolder(new File("simulation"));
 	}
-
+	
+	public long numberOfSimulationFoldersAreAvailable()
+	{
+		long count = 0;
+		try {
+			return count  = Files.find(
+				    Paths.get("simulation/"), 
+				    1, 
+				    (path, attributes) -> attributes.isDirectory()
+				).count() - 1;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			return count;
+		} 
+	}
 	public void runGame(String game, String level1, String agentName)
 	{
 		ArcadeMachine.runOneGame(game, level1, true, agentName, "", 0, 0);
@@ -242,7 +257,33 @@ public class VisualDemonstrationInterfacer {
 	public String[] mapFramePathsInTheCollectionByInteraction(Interaction interaction) throws FileNotFoundException, IOException, ParseException
 	{
 		String [] frames = new String[]{};
-		ArrayList<String> interactionPaths = loadInteractionPaths(numberOfSimulations);
+		ArrayList<String> interactionPaths = loadInteractionPaths(numberOfSimulationFoldersAreAvailable());
+		for(String path : interactionPaths)
+		{
+			FrameInteractionAssociation frameInteractionAssociation = new FrameInteractionAssociation(path);
+			JSONObject interactionObject = null;
+			interactionObject = frameInteractionAssociation.
+					retrieveInteraction(interaction.rule, interaction.sprite1, interaction.sprite2);
+			
+			if(interactionObject != null)
+			{
+				frames = frameInteractionAssociation.retrieveInteractionFrames(interactionObject);
+				path = path.replace("interactions/interaction.json", "");
+				for (int i = 0; i < frames.length; i++) 
+				{
+					frames[i] = path + frames[i];
+				}
+			}
+		}
+
+		return frames;
+	}
+	
+	public String[] mapFramePathsInTheCollectionByMechanic(Mechanic mechanic) throws FileNotFoundException, IOException, ParseException
+	{
+		Interaction interaction = new Interaction(mechanic.getAction().getName(), mechanic.getObject1().getName(), mechanic.getObject2().getName());
+		String [] frames = new String[]{};
+		ArrayList<String> interactionPaths = loadInteractionPaths(numberOfSimulationFoldersAreAvailable());
 		for(String path : interactionPaths)
 		{
 			FrameInteractionAssociation frameInteractionAssociation = new FrameInteractionAssociation(path);
@@ -264,10 +305,10 @@ public class VisualDemonstrationInterfacer {
 		return frames;
 	}
 
-	public ArrayList<String> loadInteractionPaths(int numberOfSimulations)
+	public ArrayList<String> loadInteractionPaths(long numberOfSimulations2)
 	{
 		ArrayList<String> interactionpaths = new ArrayList<>();
-		for(int i = 0; i < numberOfSimulations; i++)
+		for(int i = 0; i < numberOfSimulations2; i++)
 		{
 			interactionpaths.add("simulation/game" + i + "/interactions/interaction.json");
 		}
@@ -277,7 +318,7 @@ public class VisualDemonstrationInterfacer {
 	public void runBunchOfGames(ArrayList<BunchOfGames> bunchOfGames) throws IOException
 	{
 		numberOfSimulations = bunchOfGames.size();
-		this.createDirectories(numberOfSimulations);
+		this.createDirectories((int)numberOfSimulations);
 		for (BunchOfGames game : bunchOfGames) 
 		{
 			this.runGame(game.gamePath, game.gameLevelPath, game.playerPath);
@@ -385,17 +426,14 @@ public class VisualDemonstrationInterfacer {
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public static String[][] retrieveFramesCollisionAndEndState(ArrayList<ArrayList<Mechanic>> superP, ArrayList<BunchOfGames> bunchOfGames)
+	public String[][] retrieveFramesCollisionAndEndState(ArrayList<ArrayList<Mechanic>> superP, ArrayList<BunchOfGames> bunchOfGames)
 			throws FileNotFoundException, IOException, ParseException {
 		
 		String allFrames[][] = null;
 		String [] shootAndCollisionFrames;
 		String [] lastFrames;
 		
-		VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer();
-		vdi.runBunchOfGames(bunchOfGames);
-		
-		int simulationNumber = bunchOfGames.size();
+		int simulationNumber = (int) numberOfSimulationFoldersAreAvailable();
 		for (int i = 0; i < simulationNumber; i++) {
 			
 			//1 - Load Files
@@ -419,11 +457,84 @@ public class VisualDemonstrationInterfacer {
 				};
 				return allFrames;
 			}
-			
 		}
 		return null;
 	}
+	
+	/**
+	 * @param superP
+	 * @param bunchOfGames
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	public HashMap<Integer, int[]> getAllRelevantFrames(ArrayList<ArrayList<Mechanic>> superP, ArrayList<BunchOfGames> bunchOfGames)
+			throws FileNotFoundException, IOException, ParseException {
+		
+		String [] shootAndCollisionFrames;
+		String [] lastFrames;
+		
+		int simulationNumber = (int) numberOfSimulationFoldersAreAvailable();
+		for (int i = 0; i < simulationNumber; i++) {
+			
+			//1 - Load Files
+			String fileInteraction = "simulation/game" 
+					 + i + "/interactions/interaction.json";
+			String fileCapture = "simulation/game" 
+					 + i + "/capture/capture.json";
+			String fileResult = "simulation/game" 
+					+ i + "/result/result.json";
 
+			//2 - Initialize Auxiliary classes
+			QueryGameResult qgr = new QueryGameResult(fileResult);
+			if(qgr.getResult() == 1)
+			{
+				RuleCaptureQuery rcq = new RuleCaptureQuery(fileInteraction, fileCapture, i);
+				shootAndCollisionFrames = rcq.getShootFrameAndCollisionFrameActivateFromTheFirstTimeInThisMechanicList(superP);
+				lastFrames = qgr.getLastFrames(i);
+				HashMap<Integer, int[]> shootCollision = retrieveFrameNumbersOfShootEvents(i, shootAndCollisionFrames);
+				HashMap<Integer, int[]> allRelevantFrames = allFrames(i, shootCollision, lastFrames[lastFrames.length-1]);
+				return allRelevantFrames;
+			}
+		}
+		return null;
+	}
+	
+	public HashMap<Integer, int[]> retrieveFrameNumbersOfShootEvents(Integer simulation, String [] shootAndCollisionFrames)
+	{
+		HashMap<Integer, int[]> simulationAndFrameNumbers = new HashMap<>();
+		int[] frames = new int[shootAndCollisionFrames.length];
+		for (int i = 0; i < shootAndCollisionFrames.length; i++) 
+		{
+			StringBuilder framePath = new StringBuilder(shootAndCollisionFrames[i]).reverse();
+			int frameNumber = getTheNumberOfTheFrame(framePath);
+			frames[i] = frameNumber;
+		}
+		simulationAndFrameNumbers.put(simulation, frames);
+		return simulationAndFrameNumbers;
+	}
+
+	/**
+	 * @param framePath
+	 * @return
+	 * @throws NumberFormatException
+	 */
+	public int getTheNumberOfTheFrame(StringBuilder framePath) throws NumberFormatException {
+		String frame = framePath.substring(4, framePath.indexOf("e"));
+		framePath = new StringBuilder(frame).reverse();
+		int frameNumber = Integer.parseInt(framePath.toString());
+		return frameNumber;
+	}
+	
+	public HashMap<Integer, int[]> allFrames (int simulation, HashMap<Integer, int[]> simulationAndFrameNumbers, String lastFrames)
+	{
+		int [] allFrames = new int[]{simulationAndFrameNumbers.get(simulation)[0],
+									 simulationAndFrameNumbers.get(simulation)[1],
+									 getTheNumberOfTheFrame(new StringBuilder(lastFrames).reverse())};
+		simulationAndFrameNumbers.put(simulation, allFrames);
+		return simulationAndFrameNumbers;
+	}
+	
 	public static void main(String [] args) throws FileNotFoundException, IOException, ParseException
 	{
 		//0 - Configure the critical path
@@ -478,22 +589,35 @@ public class VisualDemonstrationInterfacer {
 
 			ArrayList<BunchOfGames> bunchOfGames = new ArrayList<>();
 			bunchOfGames.add(bog1); bunchOfGames.add(bog2);
-		
-		//2 - Run the following method and get the sprites
-		String [][] collisionAndLastFrames = retrieveFramesCollisionAndEndState(superP, bunchOfGames);
-		
-		System.out.println();
-		for (int i = 0; i < collisionAndLastFrames.length; i++) {
-			if(i == 0)
-				System.out.println("collision frames: ");
-			else
-				System.out.println("last frames collection: ");
-			String [] frames = collisionAndLastFrames[i];
-			for (int j = 0; j < frames.length; j++) {
-				System.out.println(frames[j]);
+//		
+//		//2 - Run the games
+			VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer(false);
+			vdi.runBunchOfGames(bunchOfGames);
+//			
+		//3 - Query for specific interactions
+			System.out.println();
+			String [] frames = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction("KillBoth", "base", "sam"));
+			for (int i = 0; i < frames.length; i++) {
+				System.out.println(frames[i]);
 			}
 			System.out.println();
-		}
+			frames = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction("KillBoth", "base", "bomb"));
+			for (int i = 0; i < frames.length; i++) {
+				System.out.println(frames[i]);
+			}
+			
+			System.out.println();
+		//4 - Get the numbers of the frames in the critical path
+			HashMap<Integer, int[]> relevantFrames = vdi.getAllRelevantFrames(superP, bunchOfGames);
+			for (Integer i : relevantFrames.keySet()) 
+			{
+				System.out.println("number of the win path simulation: " + i);
+				int frameIntegers [] = relevantFrames.get(i);
+				for (int j = 0; j < frameIntegers.length; j++) {
+					System.out.println(frameIntegers[j]);
+				}
+			}
+		
 	}
 	
 }

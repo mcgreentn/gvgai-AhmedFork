@@ -100,7 +100,7 @@ public class RuleCaptureQuery
 						&& sprite1.equals(interaction.sprite1)
 								&& sprite2.equals(interaction.sprite2))
 				{
-					frames = getFramesThisFrameCollection(objCaptured);
+					frames = getFramePathsInThisFrameCollection(objCaptured);
 					return frames;
 				}	
 				
@@ -121,7 +121,7 @@ public class RuleCaptureQuery
 		return false;
 	}
 
-	public String[] getFramesThisFrameCollection(JSONObject objCaptured) 
+	public String[] getFramePathsInThisFrameCollection(JSONObject objCaptured) 
 	{
 		ArrayList<String> frames = new ArrayList<String>();
 		JSONArray tickArray = (JSONArray) objCaptured.get("tickCollection");
@@ -144,7 +144,23 @@ public class RuleCaptureQuery
 		return frames.toArray(new String[frames.size()]);
 	}
 	
-	
+	public Integer[] getFrameNumberInThisFrameCollection(JSONObject objCaptured) 
+	{
+		ArrayList<Integer> frames = new ArrayList<Integer>();
+		JSONArray tickArray = (JSONArray) objCaptured.get("tickCollection");
+		int initialFrame = Integer.parseInt((String) tickArray.get(0)) - 1;
+		for (int i = 0; i < tickArray.size(); i++) 
+		{
+			String frameNumber = (String) tickArray.get(i);
+			int frame = Integer.parseInt(frameNumber);
+			frames.add(frame);
+		}
+		int frame = (initialFrame);
+		
+		frames.add(0, frame);
+		
+		return frames.toArray(new Integer[frames.size()]);
+	}
 	
 	public static void main(String [] args) throws FileNotFoundException, IOException, ParseException
 	{
