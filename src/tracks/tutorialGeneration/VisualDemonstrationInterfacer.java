@@ -647,7 +647,7 @@ public class VisualDemonstrationInterfacer {
 			HashMap<Integer, int[]> relevantFrames = vdi.getAllRelevantFrames(superP, bunchOfGames);
 			for (Integer i : relevantFrames.keySet()) 
 			{
-				System.out.println("number of the win path simulation: " + i);
+				System.out.println("number of the simulation: " + i);
 				int frameIntegers [] = relevantFrames.get(i);
 				for (int j = 0; j < frameIntegers.length; j++) {
 					System.out.println(frameIntegers[j]);
