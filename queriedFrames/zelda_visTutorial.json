@@ -1,0 +1,25 @@
+{
+	"gameInfo" : {
+		"gameName"		: "zelda",
+		"avatarInfo"	: "You are the avatar.",
+		"controlsInfo"	: "To move as the avatar, use the arrow keys to turn and move. Press space to use the sword (OrientedFlicker).",
+		"avatarImage"	: "oryx/swordman1"
+	},
+	"winRules" : [
+
+		{"text" : 	"If nokey (avatar) and key (Immovable) collide, then the nokey (avatar) sprite will be transformed into withkey (avatar).", "images":["simulation/game0/frames/frame9.png", "simulation/game0/frames/frame10.png", "simulation/game0/frames/frame11.png", "simulation/game0/frames/frame12.png", "simulation/game0/frames/frame13.png"]},
+		{"text" : 	"If goal (Door) and withkey (avatar) collide, then the goal (Door) sprite will be opened.", "images":["simulation/game0/frames/frame111.png", "simulation/game0/frames/frame112.png", "simulation/game0/frames/frame113.png", "simulation/game0/frames/frame114.png", "simulation/game0/frames/frame115.png"]},
+		{"text" : 	"If there are no more goal (Door) sprites then you will win.", "images":[]}
+	],
+	"loseRules" : [
+
+		{"text" : 	"If avatar and enemy collide, then the avatar sprite will be destroyed.", "images":[]},
+		{"text" : 	"If there are no more nokey (avatar) sprites or withkey (avatar) sprites then you will lose.", "images":[]}
+	],
+	"pointsRules" : [
+
+		{"text" : 	"If the nokey (avatar) and the key (Immovable) collide, then you will gain 1 point.", "images":["simulation/game0/frames/frame9.png", "simulation/game0/frames/frame10.png", "simulation/game0/frames/frame11.png", "simulation/game0/frames/frame12.png", "simulation/game0/frames/frame13.png"]},
+		{"text" : 	"If the enemy and the sword (OrientedFlicker) collide, then you will gain 2 points.", "images":["simulation/game0/frames/frame78.png", "simulation/game0/frames/frame79.png", "simulation/game0/frames/frame80.png", "simulation/game0/frames/frame81.png", "simulation/game0/frames/frame82.png"]},
+		{"text" : 	"If the goal (Door) and the withkey (avatar) collide, then you will gain 1 point.", "images":["simulation/game0/frames/frame111.png", "simulation/game0/frames/frame112.png", "simulation/game0/frames/frame113.png", "simulation/game0/frames/frame114.png", "simulation/game0/frames/frame115.png"]}
+	]
+}

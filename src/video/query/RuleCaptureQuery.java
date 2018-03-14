@@ -53,14 +53,13 @@ public class RuleCaptureQuery
 		return frames;
 	}
 	
-	public String[] getShootFrameAndCollisionFrameActivateFromTheFirstTimeInThisMechanicList(ArrayList<ArrayList<Mechanic>> mechanics) throws FileNotFoundException, IOException, ParseException
+	public String[] getShootFrameAndCollisionFrameActivateFromTheFirstTimeInThisMechanicList(ArrayList<Mechanic> mechanics) throws FileNotFoundException, IOException, ParseException
 	{
 		String frames [] = null;
 		//Navigate in the ArrayList<ArrayList<Mechanic>>
-		ArrayList<Mechanic> ms = mechanics.get(1);
-		for (int j = 0; j < ms.size(); j++) 
+		for (int j = 0; j < mechanics.size(); j++) 
 		{
-			Mechanic m  =  ms.get(j);
+			Mechanic m  =  mechanics.get(j);
 			Entity obj1 =  m.getObject1();
 			Entity obj2 =  m.getObject2();
 			Entity act  =  m.getAction();
@@ -220,7 +219,7 @@ public class RuleCaptureQuery
 				new Entity("Win", "Action","Termination")));
 		superP.add(last);
 		
-		String frames[] = rcq.getShootFrameAndCollisionFrameActivateFromTheFirstTimeInThisMechanicList(superP);
+		String frames[] = rcq.getShootFrameAndCollisionFrameActivateFromTheFirstTimeInThisMechanicList(superP.get(2));
 		
 		System.out.println(frames[0]);
 		System.out.println(frames[1]);		
