@@ -471,6 +471,7 @@ public class VisualDemonstrationInterfacer {
 	public HashMap<Integer, int[]> getAllRelevantFrames(ArrayList<ArrayList<Mechanic>> superP, ArrayList<BunchOfGames> bunchOfGames)
 			throws FileNotFoundException, IOException, ParseException {
 		
+		HashMap<Integer, int[]> allRelevantFrames = null;
 		String [] shootAndCollisionFrames;
 		String [] lastFrames;
 		
@@ -487,30 +488,42 @@ public class VisualDemonstrationInterfacer {
 
 			//2 - Initialize Auxiliary classes
 			QueryGameResult qgr = new QueryGameResult(fileResult);
-			if(qgr.getResult() == 1)
+			int result = qgr.getResult();
+			if(result == 1)
 			{
 				RuleCaptureQuery rcq = new RuleCaptureQuery(fileInteraction, fileCapture, i);
 				shootAndCollisionFrames = rcq.getShootFrameAndCollisionFrameActivateFromTheFirstTimeInThisMechanicList(superP);
 				lastFrames = qgr.getLastFrames(i);
 				HashMap<Integer, int[]> shootCollision = retrieveFrameNumbersOfShootEvents(i, shootAndCollisionFrames);
-				HashMap<Integer, int[]> allRelevantFrames = allFrames(i, shootCollision, lastFrames[lastFrames.length-1]);
+				allRelevantFrames = resultAndAllFrames(i, result, shootCollision, lastFrames[lastFrames.length-1]);
 				return allRelevantFrames;
 			}
+			else
+			{
+				RuleCaptureQuery rcq = new RuleCaptureQuery(fileInteraction, fileCapture, i);
+				shootAndCollisionFrames = rcq.getShootFrameAndCollisionFrameActivateFromTheFirstTimeInThisMechanicList(superP);
+				lastFrames = qgr.getLastFrames(i);
+				HashMap<Integer, int[]> shootCollision = retrieveFrameNumbersOfShootEvents(i, shootAndCollisionFrames);
+				allRelevantFrames = resultAndAllFrames(i, result, shootCollision, lastFrames[lastFrames.length-1]);
+			}
 		}
-		return null;
+		return allRelevantFrames;
 	}
 	
 	public HashMap<Integer, int[]> retrieveFrameNumbersOfShootEvents(Integer simulation, String [] shootAndCollisionFrames)
 	{
 		HashMap<Integer, int[]> simulationAndFrameNumbers = new HashMap<>();
-		int[] frames = new int[shootAndCollisionFrames.length];
-		for (int i = 0; i < shootAndCollisionFrames.length; i++) 
+		if(shootAndCollisionFrames != null)
 		{
-			StringBuilder framePath = new StringBuilder(shootAndCollisionFrames[i]).reverse();
-			int frameNumber = getTheNumberOfTheFrame(framePath);
-			frames[i] = frameNumber;
+			int[] frames = new int[shootAndCollisionFrames.length];
+			for (int i = 0; i < shootAndCollisionFrames.length; i++) 
+			{
+				StringBuilder framePath = new StringBuilder(shootAndCollisionFrames[i]).reverse();
+				int frameNumber = getTheNumberOfTheFrame(framePath);
+				frames[i] = frameNumber;
+			}
+			simulationAndFrameNumbers.put(simulation, frames);
 		}
-		simulationAndFrameNumbers.put(simulation, frames);
 		return simulationAndFrameNumbers;
 	}
 
@@ -532,6 +545,28 @@ public class VisualDemonstrationInterfacer {
 									 simulationAndFrameNumbers.get(simulation)[1],
 									 getTheNumberOfTheFrame(new StringBuilder(lastFrames).reverse())};
 		simulationAndFrameNumbers.put(simulation, allFrames);
+		return simulationAndFrameNumbers;
+	}
+	
+	public HashMap<Integer, int[]> resultAndAllFrames (int simulation, int result, HashMap<Integer, int[]> simulationAndFrameNumbers, String lastFrames)
+	{
+		int [] allFramesWithResult;
+		int simFrameNumbers [] = simulationAndFrameNumbers.get(simulation);
+		
+		if(simFrameNumbers != null)
+		{
+			allFramesWithResult = new int[]{result, simFrameNumbers[0],
+						simFrameNumbers[1],
+							getTheNumberOfTheFrame(new StringBuilder(lastFrames).reverse())};
+			simulationAndFrameNumbers.put(simulation, allFramesWithResult);
+		}
+		else
+		{
+			allFramesWithResult = new int[]{result,
+						getTheNumberOfTheFrame(new StringBuilder(lastFrames).reverse())};
+		simulationAndFrameNumbers.put(simulation, allFramesWithResult);
+		}
+			
 		return simulationAndFrameNumbers;
 	}
 	
@@ -595,24 +630,24 @@ public class VisualDemonstrationInterfacer {
 			vdi.runBunchOfGames(bunchOfGames);
 //			
 		//3 - Query for specific interactions
-			System.out.println();
-			
-			String [] frames = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction("KillBoth", "base", "sam"));
-			for (int i = 0; i < frames.length; i++) {
-				System.out.println(frames[i]);
-			}
-			System.out.println();
-			frames = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction("KillBoth", "base", "bomb"));
-			for (int i = 0; i < frames.length; i++) {
-				System.out.println(frames[i]);
-			}
+//			System.out.println();
+//			
+//			String [] frames = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction("KillBoth", "base", "sam"));
+//			for (int i = 0; i < frames.length; i++) {
+//				System.out.println(frames[i]);
+//			}
+//			System.out.println();
+//			frames = vdi.mapFramePathsInTheCollectionByInteraction(new Interaction("KillBoth", "base", "bomb"));
+//			for (int i = 0; i < frames.length; i++) {
+//				System.out.println(frames[i]);
+//			}
 			
 			System.out.println();
 		//4 - Get the numbers of the frames in the critical path
 			HashMap<Integer, int[]> relevantFrames = vdi.getAllRelevantFrames(superP, bunchOfGames);
 			for (Integer i : relevantFrames.keySet()) 
 			{
-				System.out.println("number of the win path simulation: " + i);
+				System.out.println("number of the simulation: " + i);
 				int frameIntegers [] = relevantFrames.get(i);
 				for (int j = 0; j < frameIntegers.length; j++) {
 					System.out.println(frameIntegers[j]);

@@ -1,0 +1,7 @@
+{
+	"gameInfo" : {
+		"gameName"		: "aliens",
+		"avatarInfo"	: "You are the FlakAvatar.",
+		"controlsInfo"	: "To move as the FlakAvatar, use the left and right arrow keys to move. Press space to shoot a sam (missile).",
+		"avatarImage"	: "oryx/spaceship1"
+	},
