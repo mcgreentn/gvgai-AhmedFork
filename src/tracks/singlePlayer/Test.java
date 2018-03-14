@@ -46,7 +46,7 @@ public class Test {
 						// executed. null if not to save.
 
 		// 1. This starts a game, in a level, played by a human.
-		ArcadeMachine.playOneGame(gameName, level1, recordActionsFile, seed);
+		ArcadeMachine.playOneGame("examples/gridphysics/zelda.txt", "examples/gridphysics/zelda_lvl0.txt", recordActionsFile, seed);
 
 		// 2. This plays a game in a level by the controller.
 //		ArcadeMachine.runOneGame(game, level1, visuals, sampleRHEAController, recordActionsFile, seed, 0);

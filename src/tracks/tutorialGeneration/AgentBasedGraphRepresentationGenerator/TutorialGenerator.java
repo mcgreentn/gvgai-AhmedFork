@@ -357,12 +357,8 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 		ArrayList<ArrayList<Mechanic>> superP = graph.visualPathGeneralization(winPath);
 		HashMap<Integer, int[]> relevantFrames = null;
 		try {
-<<<<<<< HEAD
-			HashMap<Integer, int[]> relevantFrames = vdi.getAllRelevantFrames(superP.get(2), bogs);
-=======
-			relevantFrames = vdi.getAllRelevantFrames(superP, bogs);
->>>>>>> 73d32d6b8d9d516eb48927bac6fcd05ea8af041a
-			Metrics.winPathing(relevantFrames);
+//			relevantFrames = vdi.getAllRelevantFrames(superP.get(2), bogs);
+//			Metrics.winPathing(relevantFrames);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
