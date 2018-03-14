@@ -96,30 +96,29 @@ public class Metrics {
         sb.append(Metrics.criticalPathFailureCount + ",");
         sb.append(Metrics.pointsCount);
         
-        for(int i = 0; i < numInts.length; i++) {
-        	sb.append("," + numInts[i]);
-        }
+//        for(int i = 0; i < numInts.length; i++) {
+//        	sb.append("," + numInts[i]);
+//        }
         
-        for(int i = 0; i < numInts.length; i++) {
-        	sb.append("," + numIntSprites[i]);
-        }
-        for(int i = 0; i < numInts.length; i++) {
-        	sb.append("," + numIntAvatar[i]);
-        }
+//        for(int i = 0; i < numInts.length; i++) {
+//        	sb.append("," + numIntSprites[i]);
+//        }
+//        for(int i = 0; i < numInts.length; i++) {
+//        	sb.append("," + numIntAvatar[i]);
+//        }
         
         sb.append("\n");
-		for(int i = 1; i < winPath.length-1; i++) {
-			for(int j = 0; j < winPath[i].length-1; j++) {
-				sb.append(superP.get(i).get(j) + ",");
-				for(int k = 0; k < winPath[i][j].length; k++) {
-					sb.append(winPath[i][j][k] + ",");
-				}
-			}
-		}
-		sb.append("Win Path Proof");
+//		for(int i = 1; i < winPath.length-1; i++) {
+//			for(int j = 0; j < winPath[i].length-1; j++) {
+//				sb.append(superP.get(i).get(j) + ",");
+//				for(int k = 0; k < winPath[i][j].length; k++) {
+//					sb.append(winPath[i][j][k] + ",");
+//				}
+//			}
+//		}
+//		sb.append("Win Path Proof");
 		for (Integer i : relevantFrames.keySet()) 
 		{
-			System.out.println("number of the win path simulation: " + i);
 			int frameIntegers [] = relevantFrames.get(i);
 			for (int j = 0; j < frameIntegers.length; j++) {
 				sb.append(frameIntegers[j] + ",");		

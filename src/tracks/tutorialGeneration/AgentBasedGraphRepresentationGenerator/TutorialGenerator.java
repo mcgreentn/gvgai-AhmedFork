@@ -29,8 +29,7 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 	private GameDescription game;
 	private String gameFile;
 	
-	private String[] agents = {"adrienctx.Agent"};
-//			, "NovelTS.Agent", "NovTea.Agent", "Number27.Agent", "YOLOBOT.Agent", "tracks.singlePlayer.simple.doNothing.Agent", "tracks.singlePlayer.simple.sampleonesteplookahead.Agent"};
+	private String[] agents = {"adrienctx.Agent", "NovelTS.Agent", "NovTea.Agent", "Number27.Agent", "YOLOBOT.Agent", "tracks.singlePlayer.simple.doNothing.Agent", "tracks.singlePlayer.simple.sampleonesteplookahead.Agent"};
 	
 	private ArrayList<String> necessaryFrames;
 	public TutorialGenerator(SLDescription sl, GameDescription game, ElapsedCpuTimer time, String gameFile) {
@@ -240,6 +239,7 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 	 * @param controls
 	 */
 	public String[] createTutorial(ArrayList<Mechanic> winPath, ArrayList<Mechanic> pointsPath, ArrayList<Mechanic> losePath, ArrayList<String> controls, GraphBuilder graph) {
+		String[] tutorial = null;
 		try {
 
 			
@@ -271,8 +271,8 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 			String two = writeWinInfo(winPath, graph, vdi, bogs);
 			String three = writeLoseInfo(losePath, graph, vdi);
 			String four = writePointsInfo(pointsPath, graph, vdi);
-			String[] tutorial = {one, two, three, four};
-			
+			String[] tutorial1 = {one, two, three, four};
+			tutorial = tutorial1;
 			
 			// gets rid of all the trash frames we don't need
 			throwAwayTrash();
@@ -287,7 +287,7 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+		return tutorial;
 	}
 	
 	
@@ -355,9 +355,9 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 		gameName = gameName.substring(gameName.indexOf('/')+1);
 
 		ArrayList<ArrayList<Mechanic>> superP = graph.visualPathGeneralization(winPath);
-		
+		HashMap<Integer, int[]> relevantFrames = null;
 		try {
-			HashMap<Integer, int[]> relevantFrames = vdi.getAllRelevantFrames(superP, bogs);
+			relevantFrames = vdi.getAllRelevantFrames(superP, bogs);
 			Metrics.winPathing(relevantFrames);
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -406,7 +406,13 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 					try{
 						
 	//					for(int j = 0; j < super)
-						String[] frames = vdi.mapFramePathsInTheCollectionByMechanic(mech);
+						String[] frames;
+						if(!mech.getCondition().getSubtype().equals("Player Input")) {
+							frames = vdi.mapFramePathsInTheCollectionByMechanic(mech);
+						} else {
+							frames = buildFramesFromScratch(relevantFrames);
+						}
+						
 //								vdi.mapFramePathsInTheCollectionByInteraction(new Interaction(mech.getAction().getName(), mech.getObject1().getName(), mech.getObject2().getName()));
 ////						String[] frames = vdi.retrieveFramePaths(win.getAction().getName(), win.getObject1().getName(), win.getObject2().getName());
 						for(String frame : frames){
@@ -447,6 +453,22 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 		}
 		return returnMe;
 	}
+	private String[] buildFramesFromScratch(HashMap<Integer, int[]> relevantFrames) {
+		String[] frames = new String[5];
+		for (Integer i : relevantFrames.keySet()) 
+		{
+			int frameIntegerStart = relevantFrames.get(0)[0];
+			String base = "simulation/game" + i + "/frames/frame";
+			for(int j = 0; j < 5; j++) {
+				String frame = base + (frameIntegerStart + j);
+				frames[j] = frame;
+			}
+			
+			break;
+		}
+		return frames;
+	}
+
 	public String writeLoseInfo(ArrayList<Mechanic> losePath, GraphBuilder graph, VisualDemonstrationInterfacer vdi) {
 		String returnMe = "This is how you lose:\n";
 		String gameName = gameFile.replace(".txt", "");
@@ -496,7 +518,12 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 					try{
 						
 	//					for(int j = 0; j < super)
-						String[] frames = vdi.mapFramePathsInTheCollectionByMechanic(mech);
+						String[] frames = null;
+						if(!mech.getAction().getSubtype().equals("Termination")) {
+							frames = vdi.mapFramePathsInTheCollectionByMechanic(mech);
+						} else {
+							frames = new String[0];
+						}
 //								vdi.mapFramePathsInTheCollectionByInteraction(new Interaction(mech.getAction().getName(), mech.getObject1().getName(), mech.getObject2().getName()));
 ////						String[] frames = vdi.retrieveFramePaths(win.getAction().getName(), win.getObject1().getName(), win.getObject2().getName());
 						for(String frame : frames){
