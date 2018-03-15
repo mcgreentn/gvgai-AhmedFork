@@ -17,14 +17,14 @@ import video.basics.Interaction;
 import video.handlers.FrameInteractionAssociation;
 
 
-public class RuleActionQuery extends FrameInteractionAssociation{
+public class QueryActionRule extends FrameInteractionAssociation{
 	
 	public String fileInteraction;//rules
 	public String fileAction;
 	public String fileResult;
 	private QueryGameResult queryGameResult;
 	
-	public RuleActionQuery(String fileInteraction,
+	public QueryActionRule(String fileInteraction,
 	 String fileAction, String fileResult) throws FileNotFoundException, IOException, ParseException
 	{
 		super(fileInteraction);
@@ -34,7 +34,11 @@ public class RuleActionQuery extends FrameInteractionAssociation{
 		queryGameResult = new QueryGameResult(this.fileResult);
 	}
 	
-	public RuleActionQuery(){};
+	public QueryActionRule(){};
+	
+	public QueryActionRule(String fileAction){
+		this.fileAction = fileAction ;
+	};
 	
 	public String getFirstRuleActionFrame(String spriteFilter) throws FileNotFoundException, IOException, ParseException
 	{
@@ -53,6 +57,20 @@ public class RuleActionQuery extends FrameInteractionAssociation{
 		}
 		
 		return "-1";
+	}
+	
+	public int getFirstRuleActionFrameNumber() throws FileNotFoundException, IOException, ParseException
+	{
+		int frameNumber = -1;
+		JSONParser parser = new JSONParser();
+		JSONArray actionArray = 
+				(JSONArray) parser.parse(new FileReader(this.fileAction));
+
+		JSONObject actionObj = (JSONObject) actionArray.get(0);
+		String tick = (String)actionObj.get("tick");
+		frameNumber = Integer.parseInt(tick);
+
+		return frameNumber;
 	}
 	
 	public String[] getFirstEventActionFrames(String spriteFilter, String simulationNumber) throws FileNotFoundException, IOException, ParseException
@@ -111,11 +129,11 @@ public class RuleActionQuery extends FrameInteractionAssociation{
 			String fileCapture = "simulation/game" 
 					 + i + "/capture/capture.json";
 			
-			RuleCaptureQuery rcq = new 
-					RuleCaptureQuery(fileInteraction, fileCapture, i);
+			QueryCaptureRule rcq = new 
+					QueryCaptureRule(fileInteraction, fileCapture, i);
 			
-			RuleActionQuery raq = new 
-					RuleActionQuery(fileInteraction, fileActions, fileResult);
+			QueryActionRule raq = new 
+					QueryActionRule(fileInteraction, fileActions, fileResult);
 			
 			
 			String framesBegin [] = rcq.
@@ -135,7 +153,7 @@ public class RuleActionQuery extends FrameInteractionAssociation{
 		//It associates the first time a player hit a (valid) sprite with its object by pressing
 		//the space key. Then it retrieves the frame of the interaction and returns a sequence of frames
 		//wrapping the event
-		RuleActionQuery raq = new RuleActionQuery();
+		QueryActionRule raq = new QueryActionRule();
 		
 	    //1st - configure your games and run the simulations to generate the data
 		BunchOfGames bog1 = new BunchOfGames("examples/gridphysics/aliens.txt", 

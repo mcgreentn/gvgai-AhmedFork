@@ -45,6 +45,13 @@ public class QueryGameResult extends FrameInteractionAssociation
 		return resultObj;
 	}
 	
+	public int getLastFrameNumber() throws FileNotFoundException, IOException, ParseException
+	{
+		JSONObject resultObj = getGameResultObject();
+		int result = Integer.parseInt((String)resultObj.get("tick"));
+		return result;
+	}
+	
 	public String[] getLastFrames(int numberOfSimulation) throws FileNotFoundException, IOException, ParseException
 	{
 		String [] frames = new String[5];

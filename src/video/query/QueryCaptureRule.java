@@ -16,13 +16,13 @@ import video.basics.BunchOfGames;
 import video.basics.Interaction;
 import video.utils.Utils;
 
-public class RuleCaptureQuery 
+public class QueryCaptureRule 
 {
 	public String actionFile;
 	public String captureFile;
 	public int simulationNumber;
 	
-	public RuleCaptureQuery(String interactionFile, String captureFile, int simulation)
+	public QueryCaptureRule(String interactionFile, String captureFile, int simulation)
 	{
 		this.actionFile = interactionFile;
 		this.captureFile = captureFile;
@@ -168,8 +168,8 @@ public class RuleCaptureQuery
 		String fileCapture = "simulation/game" 
 				 + 0 + "/capture/capture.json";
 		int simulation = 0;
-		RuleCaptureQuery rcq = new 
-				RuleCaptureQuery(fileInteraction, fileCapture, simulation);
+		QueryCaptureRule rcq = new 
+				QueryCaptureRule(fileInteraction, fileCapture, simulation);
 //		
 //		String frames [] = 
 //				rcq.
