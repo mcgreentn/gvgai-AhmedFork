@@ -355,10 +355,10 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 		gameName = gameName.substring(gameName.indexOf('/')+1);
 
 		ArrayList<ArrayList<Mechanic>> superP = graph.visualPathGeneralization(winPath);
-		HashMap<Integer, int[]> relevantFrames = null;
+		int[][] relevantFrames = null;
 		
 		try {
-			
+			relevantFrames = vdi.mapCriticalPath(superP);
 //			relevantFrames = vdi.getAllRelevantFrames(superP.get(2), bogs);
 //			Metrics.winPathing(relevantFrames);
 
@@ -366,7 +366,7 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 			e.printStackTrace();
 		}
 		
-//		Metrics.winPathing(superP);
+		Metrics.winPathing(relevantFrames);
 		// Metric Data
 		Metrics.criticalPathVictoryCount = superP.size();
 		for(ArrayList<Mechanic> list : superP) {
@@ -413,7 +413,7 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 						if(!mech.getCondition().getSubtype().equals("Player Input")) {
 							frames = vdi.mapFramePathsInTheCollectionByMechanic(mech);
 						} else {
-							frames = buildFramesFromScratch(relevantFrames);
+							frames = buildFramesFromScratch(relevantFrames[0]);
 						}
 						
 //								vdi.mapFramePathsInTheCollectionByInteraction(new Interaction(mech.getAction().getName(), mech.getObject1().getName(), mech.getObject2().getName()));
@@ -456,18 +456,14 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 		}
 		return returnMe;
 	}
-	private String[] buildFramesFromScratch(HashMap<Integer, int[]> relevantFrames) {
+	private String[] buildFramesFromScratch(int[] gameFramePath) {
 		String[] frames = new String[5];
-		for (Integer i : relevantFrames.keySet()) 
-		{
-			int frameIntegerStart = relevantFrames.get(0)[0];
-			String base = "simulation/game" + i + "/frames/frame";
-			for(int j = 0; j < 5; j++) {
-				String frame = base + (frameIntegerStart + j);
-				frames[j] = frame;
-			}
-			
-			break;
+
+		int frameIntegerStart = gameFramePath[1];
+		String base = "simulation/game" + 0 + "/frames/frame";
+		for(int j = 0; j < 5; j++) {
+			String frame = base + (frameIntegerStart + j);
+			frames[j] = frame;
 		}
 		return frames;
 	}

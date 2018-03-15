@@ -38,7 +38,7 @@ public class Metrics {
 	public static int bogsSize;
 	public static ArrayList<ArrayList<Mechanic>> superP;
 	public static int[][][] winPath;
-	public static HashMap<Integer, int[]> relevantFrames;
+	public static int[][] relevantFrames;
 	
 	public static void printMetrics() {
 		System.out.println("Metrics");
@@ -117,13 +117,14 @@ public class Metrics {
 //			}
 //		}
 //		sb.append("Win Path Proof");
-		for (Integer i : relevantFrames.keySet()) 
+		for (int[] gamePath : relevantFrames) 
 		{
-			int frameIntegers [] = relevantFrames.get(i);
-			for (int j = 0; j < frameIntegers.length; j++) {
-				sb.append(frameIntegers[j] + ",");		
+			if(gamePath[0] == 1) {
+				for (int j = 1; j < gamePath.length; j++) {
+					sb.append(gamePath[j] + ",");		
+				}
+				sb.append("\n");
 			}
-			sb.append("\n");
 		}
 		
 		
@@ -161,7 +162,7 @@ public class Metrics {
 		}
 	}
 	
-	public static void winPathing(HashMap<Integer, int[]> relevantFrames) {
+	public static void winPathing(int[][] relevantFrames) {
 		Metrics.relevantFrames = relevantFrames;
 //		winPath = new int[superP.size()][][];
 //		for(int i = 1; i < superP.size()-1; i++) {
