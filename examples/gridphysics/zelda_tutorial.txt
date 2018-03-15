@@ -1,19 +1,20 @@
 TutorialFile
-This is how you control your avatar:
-To move as the ShootAvatar, use the arrow keys to turn and move.
-Press space to use the sword (OrientedFlicker).
+The game is zelda.
+You are the avatar.
+To move as the avatar, use the arrow keys to turn and move. Press space to use the sword (OrientedFlicker).
+
 
 This is how you win:
-If nokey (ShootAvatar) and key (Immovable) collide, then the nokey (ShootAvatar) sprite will be transformed into withkey (ShootAvatar).
-If Door and withkey (ShootAvatar) collide, then the Door sprite will be opened.
-If the Door sprite is opened, then you Win.
+If nokey (avatar) and key (Immovable) collide, then the nokey (avatar) sprite will be transformed into withkey (avatar).
+If goal (Door) and withkey (avatar) collide, then the goal (Door) sprite will be opened.
+If there are no more goal (Door) sprites then you will win.
+
+This is how you lose:
+If avatar and enemy collide, then the avatar sprite will be destroyed.
+If there are no more nokey (avatar) sprites or withkey (avatar) sprites then you will lose.
 
 This is how you get points:
-If the nokey (ShootAvatar) and the key (Immovable) collide, then you will gain 1 points.
-If the RandomNPC and the OrientedFlicker collide, then you will gain 2 points.
-If the Door and the withkey (ShootAvatar) collide, then you will gain 1 points.
-
-
-
-
+If the nokey (avatar) and the key (Immovable) collide, then you will gain 1 point.
+If the enemy and the sword (OrientedFlicker) collide, then you will gain 2 points.
+If the goal (Door) and the withkey (avatar) collide, then you will gain 1 point.
 
