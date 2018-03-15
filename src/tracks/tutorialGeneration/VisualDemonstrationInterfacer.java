@@ -310,7 +310,7 @@ public class VisualDemonstrationInterfacer {
 	public int[] mapFrameNumbersInTheSimualtionByMechanic(Mechanic mechanic, int simulation) throws FileNotFoundException, IOException, ParseException
 	{
 		Interaction interaction = new Interaction(mechanic.getAction().getName(), mechanic.getObject1().getName(), mechanic.getObject2().getName());
-		int [] frameNumbers = new int[5];
+		int [] frameNumbers = new int[]{};
 
 		String path = "simulation/game" + simulation + "/interactions/interaction.json";
 		FrameInteractionAssociation frameInteractionAssociation = new FrameInteractionAssociation(path);
@@ -323,6 +323,7 @@ public class VisualDemonstrationInterfacer {
 
 			String framePaths [] = frameInteractionAssociation.retrieveInteractionFrames(interactionObject);
 			path = path.replace("interactions/interaction.json", "");
+			frameNumbers = new int[5];
 			for (int i = 0; i < framePaths.length; i++) 
 			{
 				frameNumbers[i] = getTheNumberOfTheFrame(new StringBuilder(framePaths[i]).reverse());
@@ -714,7 +715,7 @@ public class VisualDemonstrationInterfacer {
 			QueryActionRule ruleActionQuery = new QueryActionRule("simulation/game" + k + "/actions/actions.json");
 			QueryGameResult queryGameResult = new QueryGameResult("simulation/game" + k + "/result/result.json");
 			
-			int[] earliestFrames = new int[superP.size()];
+			int[] earliestFrames = new int[superP.size()+1];
 			for(int i = 0; i < superP.size()-1; i++){				
 				for(int j = 1; j < superP.get(i).size(); j++) {
 					int smallestFrame = Integer.MAX_VALUE;
@@ -742,11 +743,12 @@ public class VisualDemonstrationInterfacer {
 							smallestFrame = -1;
 						}
 					}
-					earliestFrames[i] = smallestFrame;
+					earliestFrames[i+1] = smallestFrame;
 				}
 				
 			}
-			earliestFrames[earliestFrames.length-1] = queryGameResult.getResult();
+			earliestFrames[0] = queryGameResult.getResult();
+			earliestFrames[earliestFrames.length-1] = queryGameResult.getLastFrameNumber();
 			myReturnArray[k] = earliestFrames;
 		}
 		return myReturnArray;
@@ -822,15 +824,6 @@ public class VisualDemonstrationInterfacer {
 			}
 			System.out.println();
 		}
-
-		//		for (Integer i : relevantFrames.keySet()) 
-		//		{
-		//			System.out.println("number of the simulation: " + i);
-		//			int frameIntegers [] = relevantFrames.get(i);
-		//			for (int j = 0; j < frameIntegers.length; j++) {
-		//				System.out.println(frameIntegers[j]);
-		//			}
-		//		}
 
 	}
 
