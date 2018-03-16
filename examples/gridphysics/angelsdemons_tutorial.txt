@@ -1,0 +1,18 @@
+TutorialFile
+The game is angelsdemons.
+You are the MovingAvatar.
+To move as the MovingAvatar, use the four arrow keys to move.
+
+
+This is how you win:
+If time reaches 1000 seconds, then you will win.
+
+This is how you lose:
+If citizen (movable) and bolt (missile) collide, then the citizen (movable) sprite will be transformed into cursed (Immovable).
+If the total amount of cursed (Immovable) sprites is 1, then you will lose.
+
+This is how you get points:
+If the citizen (movable) and the salvation (missile) collide, then you will gain 100 points.
+If the missile and the box (Passive) collide, then you will gain 1 point.
+If the missile and the wall (Immovable) collide, then you will gain 1 point.
+

@@ -283,6 +283,10 @@ public class VisualDemonstrationInterfacer {
 
 	public String[] mapFramePathsInTheCollectionByMechanic(Mechanic mechanic) throws FileNotFoundException, IOException, ParseException
 	{
+		if(mechanic.getAction() == null || mechanic.getObject1() == null || mechanic.getObject2() == null)
+		{
+			return new String[]{};
+		}
 		Interaction interaction = new Interaction(mechanic.getAction().getName(), mechanic.getObject1().getName(), mechanic.getObject2().getName());
 		String [] frames = new String[]{};
 		ArrayList<String> interactionPaths = loadInteractionPaths(numberOfSimulationFoldersAreAvailable());

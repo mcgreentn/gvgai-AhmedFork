@@ -1,0 +1,20 @@
+TutorialFile
+The game is assemblyline.
+You are the ShootAvatar.
+To move as the ShootAvatar, use the arrow keys to turn and move.
+
+
+This is how you win:
+If you press space, then avatar (ShootAvatar) will release a lever(Item).
+If lasercannon and lever (Flicker) collide, then the lasercannon sprite will be transformed into lasercannon.
+If product and lasercannon collide, then the product sprite will be destroyed.
+If the total amount of victory (product) sprites is 1, then you will win.
+
+This is how you lose:
+If time reaches 1500 seconds, then you will lose.
+
+This is how you get points:
+If the potato (product) and the assembly1 (assembly) collide, then you will gain 1 point.
+If the potatoeyes (product) and the assembly2 (assembly) collide, then you will gain 2 points.
+If the potatoeyesnose (product) and the assembly3 (assembly) collide, then you will gain 4 points.
+

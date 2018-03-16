@@ -1,0 +1,21 @@
+{
+	"gameInfo" : {
+		"gameName"		: "avoidgeorge",
+		"avatarInfo"	: "You are the ShootAvatar.",
+		"controlsInfo"	: "To move as the ShootAvatar, use the arrow keys to turn and move.",
+		"avatarImage"	: "newset/girl1"
+	},
+	"winRules" : [
+
+		{"text" : 	"If time reaches 1000 seconds, then you will win.", "images":[]}
+	],
+	"loseRules" : [
+
+		{"text" : 	"If avatar (citizen) and george (Chaser) collide, then the avatar (citizen) sprite will be destroyed.", "images":[]},
+		{"text" : 	"If there are no more avatar (citizen) sprites then you will lose.", "images":[]}
+	],
+	"pointsRules" : [
+
+		{"text" : 	"If the annoyed (human) and the cigarette (Flicker) collide, then you will gain 1 point.", "images":["simulation/game1/frames/frame95.png", "simulation/game1/frames/frame96.png", "simulation/game1/frames/frame97.png", "simulation/game1/frames/frame98.png", "simulation/game1/frames/frame99.png"]}
+	]
+}

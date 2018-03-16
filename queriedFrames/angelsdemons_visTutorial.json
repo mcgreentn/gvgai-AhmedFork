@@ -1,0 +1,23 @@
+{
+	"gameInfo" : {
+		"gameName"		: "angelsdemons",
+		"avatarInfo"	: "You are the MovingAvatar.",
+		"controlsInfo"	: "To move as the MovingAvatar, use the four arrow keys to move.",
+		"avatarImage"	: "newset/girl4"
+	},
+	"winRules" : [
+
+		{"text" : 	"If time reaches 1000 seconds, then you will win.", "images":[]}
+	],
+	"loseRules" : [
+
+		{"text" : 	"If citizen (movable) and bolt (missile) collide, then the citizen (movable) sprite will be transformed into cursed (Immovable).", "images":["simulation/game1/frames/frame482.png", "simulation/game1/frames/frame483.png", "simulation/game1/frames/frame484.png", "simulation/game1/frames/frame485.png", "simulation/game1/frames/frame486.png"]},
+		{"text" : 	"If the total amount of cursed (Immovable) sprites is 1, then you will lose.", "images":[]}
+	],
+	"pointsRules" : [
+
+		{"text" : 	"If the citizen (movable) and the salvation (missile) collide, then you will gain 100 points.", "images":["simulation/game1/frames/frame307.png", "simulation/game1/frames/frame308.png", "simulation/game1/frames/frame309.png", "simulation/game1/frames/frame310.png", "simulation/game1/frames/frame311.png"]},
+		{"text" : 	"If the missile and the box (Passive) collide, then you will gain 1 point.", "images":["simulation/game1/frames/frame54.png", "simulation/game1/frames/frame55.png", "simulation/game1/frames/frame56.png", "simulation/game1/frames/frame57.png", "simulation/game1/frames/frame58.png", "simulation/game1/frames/frame449.png", "simulation/game1/frames/frame450.png", "simulation/game1/frames/frame451.png", "simulation/game1/frames/frame452.png", "simulation/game1/frames/frame453.png", "simulation/game1/frames/frame449.png", "simulation/game1/frames/frame450.png", "simulation/game1/frames/frame451.png", "simulation/game1/frames/frame452.png", "simulation/game1/frames/frame453.png"]},
+		{"text" : 	"If the missile and the wall (Immovable) collide, then you will gain 1 point.", "images":["simulation/game1/frames/frame449.png", "simulation/game1/frames/frame450.png", "simulation/game1/frames/frame451.png", "simulation/game1/frames/frame452.png", "simulation/game1/frames/frame453.png", "simulation/game1/frames/frame449.png", "simulation/game1/frames/frame450.png", "simulation/game1/frames/frame451.png", "simulation/game1/frames/frame452.png", "simulation/game1/frames/frame453.png"]}
+	]
+}

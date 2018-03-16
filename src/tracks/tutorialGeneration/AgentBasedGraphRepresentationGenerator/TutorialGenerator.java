@@ -30,6 +30,7 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 	private String gameFile;
 	
 	private String[] agents = {"adrienctx.Agent", "NovelTS.Agent", "NovTea.Agent", "Number27.Agent", "YOLOBOT.Agent", "tracks.singlePlayer.simple.doNothing.Agent", "tracks.singlePlayer.simple.sampleonesteplookahead.Agent"};
+	//private String[] agents = {"adrienctx.Agent", "tracks.singlePlayer.simple.simpleRandom.Agent"};
 	
 	private ArrayList<String> necessaryFrames;
 	public TutorialGenerator(SLDescription sl, GameDescription game, ElapsedCpuTimer time, String gameFile) {

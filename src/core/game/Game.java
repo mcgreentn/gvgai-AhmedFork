@@ -1272,14 +1272,17 @@ public abstract class Game {
 			}
 		}
 		
-		storeGameSimulationResult.
+		if(avatars[0] != null)
+		{
+			storeGameSimulationResult.
 			storeGameSimulationResult(String.valueOf((avatars[0].getWinState().key()))
 					,String.valueOf(gameTick));
-		storeGameSimulationResult.
+			
+			storeGameSimulationResult.
 			writeResultToAJSONFile("simulation/game" + SimulationCounter.resultsCounter +
 					"/" + "result/result.json");
-		System.out.println(this.getClass().getSimpleName());
-		SimulationCounter.resultsCounter += 1;
+			SimulationCounter.resultsCounter += 1;
+		}
 
 		System.out.println("Result (1->win; 0->lose): " + sb1 + sb2 + "timesteps:" + this.getGameTick());
 		
@@ -1307,7 +1310,8 @@ public abstract class Game {
 		
 		// System.out.println("Result (1->win; 0->lose):"+ winner.key() + ",
 		// Score:" + score + ", timesteps:" + this.getGameTick());
-		frame.closeWindow();
+		if(frame != null)
+			frame.closeWindow();
 	}
 
 	/**
