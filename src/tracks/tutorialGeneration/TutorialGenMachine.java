@@ -5,7 +5,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-
 import core.competition.CompetitionParameters;
 import core.game.Game;
 import core.game.GameDescription;

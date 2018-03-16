@@ -65,10 +65,13 @@ public class QueryActionRule extends FrameInteractionAssociation{
 		JSONParser parser = new JSONParser();
 		JSONArray actionArray = 
 				(JSONArray) parser.parse(new FileReader(this.fileAction));
-
-		JSONObject actionObj = (JSONObject) actionArray.get(0);
-		String tick = (String)actionObj.get("tick");
-		frameNumber = Integer.parseInt(tick);
+		
+		if(actionArray.size() > 0)
+		{
+			JSONObject actionObj = (JSONObject) actionArray.get(0);
+			String tick = (String)actionObj.get("tick");
+			frameNumber = Integer.parseInt(tick);
+		}
 
 		return frameNumber;
 	}

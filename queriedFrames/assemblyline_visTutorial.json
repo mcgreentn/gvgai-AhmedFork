@@ -1,0 +1,25 @@
+{
+	"gameInfo" : {
+		"gameName"		: "assemblyline",
+		"avatarInfo"	: "You are the ShootAvatar.",
+		"controlsInfo"	: "To move as the ShootAvatar, use the arrow keys to turn and move.",
+		"avatarImage"	: "newset/man3"
+	},
+	"winRules" : [
+
+		{"text" : 	"If you press space, then avatar (ShootAvatar) will release a lever(Item).", "images":["simulation/game0/frames/frame-1", "simulation/game0/frames/frame0", "simulation/game0/frames/frame1", "simulation/game0/frames/frame2", "simulation/game0/frames/frame3"]},
+		{"text" : 	"If lasercannon and lever (Flicker) collide, then the lasercannon sprite will be transformed into lasercannon.", "images":[]},
+		{"text" : 	"If product and lasercannon collide, then the product sprite will be destroyed.", "images":[]},
+		{"text" : 	"If the total amount of victory (product) sprites is 1, then you will win.", "images":[]}
+	],
+	"loseRules" : [
+
+		{"text" : 	"If time reaches 1500 seconds, then you will lose.", "images":[]}
+	],
+	"pointsRules" : [
+
+		{"text" : 	"If the potato (product) and the assembly1 (assembly) collide, then you will gain 1 point.", "images":[]},
+		{"text" : 	"If the potatoeyes (product) and the assembly2 (assembly) collide, then you will gain 2 points.", "images":[]},
+		{"text" : 	"If the potatoeyesnose (product) and the assembly3 (assembly) collide, then you will gain 4 points.", "images":[]}
+	]
+}
