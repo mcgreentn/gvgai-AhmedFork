@@ -246,7 +246,7 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 			// Writes the game info to JSON
 			String one = writeGameInfo(controls, graph);
 			// the visual demonstrator which creates frames
-			VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer(true);
+			VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer(false);
 			String levelFile = "";
 			
 			
