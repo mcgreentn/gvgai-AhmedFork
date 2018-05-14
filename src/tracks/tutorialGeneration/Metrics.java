@@ -119,12 +119,12 @@ public class Metrics {
 //		sb.append("Win Path Proof");
 		for (int[] gamePath : relevantFrames) 
 		{
-			if(gamePath[0] == 1) {
-				for (int j = 1; j < gamePath.length; j++) {
+//			if(gamePath[0] == 1) {
+				for (int j = 0; j < gamePath.length; j++) {
 					sb.append(gamePath[j] + ",");		
 				}
 				sb.append("\n");
-			}
+//			}
 		}
 		
 		
