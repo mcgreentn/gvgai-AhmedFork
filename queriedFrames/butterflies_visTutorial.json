@@ -1,0 +1,17 @@
+{
+	"gameInfo" : {
+		"gameName"		: "butterflies",
+		"avatarInfo"	: "You are the MovingAvatar.",
+		"controlsInfo"	: "To move as the MovingAvatar, use the four arrow keys to move.",
+		"avatarImage"	: "oryx/angel1"
+	},
+	"winRules" : [
+
+		{"text" : 	"If butterfly (animal) and avatar (animal) collide, then the butterfly (animal) sprite will be destroyed.", "images":[]},
+		{"text" : 	"If there are no more butterfly (animal) sprites then you will win.", "images":[]}
+	],
+	"loseRules" : [
+
+		{"text" : 	"If cocoon (Immovable) and butterfly (animal) collide, then the cocoon (Immovable) sprite will be destroyed.", "images":[]},
+		{"text" : 	"If there are no more cocoon (Immovable) sprites then you will lose.", "images":[]}
+	],

@@ -7,19 +7,19 @@
 	},
 	"winRules" : [
 
-		{"text" : 	"If you press space, then avatar (FlakAvatar) will shoot a sam (Missile).", "images":["simulation/game0/frames/frame2", "simulation/game0/frames/frame3", "simulation/game0/frames/frame4", "simulation/game0/frames/frame5", "simulation/game0/frames/frame6"]},
-		{"text" : 	"If alien and sam (missile) collide, then the alien sprite will be destroyed.", "images":["simulation/game1/frames/frame113.png", "simulation/game1/frames/frame114.png", "simulation/game1/frames/frame115.png", "simulation/game1/frames/frame116.png", "simulation/game1/frames/frame117.png", "simulation/game1/frames/frame113.png", "simulation/game1/frames/frame114.png", "simulation/game1/frames/frame115.png", "simulation/game1/frames/frame116.png", "simulation/game1/frames/frame117.png"]},
+		{"text" : 	"If you press space, then avatar (FlakAvatar) will shoot a sam (Missile).", "images":["simulation/game0/frames/frame51", "simulation/game0/frames/frame52", "simulation/game0/frames/frame53", "simulation/game0/frames/frame54", "simulation/game0/frames/frame55"]},
+		{"text" : 	"If alien and sam (missile) collide, then the alien sprite will be destroyed.", "images":[]},
 		{"text" : 	"If there are no more portalSlow (portal) sprites or portalFast (portal) sprites or alienGreen (alien) sprites or alienBlue (alien) sprites then you will win.", "images":[]}
 	],
 	"loseRules" : [
 
 		{"text" : 	"If avatar (FlakAvatar) and alien collide, then the avatar (FlakAvatar) sprite will be destroyed.", "images":[]},
-		{"text" : 	"If avatar (FlakAvatar) and bomb (missile) collide, then the avatar (FlakAvatar) sprite will be destroyed.", "images":["simulation/game1/frames/frame466.png", "simulation/game1/frames/frame467.png", "simulation/game1/frames/frame468.png", "simulation/game1/frames/frame469.png", "simulation/game1/frames/frame470.png"]},
+		{"text" : 	"If avatar (FlakAvatar) and bomb (missile) collide, then the avatar (FlakAvatar) sprite will be destroyed.", "images":[]},
 		{"text" : 	"If there are no more avatar (FlakAvatar) sprites then you will lose.", "images":[]}
 	],
 	"pointsRules" : [
 
-		{"text" : 	"If the alien and the sam (missile) collide, then you will gain 2 points.", "images":["simulation/game1/frames/frame113.png", "simulation/game1/frames/frame114.png", "simulation/game1/frames/frame115.png", "simulation/game1/frames/frame116.png", "simulation/game1/frames/frame117.png", "simulation/game1/frames/frame113.png", "simulation/game1/frames/frame114.png", "simulation/game1/frames/frame115.png", "simulation/game1/frames/frame116.png", "simulation/game1/frames/frame117.png"]},
-		{"text" : 	"If the base (Immovable) and the sam (missile) collide, then you will gain 1 point.", "images":["simulation/game1/frames/frame0.png", "simulation/game1/frames/frame0.png", "simulation/game1/frames/frame0.png", "simulation/game1/frames/frame1.png", "simulation/game1/frames/frame2.png"]}
+		{"text" : 	"If the alien and the sam (missile) collide, then you will gain 2 points.", "images":[]},
+		{"text" : 	"If the base (Immovable) and the sam (missile) collide, then you will gain 1 point.", "images":[]}
 	]
 }

@@ -39,6 +39,7 @@ public class GraphBuilder {
 	private ArrayList<Entity> avatarEntities;
 	
 	boolean verbose = true;
+	boolean graphVisualization = true;
 	/**
 	 * contains all the entities in the graph
 	 */
@@ -58,8 +59,8 @@ public class GraphBuilder {
 
 	public ArrayList<Mechanic> winPath;
 	
-	public boolean showInteractions = false;
-	public boolean showTerminations = false;
+	public boolean showInteractions = true;
+	public boolean showTerminations = true;
 	public boolean showEntities = true;
 	
 	public Graph graph;
@@ -70,9 +71,13 @@ public class GraphBuilder {
 //	String actionColor = "#2c7fb8";
 
 	// quals presentation
-	String spriteColor = "#00A2FF";
-	String conditionColor = "#61D836";
-	String actionColor = "#EE220C";
+//	String spriteColor = "#00A2FF";
+//	String conditionColor = "#61D836";
+//	String actionColor = "#EE220C";
+
+	String spriteColor = "#FCEC8C";
+	String conditionColor = "#E77E43";
+	String actionColor = "#743C2E";
 	
 	String spriteAttributes = "shape:circle;fill-color:" + spriteColor +";size:100px;text-alignment:center;text-color:#000000;text-size:15;";
 	String conditionAttributes = "shape:diamond;fill-color: " + conditionColor + " ;size: 100px;text-alignment: center;text-color:#000000;text-size:13;";
@@ -101,11 +106,13 @@ public class GraphBuilder {
 		this.ga = ga;
 		this.la = la;
 		
-		System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
-		graph = new MultiGraph("Mechanic Graph");
-	    // Let the layout work ...
-	    // Let the layout work ...
-		graph.display();
+		if(graphVisualization) {
+			System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
+			graph = new MultiGraph("Mechanic Graph");
+		    // Let the layout work ...
+		    // Let the layout work ...
+			graph.display();
+		}
 	}
 	
 	/**
@@ -140,17 +147,19 @@ public class GraphBuilder {
 		}
 //		graph.display();
 		int counter = 100;
-		Iterator<? extends Node> nodes = graph.getNodeIterator();
-		while(nodes.hasNext()) {
-			Node node = nodes.next();
-			Iterator<? extends Node> nodes1 = graph.getNodeIterator();
-			while(nodes1.hasNext()) {
-				Node node1 = nodes1.next();
-				if(!node.equals(nodes1)) {
-					Edge e = graph.addEdge(counter + "edge", node, node1);
-					e.addAttribute("layout.weight", 25);
-					e.addAttribute( "ui.hide" );
-					counter++;
+		if(graphVisualization) {
+			Iterator<? extends Node> nodes = graph.getNodeIterator();
+			while(nodes.hasNext()) {
+				Node node = nodes.next();
+				Iterator<? extends Node> nodes1 = graph.getNodeIterator();
+				while(nodes1.hasNext()) {
+					Node node1 = nodes1.next();
+					if(!node.equals(nodes1)) {
+						Edge e = graph.addEdge(counter + "edge", node, node1);
+						e.addAttribute("layout.weight", 25);
+						e.addAttribute( "ui.hide" );
+						counter++;
+					}
 				}
 			}
 		}
@@ -240,9 +249,11 @@ public class GraphBuilder {
 			objectSprite = new Entity(current.name, current.name + " (" + current.type + ")", "Object", current.type);
 		}
 		objectSprite.setParents(current.parents);
-		Node n = graph.addNode(objectSprite.getFullName());
-		n.addAttribute("ui.label", objectSprite.getName());
-		n.addAttribute("ui.style", spriteAttributes);
+		if(graphVisualization) {
+			Node n = graph.addNode(objectSprite.getFullName());
+			n.addAttribute("ui.label", objectSprite.getName());
+			n.addAttribute("ui.style", spriteAttributes);
+		}
 //		n.addAttribute("layout.weight", 10);
 		// add this entity to the lists
 		allEntities.add(objectSprite);
@@ -299,26 +310,28 @@ public class GraphBuilder {
 		action.addOutput(missile);
 		sprite.addOutput(condition);
 		
-		Node c = graph.addNode(sprite.getFullName() + condition.getName());
-		c.addAttribute("ui.label", condition.getName());
-		c.addAttribute("ui.style", conditionAttributes);
-		
-		Node a = graph.addNode(sprite.getFullName() + action.getName());
-		a.addAttribute("ui.label", action.getName());
-		a.addAttribute("ui.style", actionAttributes);
-		
-		// edges
-		Edge e1 = graph.addEdge(sprite.getFullName() + condition.getName() + "edge", sprite.getFullName(), sprite.getFullName() + condition.getName(), true);
-		Edge e2 = graph.addEdge(condition.getName() + action.getName() + "edge", sprite.getFullName() + condition.getName(), sprite.getFullName() + action.getName(), true);
-		Edge e3 = graph.addEdge(action.getName() + missile.getFullName() + "edge", sprite.getFullName() + action.getName(), missile.getFullName(), true);
-		
-		if(!this.showInteractions) {
-			c.addAttribute( "ui.hide" );
-			a.addAttribute( "ui.hide" );
-			e1.addAttribute( "ui.hide" );
-			e2.addAttribute( "ui.hide" );
-			e3.addAttribute( "ui.hide" );
+		if(graphVisualization) {
+			Node c = graph.addNode(sprite.getFullName() + condition.getName());
+			c.addAttribute("ui.label", condition.getName());
+			c.addAttribute("ui.style", conditionAttributes);
 			
+			Node a = graph.addNode(sprite.getFullName() + action.getName());
+			a.addAttribute("ui.label", action.getName());
+			a.addAttribute("ui.style", actionAttributes);
+			
+			// edges
+			Edge e1 = graph.addEdge(sprite.getFullName() + condition.getName() + "edge", sprite.getFullName(), sprite.getFullName() + condition.getName(), true);
+			Edge e2 = graph.addEdge(condition.getName() + action.getName() + "edge", sprite.getFullName() + condition.getName(), sprite.getFullName() + action.getName(), true);
+			Edge e3 = graph.addEdge(action.getName() + missile.getFullName() + "edge", sprite.getFullName() + action.getName(), missile.getFullName(), true);
+			
+			if(!this.showInteractions) {
+				c.addAttribute( "ui.hide" );
+				a.addAttribute( "ui.hide" );
+				e1.addAttribute( "ui.hide" );
+				e2.addAttribute( "ui.hide" );
+				e3.addAttribute( "ui.hide" );
+				
+			}
 		}
 		Mechanic mech = createMechanic(action, sprite, condition);
 		sprite.addMechanic(mech);
@@ -333,10 +346,13 @@ public class GraphBuilder {
 		objectSprite.setParents(new ArrayList<String>());
 		allEntities.add(objectSprite);
 		allObjects.add(objectSprite);
-		Node n = graph.addNode("Timeout");
 		
-		n.addAttribute("ui.label", "Timeout");
-		n.addAttribute("ui.style", "shape:circle;fill-color:" + spriteColor +";size:100px;text-alignment:center;");
+		if(graphVisualization) {
+			Node n = graph.addNode("Timeout");
+			
+			n.addAttribute("ui.label", "Timeout");
+			n.addAttribute("ui.style", "shape:circle;fill-color:" + spriteColor +";size:100px;text-alignment:center;");
+		}
 	}
 	/**
 	 * Classifies the given interaction data into a family
@@ -373,31 +389,33 @@ public class GraphBuilder {
 			
 			
 			// do the same in the visualization
-			Node c = graph.addNode(one.getFullName() + two.getFullName() + condition.getName());
-			c.addAttribute("ui.label", condition.getName());
-			c.addAttribute("ui.style", conditionAttributes);
-//			c.addAttribute("layout.weight", 25);
-
-			Edge e1 = graph.addEdge(one.getFullName() + two.getFullName() + condition.getName() + "1", one.getFullName(), one.getFullName() + two.getFullName() + condition.getName(), true);
-//			e1.addAttribute("layout.weight", 25);
-			Edge e2 = graph.addEdge(one.getFullName() + two.getFullName() + condition.getName() + "2", two.getFullName(), one.getFullName() + two.getFullName() + condition.getName(), true);
-//			e2.addAttribute("layout.weight", 25);
-
-			
-			Node a = graph.addNode(one.getFullName() + two.getFullName() + action.getName());
-			a.addAttribute("ui.label", action.getName());
-			a.addAttribute("ui.style", actionAttributes);
-//			a.addAttribute("layout.weight", 5);
-			
-			Edge e3 = graph.addEdge(one.getFullName() + two.getFullName() + action.getName(), one.getFullName() + two.getFullName() + condition.getName(), one.getFullName() + two.getFullName() + action.getName(), true);
-//			e3.addAttribute("layout.weight", 25);
-
-			if(!this.showInteractions) {
-				c.addAttribute( "ui.hide" );
-				a.addAttribute( "ui.hide" );
-				e1.addAttribute( "ui.hide" );
-				e2.addAttribute( "ui.hide" );
-				e3.addAttribute( "ui.hide" );
+			if(graphVisualization) {
+				Node c = graph.addNode(one.getFullName() + two.getFullName() + condition.getName());
+				c.addAttribute("ui.label", condition.getName());
+				c.addAttribute("ui.style", conditionAttributes);
+	//			c.addAttribute("layout.weight", 25);
+	
+				Edge e1 = graph.addEdge(one.getFullName() + two.getFullName() + condition.getName() + "1", one.getFullName(), one.getFullName() + two.getFullName() + condition.getName(), true);
+	//			e1.addAttribute("layout.weight", 25);
+				Edge e2 = graph.addEdge(one.getFullName() + two.getFullName() + condition.getName() + "2", two.getFullName(), one.getFullName() + two.getFullName() + condition.getName(), true);
+	//			e2.addAttribute("layout.weight", 25);
+	
+				
+				Node a = graph.addNode(one.getFullName() + two.getFullName() + action.getName());
+				a.addAttribute("ui.label", action.getName());
+				a.addAttribute("ui.style", actionAttributes);
+	//			a.addAttribute("layout.weight", 5);
+				
+				Edge e3 = graph.addEdge(one.getFullName() + two.getFullName() + action.getName(), one.getFullName() + two.getFullName() + condition.getName(), one.getFullName() + two.getFullName() + action.getName(), true);
+	//			e3.addAttribute("layout.weight", 25);
+	
+				if(!this.showInteractions) {
+					c.addAttribute( "ui.hide" );
+					a.addAttribute( "ui.hide" );
+					e1.addAttribute( "ui.hide" );
+					e2.addAttribute( "ui.hide" );
+					e3.addAttribute( "ui.hide" );
+				}
 			}
 			// create attributes for the condition
 //			createInteractionConditionAttributes(condition, one, two, interaction);
@@ -432,32 +450,39 @@ public class GraphBuilder {
 				|| name.equals("KillIfFromAbove") || name.equals("KillIfOtherHasMore") || name.equals("CloneSprite")
 				|| name.equals("AddHealthPoints") || name.equals("AddHealthPointsToMax") || name.equals("SubtractHealthPoints")) {
 			action.addOutput(one);
-			Edge e = graph.addEdge(one.getFullName() + two.getFullName() + action.getName()+ "output", one.getFullName() + two.getFullName() + action.getName(), one.getFullName(), true);
-			if(!this.showInteractions) {
-				e.addAttribute( "ui.hide" );
+			if(graphVisualization) {
+				Edge e = graph.addEdge(one.getFullName() + two.getFullName() + action.getName()+ "output", one.getFullName() + two.getFullName() + action.getName(), one.getFullName(), true);
+				if(!this.showInteractions) {
+					e.addAttribute( "ui.hide" );
+				}
 			}
 //			e.addAttribute("layout.weight", 25);
 		} else if(name.equals("KillAll") || name.equals("SpawnBehind") || name.equals("TransformTo") || name.equals("IncreaseSpeedToAll")
 				|| name.equals("DecreaseSpeedToAll") || name.equals("SetSpeedForAll")) {
 			Entity stype = searchObjects(interaction.sprites.get(0));
 			action.addOutput(stype);
-			Edge e = graph.addEdge(one.getFullName() + two.getFullName() + action.getName()+ "output", one.getFullName() + two.getFullName() + action.getName(), stype.getFullName(), true);
-//			e.addAttribute("layout.weight", 25);
-			stype.addMechanic(m);
-			if(!this.showInteractions) {
-				e.addAttribute( "ui.hide" );
+			if(graphVisualization) {
+				Edge e = graph.addEdge(one.getFullName() + two.getFullName() + action.getName()+ "output", one.getFullName() + two.getFullName() + action.getName(), stype.getFullName(), true);
+	//			e.addAttribute("layout.weight", 25);
+				if(!this.showInteractions) {
+					e.addAttribute( "ui.hide" );
+				}
 			}
+			stype.addMechanic(m);
+
 		} else if(name.equals("KillBoth")) {
 			action.addOutput(one);
 			action.addOutput(two);
-			Edge e1 = graph.addEdge(one.getFullName() + two.getFullName() + action.getName()+ "output1", one.getFullName() + two.getFullName() + action.getName(), one.getFullName(), true);
-//			e1.addAttribute("layout.weight", 25);
-			Edge e2 = graph.addEdge(one.getFullName() + two.getFullName() + action.getName()+ "output2", one.getFullName() + two.getFullName() + action.getName(), two.getFullName(), true);
-//			e2.addAttribute("layout.weight", 25);
-			
-			if(!this.showInteractions) {
-				e1.addAttribute( "ui.hide" );
-				e2.addAttribute( "ui.hide" );
+			if(graphVisualization) {
+				Edge e1 = graph.addEdge(one.getFullName() + two.getFullName() + action.getName()+ "output1", one.getFullName() + two.getFullName() + action.getName(), one.getFullName(), true);
+	//			e1.addAttribute("layout.weight", 25);
+				Edge e2 = graph.addEdge(one.getFullName() + two.getFullName() + action.getName()+ "output2", one.getFullName() + two.getFullName() + action.getName(), two.getFullName(), true);
+	//			e2.addAttribute("layout.weight", 25);
+				
+				if(!this.showInteractions) {
+					e1.addAttribute( "ui.hide" );
+					e2.addAttribute( "ui.hide" );
+				}
 			}
 		}
 	}
@@ -528,21 +553,22 @@ public class GraphBuilder {
 		// add the mechanic to respective mechanic lists in entities
 		condition.addMechanic(mech);
 		action.addMechanic(mech);
-		
-		Node c = graph.addNode(condition.getName() + action.getName());
-		c.addAttribute("ui.label", condition.getName() + "\n limit=" + condition.getAttribute("limit").getValue());
-		c.addAttribute("ui.style", conditionAttributes);
-
-		Node a = graph.addNode(action.getName());
-		a.addAttribute("ui.label", action.getName());
-		a.addAttribute("ui.style", actionAttributes);
-
-		Edge eMain = graph.addEdge(condition.getName() + action.getName(), condition.getName() + action.getName(), action.getName(), true);
-		
-		if(!this.showTerminations) {
-			c.addAttribute( "ui.hide" );
-			a.addAttribute( "ui.hide" );
-			eMain.addAttribute( "ui.hide" );
+		if(graphVisualization) {
+			Node c = graph.addNode(condition.getName() + action.getName());
+			c.addAttribute("ui.label", condition.getName() + "\n limit=" + condition.getAttribute("limit").getValue());
+			c.addAttribute("ui.style", conditionAttributes);
+	
+			Node a = graph.addNode(action.getName());
+			a.addAttribute("ui.label", action.getName());
+			a.addAttribute("ui.style", actionAttributes);
+	
+			Edge eMain = graph.addEdge(condition.getName() + action.getName(), condition.getName() + action.getName(), action.getName(), true);
+			
+			if(!this.showTerminations) {
+				c.addAttribute( "ui.hide" );
+				a.addAttribute( "ui.hide" );
+				eMain.addAttribute( "ui.hide" );
+			}
 		}
 //		eMain.addAttribute("ui.style", "stroke-mode:plain;");
 		// deal with each sprite in this mechanic
@@ -554,11 +580,12 @@ public class GraphBuilder {
 			condition.addInput(object);
 			object.addMechanic(mech);
 			mech.setObject1(object);
-			
-			Edge e = graph.addEdge(object.getFullName() + condition.getName() + "edge", object.getFullName(), condition.getName() + action.getName(), true);
-//			e.addAttribute("ui.style", "stroke-mode:plain;");
-			if(!this.showTerminations) {
-				e.addAttribute( "ui.hide" );
+			if(graphVisualization) {
+				Edge e = graph.addEdge(object.getFullName() + condition.getName() + "edge", object.getFullName(), condition.getName() + action.getName(), true);
+	//			e.addAttribute("ui.style", "stroke-mode:plain;");
+				if(!this.showTerminations) {
+					e.addAttribute( "ui.hide" );
+				}
 			}
 		}
 		if(condition.getName().equals("Timeout")) {
@@ -1195,25 +1222,31 @@ public class GraphBuilder {
 				// find the edges for this mechanic and make them thicker
 				Mechanic m = step.get(j);
 				if(m.getObject2() != null) {
-					Edge e1 = graph.getEdge(m.getObject1().getFullName() + m.getObject2().getFullName() + m.getCondition().getName() + "1");
-					Edge e2 = graph.getEdge(m.getObject1().getFullName() + m.getObject2().getFullName() + m.getCondition().getName() + "2");
-					e1.addAttribute("ui.style", "stroke-mode:plain;");
-					e2.addAttribute("ui.style", "stroke-mode:plain;");
-					
-					// everything has a condition and an action, so color this edge
-					Edge caEdge = graph.getEdge(m.getObject1().getFullName() + m.getObject2().getFullName() + m.getAction().getName());
-					caEdge.addAttribute("ui.style", "stroke-mode:plain;");
+					if(graphVisualization) {
+						Edge e1 = graph.getEdge(m.getObject1().getFullName() + m.getObject2().getFullName() + m.getCondition().getName() + "1");
+						Edge e2 = graph.getEdge(m.getObject1().getFullName() + m.getObject2().getFullName() + m.getCondition().getName() + "2");
+						e1.addAttribute("ui.style", "stroke-mode:plain;");
+						e2.addAttribute("ui.style", "stroke-mode:plain;");
+						
+						// everything has a condition and an action, so color this edge
+						Edge caEdge = graph.getEdge(m.getObject1().getFullName() + m.getObject2().getFullName() + m.getAction().getName());
+						caEdge.addAttribute("ui.style", "stroke-mode:plain;");
+					}
 				}
 				else {
 					try {
-					Edge e1 = graph.getEdge(m.getObject1().getFullName() + m.getCondition().getName() + "edge");
-					e1.addAttribute("ui.style", "stroke-mode:plain;");
+						if(graphVisualization) {
+							Edge e1 = graph.getEdge(m.getObject1().getFullName() + m.getCondition().getName() + "edge");
+							e1.addAttribute("ui.style", "stroke-mode:plain;");
+						}
 					}catch(Exception e) {
 						System.out.println("oops");
 					}
 					try {
-					Edge ca = graph.getEdge(m.getCondition().getName() + m.getAction().getName() + "edge");
-					ca.addAttribute("ui.style", "stroke-mode:plain;");
+						if(graphVisualization) {
+							Edge ca = graph.getEdge(m.getCondition().getName() + m.getAction().getName() + "edge");
+							ca.addAttribute("ui.style", "stroke-mode:plain;");
+						}
 					} catch(Exception e) {
 						System.out.println("oops2");
 					}
@@ -1221,26 +1254,34 @@ public class GraphBuilder {
 				
 				if(m.getAction().getOutputs().size() > 0) {
 					try{
-					Edge eaGames = graph.getEdge(m.getObject1().getFullName() + m.getObject2().getFullName() + m.getAction().getName()+ "output");
-					eaGames.addAttribute("ui.style", "stroke-mode:plain;");
+						if(graphVisualization) {
+							Edge eaGames = graph.getEdge(m.getObject1().getFullName() + m.getObject2().getFullName() + m.getAction().getName()+ "output");
+							eaGames.addAttribute("ui.style", "stroke-mode:plain;");
+						}
 					} catch(Exception e) {
 						// throw away dont care
 					}
 					try{
-					Edge eaGames = graph.getEdge(m.getObject1().getFullName() + m.getObject2().getFullName() + m.getAction().getName()+ "output1");
-					eaGames.addAttribute("ui.style", "stroke-mode:plain;");
+						if(graphVisualization) {
+							Edge eaGames = graph.getEdge(m.getObject1().getFullName() + m.getObject2().getFullName() + m.getAction().getName()+ "output1");
+							eaGames.addAttribute("ui.style", "stroke-mode:plain;");
+						}
 					} catch(Exception e) {
 						// throw away dont care
 					}
 					try{
-					Edge eaGames = graph.getEdge(m.getObject1().getFullName() + m.getObject2().getFullName() + m.getAction().getName()+ "output2");
-					eaGames.addAttribute("ui.style", "stroke-mode:plain;");
+						if(graphVisualization) {
+							Edge eaGames = graph.getEdge(m.getObject1().getFullName() + m.getObject2().getFullName() + m.getAction().getName()+ "output2");
+							eaGames.addAttribute("ui.style", "stroke-mode:plain;");
+						}
 					} catch(Exception e) {
 						// throw away dont care
 					}
 					try {
-						Edge eaGames = graph.getEdge(m.getAction().getName() + m.getAction().getOutputs().get(0).getFullName() + "edge");
-						eaGames.addAttribute("ui.style", "stroke-mode:plain;");
+						if(graphVisualization) {
+							Edge eaGames = graph.getEdge(m.getAction().getName() + m.getAction().getOutputs().get(0).getFullName() + "edge");
+							eaGames.addAttribute("ui.style", "stroke-mode:plain;");
+						}
 					} catch(Exception e) {
 						// throw away dont care
 					}

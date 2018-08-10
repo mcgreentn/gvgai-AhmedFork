@@ -7,19 +7,19 @@
 	},
 	"winRules" : [
 
-		{"text" : 	"If nokey (avatar) and key (Immovable) collide, then the nokey (avatar) sprite will be transformed into withkey (avatar).", "images":["simulation/game0/frames/frame9.png", "simulation/game0/frames/frame10.png", "simulation/game0/frames/frame11.png", "simulation/game0/frames/frame12.png", "simulation/game0/frames/frame13.png"]},
-		{"text" : 	"If goal (Door) and withkey (avatar) collide, then the goal (Door) sprite will be opened.", "images":["simulation/game0/frames/frame111.png", "simulation/game0/frames/frame112.png", "simulation/game0/frames/frame113.png", "simulation/game0/frames/frame114.png", "simulation/game0/frames/frame115.png"]},
+		{"text" : 	"If nokey (avatar) and key (Immovable) collide, then the nokey (avatar) sprite will be transformed into withkey (avatar).", "images":["simulation/game30/frames/frame12.png", "simulation/game30/frames/frame13.png", "simulation/game30/frames/frame14.png", "simulation/game30/frames/frame15.png", "simulation/game30/frames/frame16.png"]},
+		{"text" : 	"If goal (Door) and withkey (avatar) collide, then the goal (Door) sprite will be opened.", "images":["simulation/game24/frames/frame36.png", "simulation/game24/frames/frame37.png", "simulation/game24/frames/frame38.png", "simulation/game24/frames/frame39.png", "simulation/game24/frames/frame40.png"]},
 		{"text" : 	"If there are no more goal (Door) sprites then you will win.", "images":[]}
 	],
 	"loseRules" : [
 
-		{"text" : 	"If avatar and enemy collide, then the avatar sprite will be destroyed.", "images":[]},
+		{"text" : 	"If avatar and enemy collide, then the avatar sprite will be destroyed.", "images":["simulation/game31/frames/frame716.png", "simulation/game31/frames/frame717.png", "simulation/game31/frames/frame718.png", "simulation/game31/frames/frame719.png", "simulation/game31/frames/frame720.png", "simulation/game32/frames/frame1508.png", "simulation/game32/frames/frame1509.png", "simulation/game32/frames/frame1510.png", "simulation/game32/frames/frame1511.png", "simulation/game32/frames/frame1512.png", "simulation/game27/frames/frame840.png", "simulation/game27/frames/frame841.png", "simulation/game27/frames/frame842.png", "simulation/game27/frames/frame843.png", "simulation/game27/frames/frame844.png"]},
 		{"text" : 	"If there are no more nokey (avatar) sprites or withkey (avatar) sprites then you will lose.", "images":[]}
 	],
 	"pointsRules" : [
 
-		{"text" : 	"If the nokey (avatar) and the key (Immovable) collide, then you will gain 1 point.", "images":["simulation/game0/frames/frame9.png", "simulation/game0/frames/frame10.png", "simulation/game0/frames/frame11.png", "simulation/game0/frames/frame12.png", "simulation/game0/frames/frame13.png"]},
-		{"text" : 	"If the enemy and the sword (OrientedFlicker) collide, then you will gain 2 points.", "images":["simulation/game0/frames/frame78.png", "simulation/game0/frames/frame79.png", "simulation/game0/frames/frame80.png", "simulation/game0/frames/frame81.png", "simulation/game0/frames/frame82.png"]},
-		{"text" : 	"If the goal (Door) and the withkey (avatar) collide, then you will gain 1 point.", "images":["simulation/game0/frames/frame111.png", "simulation/game0/frames/frame112.png", "simulation/game0/frames/frame113.png", "simulation/game0/frames/frame114.png", "simulation/game0/frames/frame115.png"]}
+		{"text" : 	"If the nokey (avatar) and the key (Immovable) collide, then you will gain 1 point.", "images":["simulation/game30/frames/frame12.png", "simulation/game30/frames/frame13.png", "simulation/game30/frames/frame14.png", "simulation/game30/frames/frame15.png", "simulation/game30/frames/frame16.png"]},
+		{"text" : 	"If the enemy and the sword (OrientedFlicker) collide, then you will gain 2 points.", "images":["simulation/game34/frames/frame1285.png", "simulation/game34/frames/frame1286.png", "simulation/game34/frames/frame1287.png", "simulation/game34/frames/frame1288.png", "simulation/game34/frames/frame1289.png", "simulation/game34/frames/frame469.png", "simulation/game34/frames/frame470.png", "simulation/game34/frames/frame471.png", "simulation/game34/frames/frame472.png", "simulation/game34/frames/frame473.png", "simulation/game33/frames/frame72.png", "simulation/game33/frames/frame73.png", "simulation/game33/frames/frame74.png", "simulation/game33/frames/frame75.png", "simulation/game33/frames/frame76.png"]},
+		{"text" : 	"If the goal (Door) and the withkey (avatar) collide, then you will gain 1 point.", "images":["simulation/game24/frames/frame36.png", "simulation/game24/frames/frame37.png", "simulation/game24/frames/frame38.png", "simulation/game24/frames/frame39.png", "simulation/game24/frames/frame40.png"]}
 	]
 }

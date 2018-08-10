@@ -1,0 +1,16 @@
+{
+	"gameInfo" : {
+		"gameName"		: "jaws",
+		"avatarInfo"	: "You are the ShootAvatar.",
+		"controlsInfo"	: "To move as the ShootAvatar, use the arrow keys to turn and move. Press space to shoot a torpedo (moving).",
+		"avatarImage"	: "newset/submarine"
+	},
+	"winRules" : [
+
+		{"text" : 	"If time reaches 1000 seconds, then you will win.", "images":[]}
+	],
+	"loseRules" : [
+
+		{"text" : 	"If moving and fish collide, then the moving sprite will be destroyed.", "images":[]},
+		{"text" : 	"If there are no more avatar (moving) sprites then you will lose.", "images":[]}
+	],

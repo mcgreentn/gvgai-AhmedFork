@@ -1,0 +1,16 @@
+{
+	"gameInfo" : {
+		"gameName"		: "survivezombies",
+		"avatarInfo"	: "You are the MovingAvatar.",
+		"controlsInfo"	: "To move as the MovingAvatar, use the four arrow keys to move.",
+		"avatarImage"	: "oryx/swordman1"
+	},
+	"winRules" : [
+
+		{"text" : 	"If time reaches 1000 seconds, then you will win.", "images":[]}
+	],
+	"loseRules" : [
+
+		{"text" : 	"If avatar (moving) and hell collide, then the avatar (moving) sprite will be destroyed.", "images":[]},
+		{"text" : 	"If there are no more avatar (moving) sprites then you will lose.", "images":[]}
+	],

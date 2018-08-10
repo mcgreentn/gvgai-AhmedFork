@@ -1,0 +1,19 @@
+{
+	"gameInfo" : {
+		"gameName"		: "realportals",
+		"avatarInfo"	: "You are the avatar.",
+		"controlsInfo"	: "To move as the avatar, use the arrow keys to turn and move. Press space to shoot a missileIn (missile).",
+		"avatarImage"	: "oryx/necromancer1"
+	},
+	"winRules" : [
+
+		{"text" : 	"If avatar and weaponToggle1 (Immovable) collide, then the avatar sprite will be transformed into avatar.", "images":[]},
+		{"text" : 	"If avatar and weaponToggle2 (Immovable) collide, then the avatar sprite will be transformed into avatar.", "images":[]},
+		{"text" : 	"If goal (Immovable) and avatar collide, then the goal (Immovable) sprite will be destroyed.", "images":[]},
+		{"text" : 	"If there are no more goal (Immovable) sprites then you will win.", "images":[]}
+	],
+	"loseRules" : [
+
+		{"text" : 	"If avatar and water (Immovable) collide, then the avatar sprite will be destroyed.", "images":[]},
+		{"text" : 	"If there are no more avatarIn (avatar) sprites or avatarOut (avatar) sprites then you will lose.", "images":[]}
+	],
