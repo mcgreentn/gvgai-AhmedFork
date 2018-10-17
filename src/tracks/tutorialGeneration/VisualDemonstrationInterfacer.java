@@ -721,9 +721,9 @@ public class VisualDemonstrationInterfacer {
 			QueryGameResult queryGameResult = new QueryGameResult("simulation/game" + k + "/result/result.json");
 			
 			int[] earliestFrames = new int[superP.size()+1];
-			for(int i = 0; i < superP.size()-1; i++){				
+			for(int i = 0; i < superP.size()-1; i++){
+				int smallestFrame = Integer.MAX_VALUE;
 				for(int j = 1; j < superP.get(i).size(); j++) {
-					int smallestFrame = Integer.MAX_VALUE;
 					Mechanic temp = superP.get(i).get(j);
 					if(temp.getCondition().getSubtype().equals("Player Input")) {
 						
@@ -737,16 +737,17 @@ public class VisualDemonstrationInterfacer {
 					else {
 						// deal with as a normal mechanic
 						int [] frames = mapFrameNumbersInTheSimualtionByMechanic(temp, k);
-						if(frames.length > 0)
+						if(frames.length > 0 )
 						{
 							int frameCount = frames[4];
-							if (frameCount < smallestFrame) 
+							if (frameCount < smallestFrame || smallestFrame == -1) 
 							{
 								smallestFrame = frameCount;
 							}
-						}else{
-							smallestFrame = -1;
 						}
+//						else{
+//							smallestFrame = -1;
+//						}
 					}
 					earliestFrames[i+1] = smallestFrame;
 				}

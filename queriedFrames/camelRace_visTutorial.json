@@ -1,0 +1,18 @@
+{
+	"gameInfo" : {
+		"gameName"		: "camelRace",
+		"avatarInfo"	: "You are the avatar.",
+		"controlsInfo"	: "To move as the avatar, use the four arrow keys to move.",
+		"avatarImage"	: "newset/camel5L"
+	},
+	"winRules" : [
+
+		{"text" : 	"If avatar and goal (structure) collide, then the avatar sprite will be transformed into winnerPlayer (Immovable).", "images":[]},
+		{"text" : 	"If the total amount of winnerPlayer (Immovable) sprites is 1, then you will win.", "images":[]}
+	],
+	"loseRules" : [
+
+		{"text" : 	"If randomCamel (camel) and goal (structure) collide, then the randomCamel (camel) sprite will be transformed into winnerNPC (Immovable).", "images":[]},
+		{"text" : 	"If camel and goal (structure) collide, then the camel sprite will be transformed into winnerNPC (Immovable).", "images":[]},
+		{"text" : 	"If the total amount of winnerNPC (Immovable) sprites is 1, then you will lose.", "images":[]}
+	],

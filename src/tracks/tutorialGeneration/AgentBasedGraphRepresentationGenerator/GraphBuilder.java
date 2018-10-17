@@ -2,6 +2,7 @@ package tracks.tutorialGeneration.AgentBasedGraphRepresentationGenerator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -13,7 +14,12 @@ import core.game.GameDescription.TerminationData;
 import tools.GameAnalyzer;
 import tools.LevelAnalyzer;
 import tracks.tutorialGeneration.Metrics;
-import tracks.tutorialGeneration.ITSetParserGenerator.Node;
+
+import org.graphstream.graph.*;
+import org.graphstream.graph.implementations.*;
+import org.graphstream.ui.*;
+import org.graphstream.ui.layout.Layout;
+import org.graphstream.ui.view.Viewer;
 
 public class GraphBuilder {
 	/**
@@ -33,6 +39,7 @@ public class GraphBuilder {
 	private ArrayList<Entity> avatarEntities;
 	
 	boolean verbose = true;
+	boolean graphVisualization = true;
 	/**
 	 * contains all the entities in the graph
 	 */
@@ -51,6 +58,30 @@ public class GraphBuilder {
 	public ArrayList<String> spriteCountActions = new ArrayList<String>(Arrays.asList("KillSprite"));
 
 	public ArrayList<Mechanic> winPath;
+	
+	public boolean showInteractions = true;
+	public boolean showTerminations = true;
+	public boolean showEntities = true;
+	
+	public Graph graph;
+	
+	// printer safe
+//	String spriteColor = "#edf8b1";
+//	String conditionColor = "#7fcdbb";
+//	String actionColor = "#2c7fb8";
+
+	// quals presentation
+//	String spriteColor = "#00A2FF";
+//	String conditionColor = "#61D836";
+//	String actionColor = "#EE220C";
+
+	String spriteColor = "#FCEC8C";
+	String conditionColor = "#E77E43";
+	String actionColor = "#743C2E";
+	
+	String spriteAttributes = "shape:circle;fill-color:" + spriteColor +";size:100px;text-alignment:center;text-color:#000000;text-size:15;";
+	String conditionAttributes = "shape:diamond;fill-color: " + conditionColor + " ;size: 100px;text-alignment: center;text-color:#000000;text-size:13;";
+	String actionAttributes = "shape:box;fill-color: " + actionColor + " ;size: 75px;text-alignment: center;text-color:#FFFFFF;text-size:15;";
 	/**
 	 * Creates a graph builder object, intakes all information parsed in from the VDGL file
 	 * @param gd the game description
@@ -74,6 +105,14 @@ public class GraphBuilder {
 		this.sl = sl;
 		this.ga = ga;
 		this.la = la;
+		
+		if(graphVisualization) {
+			System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
+			graph = new MultiGraph("Mechanic Graph");
+		    // Let the layout work ...
+		    // Let the layout work ...
+			graph.display();
+		}
 	}
 	
 	/**
@@ -106,7 +145,26 @@ public class GraphBuilder {
 			}
 
 		}
-	
+//		graph.display();
+		int counter = 100;
+		if(graphVisualization) {
+			Iterator<? extends Node> nodes = graph.getNodeIterator();
+			while(nodes.hasNext()) {
+				Node node = nodes.next();
+				Iterator<? extends Node> nodes1 = graph.getNodeIterator();
+				while(nodes1.hasNext()) {
+					Node node1 = nodes1.next();
+					if(!node.equals(nodes1)) {
+						Edge e = graph.addEdge(counter + "edge", node, node1);
+						e.addAttribute("layout.weight", 25);
+						e.addAttribute( "ui.hide" );
+						counter++;
+					}
+				}
+			}
+		}
+		
+		
 	}
 	
 	/**
@@ -140,7 +198,8 @@ public class GraphBuilder {
 		// loop through every sprite paired with every other sprite
 		// get all sprite data
 		ArrayList<SpriteData> allSpriteData = gd.getAllSpriteData();
-		
+//		this.showInteractions = true;
+
 		for(SpriteData sprite1 : allSpriteData) {
 			for(SpriteData sprite2 : allSpriteData) {
 				// get all interactions between these two sprites
@@ -149,7 +208,8 @@ public class GraphBuilder {
 					classifyInteractionData(interaction, sprite1.name, sprite2.name);
 				}
 			}
-		}	
+		}
+//		graph.display();
 	}
 	
 	/**
@@ -189,6 +249,12 @@ public class GraphBuilder {
 			objectSprite = new Entity(current.name, current.name + " (" + current.type + ")", "Object", current.type);
 		}
 		objectSprite.setParents(current.parents);
+		if(graphVisualization) {
+			Node n = graph.addNode(objectSprite.getFullName());
+			n.addAttribute("ui.label", objectSprite.getName());
+			n.addAttribute("ui.style", spriteAttributes);
+		}
+//		n.addAttribute("layout.weight", 10);
 		// add this entity to the lists
 		allEntities.add(objectSprite);
 		allObjects.add(objectSprite);
@@ -244,6 +310,29 @@ public class GraphBuilder {
 		action.addOutput(missile);
 		sprite.addOutput(condition);
 		
+		if(graphVisualization) {
+			Node c = graph.addNode(sprite.getFullName() + condition.getName());
+			c.addAttribute("ui.label", condition.getName());
+			c.addAttribute("ui.style", conditionAttributes);
+			
+			Node a = graph.addNode(sprite.getFullName() + action.getName());
+			a.addAttribute("ui.label", action.getName());
+			a.addAttribute("ui.style", actionAttributes);
+			
+			// edges
+			Edge e1 = graph.addEdge(sprite.getFullName() + condition.getName() + "edge", sprite.getFullName(), sprite.getFullName() + condition.getName(), true);
+			Edge e2 = graph.addEdge(condition.getName() + action.getName() + "edge", sprite.getFullName() + condition.getName(), sprite.getFullName() + action.getName(), true);
+			Edge e3 = graph.addEdge(action.getName() + missile.getFullName() + "edge", sprite.getFullName() + action.getName(), missile.getFullName(), true);
+			
+			if(!this.showInteractions) {
+				c.addAttribute( "ui.hide" );
+				a.addAttribute( "ui.hide" );
+				e1.addAttribute( "ui.hide" );
+				e2.addAttribute( "ui.hide" );
+				e3.addAttribute( "ui.hide" );
+				
+			}
+		}
 		Mechanic mech = createMechanic(action, sprite, condition);
 		sprite.addMechanic(mech);
 	}
@@ -257,7 +346,13 @@ public class GraphBuilder {
 		objectSprite.setParents(new ArrayList<String>());
 		allEntities.add(objectSprite);
 		allObjects.add(objectSprite);
-
+		
+		if(graphVisualization) {
+			Node n = graph.addNode("Timeout");
+			
+			n.addAttribute("ui.label", "Timeout");
+			n.addAttribute("ui.style", "shape:circle;fill-color:" + spriteColor +";size:100px;text-alignment:center;");
+		}
 	}
 	/**
 	 * Classifies the given interaction data into a family
@@ -292,7 +387,36 @@ public class GraphBuilder {
 			condition.addInput(one);
 			action.addInput(condition);
 			
-
+			
+			// do the same in the visualization
+			if(graphVisualization) {
+				Node c = graph.addNode(one.getFullName() + two.getFullName() + condition.getName());
+				c.addAttribute("ui.label", condition.getName());
+				c.addAttribute("ui.style", conditionAttributes);
+	//			c.addAttribute("layout.weight", 25);
+	
+				Edge e1 = graph.addEdge(one.getFullName() + two.getFullName() + condition.getName() + "1", one.getFullName(), one.getFullName() + two.getFullName() + condition.getName(), true);
+	//			e1.addAttribute("layout.weight", 25);
+				Edge e2 = graph.addEdge(one.getFullName() + two.getFullName() + condition.getName() + "2", two.getFullName(), one.getFullName() + two.getFullName() + condition.getName(), true);
+	//			e2.addAttribute("layout.weight", 25);
+	
+				
+				Node a = graph.addNode(one.getFullName() + two.getFullName() + action.getName());
+				a.addAttribute("ui.label", action.getName());
+				a.addAttribute("ui.style", actionAttributes);
+	//			a.addAttribute("layout.weight", 5);
+				
+				Edge e3 = graph.addEdge(one.getFullName() + two.getFullName() + action.getName(), one.getFullName() + two.getFullName() + condition.getName(), one.getFullName() + two.getFullName() + action.getName(), true);
+	//			e3.addAttribute("layout.weight", 25);
+	
+				if(!this.showInteractions) {
+					c.addAttribute( "ui.hide" );
+					a.addAttribute( "ui.hide" );
+					e1.addAttribute( "ui.hide" );
+					e2.addAttribute( "ui.hide" );
+					e3.addAttribute( "ui.hide" );
+				}
+			}
 			// create attributes for the condition
 //			createInteractionConditionAttributes(condition, one, two, interaction);
 			//create a mechanic
@@ -326,14 +450,40 @@ public class GraphBuilder {
 				|| name.equals("KillIfFromAbove") || name.equals("KillIfOtherHasMore") || name.equals("CloneSprite")
 				|| name.equals("AddHealthPoints") || name.equals("AddHealthPointsToMax") || name.equals("SubtractHealthPoints")) {
 			action.addOutput(one);
+			if(graphVisualization) {
+				Edge e = graph.addEdge(one.getFullName() + two.getFullName() + action.getName()+ "output", one.getFullName() + two.getFullName() + action.getName(), one.getFullName(), true);
+				if(!this.showInteractions) {
+					e.addAttribute( "ui.hide" );
+				}
+			}
+//			e.addAttribute("layout.weight", 25);
 		} else if(name.equals("KillAll") || name.equals("SpawnBehind") || name.equals("TransformTo") || name.equals("IncreaseSpeedToAll")
 				|| name.equals("DecreaseSpeedToAll") || name.equals("SetSpeedForAll")) {
 			Entity stype = searchObjects(interaction.sprites.get(0));
 			action.addOutput(stype);
+			if(graphVisualization) {
+				Edge e = graph.addEdge(one.getFullName() + two.getFullName() + action.getName()+ "output", one.getFullName() + two.getFullName() + action.getName(), stype.getFullName(), true);
+	//			e.addAttribute("layout.weight", 25);
+				if(!this.showInteractions) {
+					e.addAttribute( "ui.hide" );
+				}
+			}
 			stype.addMechanic(m);
+
 		} else if(name.equals("KillBoth")) {
 			action.addOutput(one);
 			action.addOutput(two);
+			if(graphVisualization) {
+				Edge e1 = graph.addEdge(one.getFullName() + two.getFullName() + action.getName()+ "output1", one.getFullName() + two.getFullName() + action.getName(), one.getFullName(), true);
+	//			e1.addAttribute("layout.weight", 25);
+				Edge e2 = graph.addEdge(one.getFullName() + two.getFullName() + action.getName()+ "output2", one.getFullName() + two.getFullName() + action.getName(), two.getFullName(), true);
+	//			e2.addAttribute("layout.weight", 25);
+				
+				if(!this.showInteractions) {
+					e1.addAttribute( "ui.hide" );
+					e2.addAttribute( "ui.hide" );
+				}
+			}
 		}
 	}
 	/**
@@ -403,7 +553,24 @@ public class GraphBuilder {
 		// add the mechanic to respective mechanic lists in entities
 		condition.addMechanic(mech);
 		action.addMechanic(mech);
-		
+		if(graphVisualization) {
+			Node c = graph.addNode(condition.getName() + action.getName());
+			c.addAttribute("ui.label", condition.getName() + "\n limit=" + condition.getAttribute("limit").getValue());
+			c.addAttribute("ui.style", conditionAttributes);
+	
+			Node a = graph.addNode(action.getName());
+			a.addAttribute("ui.label", action.getName());
+			a.addAttribute("ui.style", actionAttributes);
+	
+			Edge eMain = graph.addEdge(condition.getName() + action.getName(), condition.getName() + action.getName(), action.getName(), true);
+			
+			if(!this.showTerminations) {
+				c.addAttribute( "ui.hide" );
+				a.addAttribute( "ui.hide" );
+				eMain.addAttribute( "ui.hide" );
+			}
+		}
+//		eMain.addAttribute("ui.style", "stroke-mode:plain;");
 		// deal with each sprite in this mechanic
 		for(String sprite : spritesInvolved) {
 			// find entity object, add this mechanic to its list
@@ -413,6 +580,13 @@ public class GraphBuilder {
 			condition.addInput(object);
 			object.addMechanic(mech);
 			mech.setObject1(object);
+			if(graphVisualization) {
+				Edge e = graph.addEdge(object.getFullName() + condition.getName() + "edge", object.getFullName(), condition.getName() + action.getName(), true);
+	//			e.addAttribute("ui.style", "stroke-mode:plain;");
+				if(!this.showTerminations) {
+					e.addAttribute( "ui.hide" );
+				}
+			}
 		}
 		if(condition.getName().equals("Timeout")) {
 			Entity timeoutObject = searchObjects("Timeout");
@@ -545,7 +719,9 @@ public class GraphBuilder {
 						}
 						String a = aMech.getAction().getName();
 						if((s1.equals(subtype1)) && (s2.equals(subtype2)) && a.equals(m.getAction().getName()) && !aMech.equals(m)) {
-							subSiblingMechs.add(aMech);
+							if(!siblingMechs.contains(aMech)){
+								subSiblingMechs.add(aMech);
+							}
 							works = 1;
 							break;
 						} 
@@ -715,7 +891,9 @@ public class GraphBuilder {
 						String l1 = m.getAction().getAttribute("ScoreChange").getValue();
 						String l2 = aMech.getAction().getAttribute("ScoreChange").getValue();
 						if((s1.equals(subtype1) || s1.equals(m.getObject1().getName())) && (s2.equals(subtype2)) && a.equals(m.getAction().getName()) && !aMech.equals(m) && l1.equals(l2)) {
-							subSiblingMechs.add(aMech);
+							if(!siblingMechs.contains(aMech)) {
+								subSiblingMechs.add(aMech);
+							}
 							works = 1;
 							break;
 						}
@@ -913,6 +1091,38 @@ public class GraphBuilder {
 		}
 		return m;
 	}
+	
+	public BFSNode generalizeTerminal(BFSNode og, ArrayList<Mechanic> siblingMechs) {
+		// we can assume that this is a spriteCounter, MultispriteCounter, or Timeout
+		// If timeout, nothing will happen here, so we can return out pretty fast with the original node
+		if(og.getMech().getObject1().getFullName().equals("Timeout")) {
+			return og;
+		} else {
+			// if not a timeout, then this might have multiple inputs. We cannot rely on the object1 and object2 methodology used before.
+			// we can use the condition node to figure out what all the inputs will be
+			Entity condition = og.getMech().getCondition();
+			ArrayList<Entity> inputs = condition.getInputs();
+			boolean sameParent = true;
+			// check to see we can generalize all of this
+			for(int i = 0; i < inputs.size(); i++) {
+				for(int j = 0; j < inputs.size(); j++) {
+					if((inputs.get(i).getParents().size() > 0 && inputs.get(j).getParents().size() > 0) && !inputs.get(i).getParents().get(0).equals(inputs.get(j).getParents().get(0))) {
+						sameParent = false;
+					}
+				}
+			}
+			if(sameParent) {
+				// yay we can generalize this all nice and pretty!
+				for(int i = 0; i < inputs.size(); i++) {
+					Entity input = inputs.get(i);
+					// gotta find this mechanic
+					ArrayList<Mechanic> mechs = input.getMechanics();
+					System.out.println("debug");
+				}
+			}
+		}
+		return og;
+	}
 	public ArrayList<String> traceUserInteractionChain(Entity avatar, Entity win) {
 		if(winPath == null)
 			winPath = new ArrayList<Mechanic>();
@@ -980,8 +1190,14 @@ public class GraphBuilder {
 			superWP.add(new ArrayList<Mechanic>());
 			ArrayList<Mechanic> siblingMechs = new ArrayList<Mechanic>();
 //			generalize()
-			superWP.get(i).add(generalize(new BFSNode(wp.get(i)), siblingMechs).getMech());
-			superWP.get(i).addAll(siblingMechs);
+			if(!wp.get(i).getAction().getName().equals("Win") && !wp.get(i).getAction().getName().equals("Lose")) {
+				superWP.get(i).add(generalize(new BFSNode(wp.get(i)), siblingMechs).getMech());
+				superWP.get(i).addAll(siblingMechs);
+			} else {
+				// new generalized function
+				superWP.get(i).add(generalizeTerminal(new BFSNode(wp.get(i)), siblingMechs).getMech());
+				superWP.get(i).addAll(siblingMechs);
+			}
 		}
 		
 		// now go through each head mechanic and see if they are the same
@@ -992,7 +1208,88 @@ public class GraphBuilder {
 				}
 			}
 		}
+		
+		// do graph stuff with superWP
+		
+
 		return superWP;
+	}
+	
+	public void colorCritPath(ArrayList<ArrayList<Mechanic>> superWP) {
+		for(int i = 0; i < superWP.size(); i++) {
+			ArrayList<Mechanic> step = superWP.get(i);
+			for(int j = 1; j < step.size(); j++) {
+				// find the edges for this mechanic and make them thicker
+				Mechanic m = step.get(j);
+				if(m.getObject2() != null) {
+					if(graphVisualization) {
+						Edge e1 = graph.getEdge(m.getObject1().getFullName() + m.getObject2().getFullName() + m.getCondition().getName() + "1");
+						Edge e2 = graph.getEdge(m.getObject1().getFullName() + m.getObject2().getFullName() + m.getCondition().getName() + "2");
+						e1.addAttribute("ui.style", "stroke-mode:plain;");
+						e2.addAttribute("ui.style", "stroke-mode:plain;");
+						
+						// everything has a condition and an action, so color this edge
+						Edge caEdge = graph.getEdge(m.getObject1().getFullName() + m.getObject2().getFullName() + m.getAction().getName());
+						caEdge.addAttribute("ui.style", "stroke-mode:plain;");
+					}
+				}
+				else {
+					try {
+						if(graphVisualization) {
+							Edge e1 = graph.getEdge(m.getObject1().getFullName() + m.getCondition().getName() + "edge");
+							e1.addAttribute("ui.style", "stroke-mode:plain;");
+						}
+					}catch(Exception e) {
+						System.out.println("oops");
+					}
+					try {
+						if(graphVisualization) {
+							Edge ca = graph.getEdge(m.getCondition().getName() + m.getAction().getName() + "edge");
+							ca.addAttribute("ui.style", "stroke-mode:plain;");
+						}
+					} catch(Exception e) {
+						System.out.println("oops2");
+					}
+				}
+				
+				if(m.getAction().getOutputs().size() > 0) {
+					try{
+						if(graphVisualization) {
+							Edge eaGames = graph.getEdge(m.getObject1().getFullName() + m.getObject2().getFullName() + m.getAction().getName()+ "output");
+							eaGames.addAttribute("ui.style", "stroke-mode:plain;");
+						}
+					} catch(Exception e) {
+						// throw away dont care
+					}
+					try{
+						if(graphVisualization) {
+							Edge eaGames = graph.getEdge(m.getObject1().getFullName() + m.getObject2().getFullName() + m.getAction().getName()+ "output1");
+							eaGames.addAttribute("ui.style", "stroke-mode:plain;");
+						}
+					} catch(Exception e) {
+						// throw away dont care
+					}
+					try{
+						if(graphVisualization) {
+							Edge eaGames = graph.getEdge(m.getObject1().getFullName() + m.getObject2().getFullName() + m.getAction().getName()+ "output2");
+							eaGames.addAttribute("ui.style", "stroke-mode:plain;");
+						}
+					} catch(Exception e) {
+						// throw away dont care
+					}
+					try {
+						if(graphVisualization) {
+							Edge eaGames = graph.getEdge(m.getAction().getName() + m.getAction().getOutputs().get(0).getFullName() + "edge");
+							eaGames.addAttribute("ui.style", "stroke-mode:plain;");
+						}
+					} catch(Exception e) {
+						// throw away dont care
+					}
+					
+				}
+
+			}
+		}
 	}
 	public ArrayList<String> scoreChangers() {
 		ArrayList<String> instructions = new ArrayList<String>();

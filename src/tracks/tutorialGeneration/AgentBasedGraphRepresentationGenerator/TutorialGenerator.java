@@ -30,7 +30,7 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 	private String gameFile;
 	
 	private String[] agents = {"adrienctx.Agent", "NovelTS.Agent", "NovTea.Agent", "Number27.Agent", "YOLOBOT.Agent", "tracks.singlePlayer.simple.doNothing.Agent", "tracks.singlePlayer.simple.sampleonesteplookahead.Agent"};
-	//private String[] agents = {"adrienctx.Agent", "tracks.singlePlayer.simple.simpleRandom.Agent"};
+//	private String[] agents = {"adrienctx.Agent", "tracks.singlePlayer.simple.simpleRandom.Agent"};
 	
 	private ArrayList<String> necessaryFrames;
 	public TutorialGenerator(SLDescription sl, GameDescription game, ElapsedCpuTimer time, String gameFile) {
@@ -247,20 +247,20 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 			// Writes the game info to JSON
 			String one = writeGameInfo(controls, graph);
 			// the visual demonstrator which creates frames
-			VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer(true);
+			VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer(false);
 			String levelFile = "";
 			
 			
 			ArrayList<BunchOfGames> bogs = new ArrayList<>();
 			/** Add games for all agents on all levels **/
 			for(int i = 0; i < agents.length; i++) {
-				for(int j = 0; j < 1; j++) {
+				for(int j = 0; j < 5; j++) {
 					levelFile = gameFile.replace(".txt", "_lvl" + j + ".txt");
 					bogs.add(new BunchOfGames(gameFile, levelFile, agents[i]));
 				}
 			}
 //			vdi.runGame(gameFile, levelFile, "tracks.singlePlayer.advanced.olets.Agent");
-			vdi.runBunchOfGames(bogs);
+//			vdi.runBunchOfGames(bogs);
 
 			String gameName = gameFile.replace(".txt", "");
 			gameName = gameName.substring(gameName.indexOf('/')+1);
@@ -356,6 +356,7 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 		gameName = gameName.substring(gameName.indexOf('/')+1);
 
 		ArrayList<ArrayList<Mechanic>> superP = graph.visualPathGeneralization(winPath);
+//		graph.colorCritPath(superP);
 		int[][] relevantFrames = null;
 		
 		try {
