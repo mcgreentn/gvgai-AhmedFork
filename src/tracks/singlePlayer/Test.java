@@ -49,7 +49,7 @@ public class Test {
 		ArcadeMachine.playOneGame("examples/gridphysics/zelda.txt", "examples/gridphysics/zelda_lvl0.txt", recordActionsFile, seed);
 
 		// 2. This plays a game in a level by the controller.
-//		ArcadeMachine.runOneGame(game, level1, visuals, sampleRHEAController, recordActionsFile, seed, 0);
+//		ArcadeMachine.runOneGame(game, level1, visuals, sampleFlatMCTSController, recordActionsFile, seed, 0);
 
 
 		// 3. This replays a game from an action file previously recorded

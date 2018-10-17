@@ -65,6 +65,7 @@ public class VisualDemonstrationInterfacer {
 			return count;
 		} 
 	}
+	
 	public void runGame(String game, String level1, String agentName)
 	{
 		ArcadeMachine.runOneGame(game, level1, true, agentName, "", 0, 0);
@@ -761,44 +762,44 @@ public class VisualDemonstrationInterfacer {
 	public static void main(String [] args) throws FileNotFoundException, IOException, ParseException
 	{
 		//0 - Configure the critical path
-		ArrayList<ArrayList<Mechanic>> superP = new ArrayList<ArrayList<Mechanic>>();		
-		// example critical path
-		// first mechanic
-		ArrayList<Mechanic> first = new ArrayList<Mechanic>();
-		Mechanic input = new Mechanic(
-				new Entity("avatar", "Object", "FlakAvatar"), 
-				new Entity("Press Space", "Condition", "Player Input"), 
-				new Entity("Shoot", "Action", "Interaction"));
+//		ArrayList<ArrayList<Mechanic>> superP = new ArrayList<ArrayList<Mechanic>>();		
+//		// example critical path
+//		// first mechanic
+//		ArrayList<Mechanic> first = new ArrayList<Mechanic>();
+//		Mechanic input = new Mechanic(
+//				new Entity("avatar", "Object", "FlakAvatar"), 
+//				new Entity("Press Space", "Condition", "Player Input"), 
+//				new Entity("Shoot", "Action", "Interaction"));
+//
+//		input.getAction().getOutputs().add(new Entity("sam","Object","Missile"));
+//		first.add(input);
+//		first.add(input);
+//		superP.add(first);
 
-		input.getAction().getOutputs().add(new Entity("sam","Object","Missile"));
-		first.add(input);
-		first.add(input);
-		superP.add(first);
+//		ArrayList<Mechanic> next1 = new ArrayList<Mechanic>();
+//		next1.add(new Mechanic(
+//				new Entity("alien", "Object", "alien"), 
+//				new Entity("sam", "Object", "Missile"), 
+//				new Entity("Collision", "Condition", "n/a"),
+//				new Entity("KillSprite", "Action", "Interaction")));
+//		next1.add(new Mechanic(
+//				new Entity("alienGreen", "Object", "Bomber"), 
+//				new Entity("sam", "Object", "Missile"), 
+//				new Entity("Collision", "Condition", "n/a"), 
+//				new Entity("KillSprite", "Action", "Interaction")));
+//		next1.add(new Mechanic(
+//				new Entity("alienBlue", "Object", "Bomber"), 
+//				new Entity("sam", "Object", "Missile"),
+//				new Entity("Collision", "Condition", "n/a"), 
+//				new Entity("KillSprite", "Action", "Interaction")));
+//		superP.add(next1);
 
-		ArrayList<Mechanic> next1 = new ArrayList<Mechanic>();
-		next1.add(new Mechanic(
-				new Entity("alien", "Object", "alien"), 
-				new Entity("sam", "Object", "Missile"), 
-				new Entity("Collision", "Condition", "n/a"),
-				new Entity("KillSprite", "Action", "Interaction")));
-		next1.add(new Mechanic(
-				new Entity("alienGreen", "Object", "Bomber"), 
-				new Entity("sam", "Object", "Missile"), 
-				new Entity("Collision", "Condition", "n/a"), 
-				new Entity("KillSprite", "Action", "Interaction")));
-		next1.add(new Mechanic(
-				new Entity("alienBlue", "Object", "Bomber"), 
-				new Entity("sam", "Object", "Missile"),
-				new Entity("Collision", "Condition", "n/a"), 
-				new Entity("KillSprite", "Action", "Interaction")));
-		superP.add(next1);
-
-		ArrayList<Mechanic> last = new ArrayList<Mechanic>();
-		last.add(new Mechanic(
-				new Entity("alien", "Object", "alien"), 
-				new Entity("MultiSpriteCounter", "Condition", "n/a"), 
-				new Entity("Win", "Action","Termination")));
-		superP.add(last);
+//		ArrayList<Mechanic> last = new ArrayList<Mechanic>();
+//		last.add(new Mechanic(
+//				new Entity("alien", "Object", "alien"), 
+//				new Entity("MultiSpriteCounter", "Condition", "n/a"), 
+//				new Entity("Win", "Action","Termination")));
+//		superP.add(last);
 
 		//1 - Configure your games
 
@@ -814,20 +815,20 @@ public class VisualDemonstrationInterfacer {
 		bunchOfGames.add(bog1); bunchOfGames.add(bog2);
 		//	
 		//	//2 - Run the games
-		VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer(false);
-		//vdi.runBunchOfGames(bunchOfGames);
+		VisualDemonstrationInterfacer vdi = new VisualDemonstrationInterfacer(true);
+		vdi.runBunchOfGames(bunchOfGames);
 
 		//			
 		//3 - Query for everything
-		int [][] array = vdi.mapCriticalPath(superP);
-		
-		for (int i = 0; i < array.length; i++) {
-			System.out.println("game : " + i);
-			for (int j = 0; j < array[i].length; j++) {
-				System.out.println(array[i][j]);
-			}
-			System.out.println();
-		}
+//		int [][] array = vdi.mapCriticalPath(superP);
+//		
+//		for (int i = 0; i < array.length; i++) {
+//			System.out.println("game : " + i);
+//			for (int j = 0; j < array[i].length; j++) {
+//				System.out.println(array[i][j]);
+//			}
+//			System.out.println();
+//		}
 
 	}
 

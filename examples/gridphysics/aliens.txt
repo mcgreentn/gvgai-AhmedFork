@@ -1,4 +1,6 @@
 BasicGame square_size=32
+
+
     SpriteSet
         background > Immovable img=oryx/space1 hidden=True
         base    > Immovable    color=WHITE img=oryx/planet

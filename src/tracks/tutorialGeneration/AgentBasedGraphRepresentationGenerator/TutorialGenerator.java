@@ -360,6 +360,13 @@ public class TutorialGenerator extends AbstractTutorialGenerator{
 		
 		try {
 			relevantFrames = vdi.mapCriticalPath(superP);
+			for (int i = 0; i < relevantFrames.length; i++) {
+				System.out.println("game : " + i);
+				for (int j = 0; j < relevantFrames[i].length; j++) {
+					System.out.println(relevantFrames[i][j]);
+				}
+				System.out.println();
+			}
 //			relevantFrames = vdi.getAllRelevantFrames(superP.get(2), bogs);
 //			Metrics.winPathing(relevantFrames);
 

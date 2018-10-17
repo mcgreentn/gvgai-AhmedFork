@@ -12,6 +12,7 @@ BasicGame
         monsterQuick > RandomNPC cooldown=2 cons=6 img=oryx/bat1
         monsterNormal > RandomNPC cooldown=4 cons=8 img=oryx/spider2
         monsterSlow > RandomNPC cooldown=8 cons=12 img=oryx/scorpion1
+        monsterNew > RandomNPC cooldown=1 cons=12 img=oryx/key2
       wall > Immovable autotiling=true img=oryx/wall3
       	
 
@@ -22,6 +23,7 @@ BasicGame
     1 > floor monsterQuick
     2 > floor monsterNormal
     3 > floor monsterSlow
+    & > floor monsterNew
     w > wall
     . > floor
     
